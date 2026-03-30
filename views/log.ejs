@@ -1,0 +1,91 @@
+<%- include('partials/header') %>
+    <div class="auth-container">
+        <!-- Login Form -->
+        <div id="login-form">
+            <h2>Log In</h2>
+            <input type="text" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+            <button id="login-btn">Log In</button>
+            <div class="toggle-link">
+                <p>Don't have an account? <a id="show-signup">Sign up</a></p>
+            </div>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signup-form" style="display: none;">
+            <h2>Sign Up</h2>
+            <input type="text" name="firstname" placeholder="First Name">
+            <input type="text" name="lastname" placeholder="Last Name">
+            <input type="email" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+            <button id="signup-btn">Sign Up</button>
+            <div class="toggle-link">
+                <p>Already have an account? <a id="show-login">Log in</a></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById("login-form");
+        const signupForm = document.getElementById("signup-form");
+        const showSignup = document.getElementById("show-signup");
+        const showLogin = document.getElementById("show-login");
+
+        showSignup.addEventListener("click", () => {
+            loginForm.style.display = "none";
+            signupForm.style.display = "block";
+        });
+
+        showLogin.addEventListener("click", () => {
+            signupForm.style.display = "none";
+            loginForm.style.display = "block";
+        });
+
+        document.getElementById("login-btn").addEventListener("click", async () => {
+            const email = loginForm.querySelector('input[name="email"]').value;
+            const password = loginForm.querySelector('input[name="password"]').value;
+
+            const res = await fetch('./api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ "email": email, "password": password })
+            });
+
+            const data = await res.text();
+
+            if (res.ok) {
+                window.location = '/protected/home.html';
+            } else {
+                alert(`${data}`);
+            }
+        });
+
+        document.getElementById("signup-btn").addEventListener("click", async () => {
+            console.log("Signup button clicked"); // Debugging line
+            const firstname = signupForm.querySelector('input[name="firstname"]').value;
+            const lastname = signupForm.querySelector('input[name="lastname"]').value;
+            const email = signupForm.querySelector('input[name="email"]').value;
+            const password = signupForm.querySelector('input[name="password"]').value;
+
+            const res = await fetch('./api/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include',
+                body: JSON.stringify({ firstname, lastname, email, password }),
+            });
+            const data = await res.text();
+
+            if (res.ok) {
+                window.location = '/protected/home.html';
+            } else {
+                alert(`${data}`);
+            }
+        });
+    </script>
+
+<%- include('partials/footer') %>

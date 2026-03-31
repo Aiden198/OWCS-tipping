@@ -1,0 +1,35 @@
+.nav-links a {
+  color: var(--text);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-links a:hover {
+  color: var(--orange);
+}
+
+.btn-primary:hover {
+  background: var(--orange-dark);
+}
+
+.btn-secondary:hover {
+  background: var(--blue);
+  color: white;
+}
+
+.footer-column a {
+  color: var(--muted);
+  transition: color 0.2s ease;
+}
+
+.footer-column a:hover {
+  color: var(--orange);
+}
+
+.footer-bottom__links a {
+  color: var(--muted);
+}
+
+.footer-bottom__links a:hover {
+  color: var(--orange);
+}

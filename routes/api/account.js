@@ -1,4 +1,4 @@
-const db = require('../../db');
+const db = require('../../database/db');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const router = express.Router();
@@ -7,6 +7,10 @@ const isAuthenticated = require('../../middlewares/auth');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const util = require('util');
+
+const rename = util.promisify(fs.rename);
+const unlink = util.promisify(fs.unlink);
 
 /* =========================
    ACCOUNT UPDATE
@@ -27,7 +31,7 @@ router.put('/', isAuthenticated, async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await db.promise().query(
+    await db.query(
       'UPDATE users SET firstname = ?, lastname = ?, email = ?, password = ? WHERE user_id = ?',
       [firstname, lastname, email, hashedPassword, userId]
     );
@@ -82,7 +86,7 @@ router.post('/profile-pic', isAuthenticated, upload.single('profilePic'), async 
   const targetFilename = `user_${userId}.png`;
 
   try {
-    await db.promise().query(
+    await db.query(
       'UPDATE users SET profile_pic = ? WHERE user_id = ?',
       [targetFilename, userId]
     );
@@ -102,7 +106,7 @@ router.post('/profile-pic', isAuthenticated, upload.single('profilePic'), async 
 
 router.get('/', isAuthenticated, async (req, res) => {
   try {
-    const [rows] = await db.promise().query(
+    const [rows] = await db.query(
       `
       SELECT firstname, lastname, email, profile_pic, is_admin, credits
       FROM users

@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const db = require("./db");
+const db = require("./database/db");
 
 async function createDatabase() {
   try {
@@ -8,7 +8,7 @@ async function createDatabase() {
     const sql = fs.readFileSync(sqlPath, "utf8");
 
     // mysql2 needs multipleStatements enabled for big SQL files
-    await db.promise().query(sql);
+    await db.query(sql);
 
     console.log("Database initialized successfully.");
     process.exit(0);

@@ -6,7 +6,7 @@ async function seedResults() {
   let connection;
 
   try {
-    connection = await db.promise().getConnection();
+    connection = await db.getConnection();
     await connection.beginTransaction();
 
     // Find the test user

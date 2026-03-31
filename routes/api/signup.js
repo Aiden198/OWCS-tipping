@@ -1,4 +1,4 @@
-const db = require("../../db");
+const db = require("../../database/db");
 const bcrypt = require("bcrypt");
 var express = require('express');
 var router = express.Router();
@@ -20,7 +20,7 @@ router.post('/', async function (req, res, next) {
     }
 
     try {
-        const [results] = await db.promise().query(
+        const [results] = await db.query(
             'SELECT * FROM users WHERE email = ?',
             [email]
         );
@@ -32,13 +32,13 @@ router.post('/', async function (req, res, next) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const [[{ count }]] = await db.promise().query(
+        const [[{ count }]] = await db.query(
             'SELECT COUNT(*) AS count FROM users'
         );
 
         const isAdmin = count === 0 ? 1 : 0;
 
-        const [insertUser] = await db.promise().query(
+        const [insertUser] = await db.query(
             'INSERT INTO users (firstname, lastname, email, password, is_admin) VALUES (?, ?, ?, ?, ?)',
             [firstname, lastname, email, hashedPassword, isAdmin]
         );

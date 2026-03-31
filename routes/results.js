@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const db = require('../db');
+const db = require('../database/db');
 
 router.get('/', async function(req, res) {
   try {
@@ -59,8 +59,8 @@ router.get('/', async function(req, res) {
     `;
 
     const [rows] = currentUserId
-      ? await db.promise().query(query, [currentUserId])
-      : await db.promise().query(query);
+      ? await db.query(query, [currentUserId])
+      : await db.query(query);
 
     const results = rows.map((match) => {
       let userTip = null;

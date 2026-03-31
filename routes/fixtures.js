@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const db = require('../db');
+const db = require('../database/db');
 
 router.get('/', async function(req, res) {
   try {
-    const [matches] = await db.promise().query(`
+    const [matches] = await db.query(`
       SELECT
         m.match_id,
         m.match_datetime,
@@ -39,7 +39,7 @@ router.get('/', async function(req, res) {
     let existingTips = {};
 
     if (req.session.user) {
-      const [tips] = await db.promise().query(`
+      const [tips] = await db.query(`
         SELECT match_id, selected_team_id, amount_tipped, odds, status
         FROM tips
         WHERE user_id = ?

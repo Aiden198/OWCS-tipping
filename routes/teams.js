@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const db = require('../db');
+const db = require('../database/db');
 
 router.get('/', async function(req, res) {
   try {
-    const [teams] = await db.promise().query(`
+    const [teams] = await db.query(`
       SELECT
         team_id,
         slug,

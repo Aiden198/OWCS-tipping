@@ -10,7 +10,7 @@ async function seedMatches() {
   let connection;
 
   try {
-    connection = await db.promise().getConnection();
+    connection = await db.getConnection();
     await connection.beginTransaction();
 
     // Wipe dependent rows first

@@ -1,9 +1,9 @@
-const db = require("../db");
+const db = require("../database/db");
 const resolveMatch = require("./resolveMatch");
 
 async function resolveAllMatches() {
   try {
-    const [matches] = await db.promise().query(`
+    const [matches] = await db.query(`
       SELECT match_id
       FROM matches
       WHERE completed = TRUE

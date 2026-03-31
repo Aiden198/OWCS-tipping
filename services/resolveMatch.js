@@ -1,10 +1,10 @@
-const db = require("../db");
+const db = require("../database/db");
 
 async function resolveMatch(matchId) {
   let connection;
 
   try {
-    connection = await db.promise().getConnection();
+    connection = await db.getConnection();
     await connection.beginTransaction();
 
     const [matchRows] = await connection.query(

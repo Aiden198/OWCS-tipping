@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const db = require('../db');
+const db = require('../database/db');
 
 router.get('/', async function(req, res) {
   if (!req.session.user) {
@@ -8,7 +8,7 @@ router.get('/', async function(req, res) {
   }
 
   try {
-    const [tips] = await db.promise().query(`
+    const [tips] = await db.query(`
       SELECT
         t.tip_id,
         t.match_id,

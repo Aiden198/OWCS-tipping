@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../database/db");
 const bcrypt = require("bcrypt");
 
 const firstNames = [
@@ -31,7 +31,7 @@ async function seedTestUsers() {
   let connection;
 
   try {
-    connection = await db.promise().getConnection();
+    connection = await db.getConnection();
     await connection.beginTransaction();
 
     // Clear dependent rows first

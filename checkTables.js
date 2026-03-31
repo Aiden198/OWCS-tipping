@@ -1,6 +1,6 @@
-const db = require("./db");
+const db = require("./database/db");
 
-db.promise().query("SHOW TABLES")
+db.query("SHOW TABLES")
   .then(([rows]) => {
     console.log("Tables in owcs_db:");
     console.table(rows);

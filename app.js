@@ -49,7 +49,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(sessionMiddleware);
 
-const db = require('./db');
+const db = require('./database/db');
 
 app.use(async (req, res, next) => {
   try {
@@ -58,7 +58,7 @@ app.use(async (req, res, next) => {
       return next();
     }
 
-    const [rows] = await db.promise().query(
+    const [rows] = await db.query(
       `
       SELECT user_id, firstname, lastname, email, is_admin, credits
       FROM users

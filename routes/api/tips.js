@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../db');
+const db = require('../../database/db');
 
 router.post('/', async function (req, res) {
   const sessionUser = req.session.user;
@@ -26,7 +26,7 @@ router.post('/', async function (req, res) {
   let connection;
 
   try {
-    connection = await db.promise().getConnection();
+    connection = await db.getConnection();
     await connection.beginTransaction();
 
     const [matchRows] = await connection.query(`

@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const db = require('../db');
+const db = require('../database/db');
 
 router.get('/', async function(req, res) {
   try {
-    const [topUsers] = await db.promise().query(`
+    const [topUsers] = await db.query(`
       SELECT
         user_id,
         firstname,
@@ -19,7 +19,7 @@ router.get('/', async function(req, res) {
     if (req.session.user) {
       const currentUserId = req.session.user.userID;
 
-      const [allUsersOrdered] = await db.promise().query(`
+      const [allUsersOrdered] = await db.query(`
         SELECT
           user_id,
           firstname,

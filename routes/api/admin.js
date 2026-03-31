@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../database/db'); // Adjust path as needed
+const db = require('../../db'); // Adjust path as needed
 const isAuthenticated = require('../../middlewares/auth');
 const isAdmin = require('../../middlewares/isAdmin');
 

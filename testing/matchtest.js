@@ -1,4 +1,4 @@
-const db = require("../database/db");
+const db = require("../db");
 
 function addHours(date, hours) {
   const d = new Date(date);

@@ -49,7 +49,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(sessionMiddleware);
 
-const db = require('./database/db');
+const db = require('./db');
 
 app.use(async (req, res, next) => {
   try {

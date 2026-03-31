@@ -1,4 +1,4 @@
-const db = require("../../database/db");
+const db = require("../../db");
 const bcrypt = require("bcrypt");
 var express = require('express');
 var router = express.Router();

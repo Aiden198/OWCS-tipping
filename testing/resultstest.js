@@ -1,4 +1,4 @@
-const db = require("../database/db");
+const db = require("../db");
 
 const TEST_EMAIL = "tester@owcs.com";
 

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../../database/db');
+const db = require('../../db');
 
 router.post('/', async function (req, res) {
   const sessionUser = req.session.user;

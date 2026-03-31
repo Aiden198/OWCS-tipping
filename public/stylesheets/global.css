@@ -33,3 +33,8 @@ a {
   width: min(1200px, 92%);
   margin: 0 auto;
 }
+
+.container-wide {
+  width: min(1600px, 96%);
+  margin: 0 auto;
+}

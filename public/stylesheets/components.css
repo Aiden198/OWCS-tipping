@@ -1,16 +1,21 @@
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 1.4rem;
+  gap: 1rem;
   margin: 0;
   padding: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .nav-actions {
   display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  gap: 0.6rem;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+.nav-actions .btn {
+  white-space: nowrap;
 }
 
 .btn {
@@ -70,4 +75,64 @@
   margin: 0;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.btn-danger {
+  border: 1px solid rgba(249, 115, 22, 0.45);
+  color: #ffd7c2;
+  background: transparent;
+}
+
+.btn-danger:hover {
+  background: rgba(249, 115, 22, 0.12);
+  color: white;
+}
+
+.page-shell {
+  padding: 3rem 0 4rem;
+}
+
+.page-hero {
+  padding: 1rem 0 2rem;
+}
+
+.page-hero h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+}
+
+.page-hero p {
+  margin: 0;
+  max-width: 760px;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.page-content {
+  padding-bottom: 2rem;
+}
+
+.nav-credits {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.nav-credits__icon {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.nav-credits__amount {
+  font-weight: 800;
+  color: white;
+  font-size: 0.95rem;
+  line-height: 1;
 }

@@ -6,7 +6,7 @@ const isAdmin = require('../../middlewares/isAdmin');
 
 router.get('/users', isAuthenticated, isAdmin, async (req, res) => {
     try {
-        const [rows] = await db.promise().query("SELECT user_id, firstname, lastname, email, is_admin FROM user");
+        const [rows] = await db.promise().query("SELECT user_id, firstname, lastname, email, is_admin FROM users");
         res.json(rows);
     } catch (err) {
         console.error("Error fetching users:", err);

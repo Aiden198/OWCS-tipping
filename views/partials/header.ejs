@@ -7,7 +7,7 @@
   </div>
 
   <nav class="navbar">
-    <div class="container navbar__content">
+    <div class="container-wide navbar__content">
       <a href="/" class="brand">
         <span class="brand__ow">OW</span>
         <div class="brand__text">
@@ -17,18 +17,35 @@
       </a>
 
       <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Fixtures</a></li>
-        <li><a href="#">Tips</a></li>
-        <li><a href="#">Leaderboard</a></li>
-        <li><a href="#">Results</a></li>
-        <li><a href="#">Rules</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/fixtures">Fixtures</a></li>
+        <li><a href="/tips">My Tips</a></li>
+        <li><a href="/leaderboard">Leaderboard</a></li>
+        <li><a href="/results">Results</a></li>
+        <li><a href="/teams">Teams</a></li>
+        <li><a href="/rules">Rules</a></li>
       </ul>
 
-      <div class="nav-actions">
-        <a href="#" class="btn btn-secondary">Log In</a>
-        <a href="#" class="btn btn-primary">Make Tips</a>
-      </div>
+        <% if (user) { %>
+        <div class="nav-credits">
+            <img src="/images/credits.webp" alt="Credits" class="nav-credits__icon">
+            <span class="nav-credits__amount"><%= Number(user.credits).toFixed(2) %></span>
+        </div>
+        <% } %>
+
+        <div class="nav-actions">
+        <a href="/fixtures" class="btn btn-primary">Make Tips</a>
+
+        <% if (typeof user !== 'undefined' && user) { %>
+            <a href="/account" class="btn btn-secondary">My Account</a>
+            <a href="/api/logout" class="btn btn-secondary btn-danger">Log Out</a>
+        <% } else { %>
+            <a href="/login" class="btn btn-secondary">Log In</a>
+        <% } %>
+        <% if (typeof user !== 'undefined' && user && user.is_admin === 1) { %>
+          <a href="/admin" class="btn btn-secondary">Admin</a>
+        <% } %>
+        </div>
     </div>
   </nav>
 </header>

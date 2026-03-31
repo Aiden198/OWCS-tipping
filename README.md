@@ -3,14 +3,20 @@
 
 npm install
 
-## Starting MySQL Service
+## Install db
 
-service mysql start
-
-## Importing Database Template
-
-mysql < database/db_init.sql
+node createDB.js
 
 ## Running server
 
 npm start
+
+## delete db
+
+node wipeDB.js
+
+## domain
+
+owcstipping.com
+
+Plcs2929OWCS

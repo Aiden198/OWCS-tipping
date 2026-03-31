@@ -1,19 +1,22 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
-const db = mysql.createConnection({
+const db = mysql.createPool({
   host: process.env.DB_HOST || 'db',
   port: process.env.DB_PORT || 3306,
   user: process.env.DB_USER || 'owcs_user',
   password: process.env.DB_PASSWORD || 'owcs_password',
-  database: process.env.DB_NAME || 'owcs_db'
+  database: process.env.DB_NAME || 'owcs_db',
+  multipleStatements: true,
+  connectionLimit: 10
 });
 
-db.connect((err) => {
+db.getConnection((err, connection) => {
   if (err) {
     console.error('Database connection failed:', err);
   } else {
     console.log('Connected to MySQL');
+    connection.release();
   }
 });
 

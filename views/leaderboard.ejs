@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - OWCS Tipping</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/leaderboard.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Leaderboard</h1>
+        <p>See the top users ranked by credits, and where you currently place overall.</p>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <div class="container">
+        <div class="leaderboard-card">
+          <div class="leaderboard-card__header">
+            <h2>Top Players</h2>
+            <p>Showing up to the top 50 users by credits.</p>
+          </div>
+
+          <% if (!topUsers || topUsers.length === 0) { %>
+            <div class="leaderboard-empty">
+              <p>No users found yet.</p>
+            </div>
+          <% } else { %>
+            <div class="leaderboard-table">
+              <div class="leaderboard-row leaderboard-row--head">
+                <span>Rank</span>
+                <span>Player</span>
+                <span>Credits</span>
+              </div>
+
+              <% topUsers.forEach((user, index) => { %>
+                <div class="leaderboard-row <%= index < 3 ? 'leaderboard-row--top' : '' %>">
+                  <span class="leaderboard-rank">#<%= index + 1 %></span>
+                  <span class="leaderboard-name"><%= user.firstname %></span>
+                  <span class="leaderboard-credits"><%= Number(user.credits).toFixed(2) %></span>
+                </div>
+              <% }) %>
+            </div>
+          <% } %>
+        </div>
+
+        <% if (currentUserRank) { %>
+          <div class="leaderboard-card leaderboard-card--me">
+            <div class="leaderboard-card__header">
+              <h2>Your Position</h2>
+              <p>Your current placement compared to all users.</p>
+            </div>
+
+            <div class="leaderboard-row leaderboard-row--me">
+              <span class="leaderboard-rank">#<%= currentUserRank.rank %></span>
+              <span class="leaderboard-name"><%= currentUserRank.firstname %></span>
+              <span class="leaderboard-credits"><%= Number(currentUserRank.credits).toFixed(2) %></span>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

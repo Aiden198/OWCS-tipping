@@ -20,7 +20,11 @@ router.post('/', async function (req, res, next) {
     }
 
     try {
-        const [results] = await db.promise().query('SELECT * FROM user WHERE email = ?', [email]);
+        const [results] = await db.promise().query(
+            'SELECT * FROM users WHERE email = ?',
+            [email]
+        );
+
         if (results.length > 0) {
             console.log(`Email: ${email} already exists in the database`);
             return res.status(401).send("Email already registered");
@@ -28,14 +32,17 @@ router.post('/', async function (req, res, next) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Check if this is the first user
-        const [[{ count }]] = await db.promise().query('SELECT COUNT(*) AS count FROM user');
+        const [[{ count }]] = await db.promise().query(
+            'SELECT COUNT(*) AS count FROM users'
+        );
+
         const isAdmin = count === 0 ? 1 : 0;
 
         const [insertUser] = await db.promise().query(
-            'INSERT INTO user (firstname, lastname, email, password, is_admin) VALUES (?, ?, ?, ?, ?)',
+            'INSERT INTO users (firstname, lastname, email, password, is_admin) VALUES (?, ?, ?, ?, ?)',
             [firstname, lastname, email, hashedPassword, isAdmin]
         );
+
         console.log(`User ${email} successfully added to database`);
 
         req.session.user = {
@@ -43,7 +50,8 @@ router.post('/', async function (req, res, next) {
             lastname: lastname,
             email: email,
             userID: insertUser.insertId,
-            is_admin: isAdmin
+            is_admin: isAdmin,
+            credits: 1000
         };
 
         console.log("User session created:", req.session.user);

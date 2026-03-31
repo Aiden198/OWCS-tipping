@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin User Management</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <script>
+    if (localStorage.getItem('darkMode') === 'true') {
+      document.documentElement.classList.add('dark-mode');
+    }
+  </script>
+</head>
+<body>
+<%- include('partials/header') %>
+
+  <div class="account-container">
+    <h2>Admin: Manage Users</h2>
+    <table id="users-table" border="1" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>First</th>
+          <th>Last</th>
+          <th>Email</th>
+          <th>Admin?</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    async function loadAllUsers() {
+      try {
+        const res = await fetch('/api/admin/users', { credentials: 'include' });
+        if (!res.ok) throw new Error('Access denied or server error');
+        const users = await res.json();
+
+        const tbody = document.querySelector('#users-table tbody');
+        tbody.innerHTML = '';
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          console.log(user.is_admin)
+          row.innerHTML = `
+            <td>${user.firstname}</td>
+            <td>${user.lastname}</td>
+            <td>${user.email}</td>
+            <td>${Number(user.is_admin) === 1 ? '✅' : '❌'}</td>
+          `;
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error(err);
+        alert("You are not authorized to view this page.");
+        window.location.href = '/';
+      }
+    }
+
+    loadAllUsers();
+  </script>
+  <%- include('partials/footer') %>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Account - OWCS Tipping</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/account.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>My Account</h1>
+        <p>Manage your profile, view your account details, and keep track of your current credits.</p>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <div class="container">
+        <div class="account-layout">
+          <div class="account-card account-card--profile">
+            <h2>Profile</h2>
+
+            <div class="profile-pic-section">
+              <img id="profile-preview" src="/uploads/default.png" alt="Profile picture" class="profile-preview">
+
+              <form id="profile-pic-form" enctype="multipart/form-data" class="profile-pic-form">
+                <input type="file" name="profilePic" id="profilePicInput">
+                <button type="submit" class="btn btn-primary">Upload Profile Picture</button>
+              </form>
+            </div>
+          </div>
+
+          <div class="account-card">
+            <h2>Account Details</h2>
+
+            <div class="account-info-grid">
+              <div class="account-info-item">
+                <span class="account-info-item__label">First Name</span>
+                <span class="account-info-item__value" id="first-name">Loading...</span>
+              </div>
+
+              <div class="account-info-item">
+                <span class="account-info-item__label">Last Name</span>
+                <span class="account-info-item__value" id="last-name">Loading...</span>
+              </div>
+
+              <div class="account-info-item">
+                <span class="account-info-item__label">Email</span>
+                <span class="account-info-item__value" id="email">Loading...</span>
+              </div>
+
+              <div class="account-info-item">
+                <span class="account-info-item__label">Credits</span>
+                <span class="account-info-item__value account-info-item__value--credits">
+                  <img src="/images/credits.webp" alt="Credits" class="account-credits-icon">
+                  <span id="credits">Loading...</span>
+                </span>
+              </div>
+
+              <div class="account-info-item">
+                <span class="account-info-item__label">Account Type</span>
+                <span class="account-info-item__value" id="account-type">Loading...</span>
+              </div>
+            </div>
+
+            <div class="account-actions">
+              <a href="/tips" class="btn btn-secondary">View My Tips</a>
+              <a href="/leaderboard" class="btn btn-secondary">Leaderboard</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script>
+    async function loadAccountInfo() {
+      try {
+        const res = await fetch('/api/account', { credentials: 'include' });
+        if (!res.ok) throw new Error("Not authenticated");
+
+        const user = await res.json();
+
+        document.getElementById('first-name').textContent = user.firstname;
+        document.getElementById('last-name').textContent = user.lastname;
+        document.getElementById('email').textContent = user.email;
+        document.getElementById('credits').textContent = Number(user.credits).toFixed(2);
+        document.getElementById('account-type').textContent = Number(user.is_admin) === 1 ? 'Admin' : 'User';
+
+        const profilePreview = document.getElementById('profile-preview');
+
+        if (user.profile_pic) {
+          profilePreview.src = `/uploads/${user.profile_pic}`;
+          profilePreview.onerror = () => {
+            profilePreview.src = '/uploads/default.png';
+          };
+        } else {
+          profilePreview.src = '/uploads/default.png';
+        }
+      } catch (err) {
+        console.error("Error loading account:", err);
+        alert("Could not load account info. Please log in again.");
+        window.location.href = '/login';
+      }
+    }
+
+    loadAccountInfo();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('profile-pic-form');
+      if (!form) return;
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const fileInput = document.getElementById('profilePicInput');
+        const file = fileInput.files[0];
+
+        if (!file) {
+          alert('Please choose a file.');
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('profilePic', file);
+
+        try {
+          const res = await fetch('/api/account/profile-pic', {
+            method: 'POST',
+            body: formData,
+            credentials: 'include'
+          });
+
+          const msg = await res.text();
+          alert(msg);
+
+          if (res.ok) {
+            await loadAccountInfo();
+          }
+        } catch (err) {
+          console.error('Upload failed:', err);
+          alert('Failed to upload image.');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

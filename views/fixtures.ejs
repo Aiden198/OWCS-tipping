@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixtures - OWCS Tipping</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/fixtures.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Fixtures</h1>
+        <p>Browse upcoming OWCS matches and place your tips before they lock.</p>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <div class="container">
+        <% if (matches.length === 0) { %>
+          <div class="feature-card">
+            <h3>No Upcoming Matches</h3>
+            <p>There are currently no scheduled fixtures to tip on.</p>
+          </div>
+        <% } %>
+
+        <div class="fixtures-list">
+          <% matches.forEach((match) => {
+              const existingTip = existingTips[match.match_id];
+          %>
+            <div class="fixture-card">
+              <div class="fixture-card__top">
+                <div class="fixture-card__meta">
+                  <span class="fixture-card__region"><%= match.team_1_region %></span>
+                  <span class="fixture-card__time">
+                    <%= new Date(match.match_datetime).toLocaleString('en-AU', {
+                      weekday: 'short',
+                      day: 'numeric',
+                      month: 'short',
+                      hour: 'numeric',
+                      minute: '2-digit'
+                    }) %>
+                  </span>
+                </div>
+
+                <div class="fixture-card__matchup">
+                  <div class="fixture-team">
+                    <img src="<%= match.team_1_icon %>" alt="<%= match.team_1_name %> logo" class="fixture-team__logo">
+                    <div class="fixture-team__text">
+                      <span class="fixture-team__abbr"><%= match.team_1_abbreviation %></span>
+                      <span class="fixture-team__name"><%= match.team_1_name %></span>
+                    </div>
+                  </div>
+
+                  <div class="fixture-card__vs">VS</div>
+
+                  <div class="fixture-team fixture-team--right">
+                    <div class="fixture-team__text fixture-team__text--right">
+                      <span class="fixture-team__abbr"><%= match.team_2_abbreviation %></span>
+                      <span class="fixture-team__name"><%= match.team_2_name %></span>
+                    </div>
+                    <img src="<%= match.team_2_icon %>" alt="<%= match.team_2_name %> logo" class="fixture-team__logo">
+                  </div>
+                </div>
+              </div>
+
+              <div class="fixture-card__bottom">
+                <% if (user) { %>
+                  <div class="fixture-tip-box">
+                    <div class="fixture-tip-box__header">
+                      <h3>Place Your Tip</h3>
+                      <% if (existingTip) { %>
+                        <span class="fixture-tip-box__status">
+                          Current tip: <%= Number(existingTip.amount_tipped).toFixed(2) %> at <%= Number(existingTip.odds).toFixed(2) %> odds
+                        </span>
+                      <% } %>
+                    </div>
+
+                    <div class="fixture-tip-controls" data-match-id="<%= match.match_id %>">
+                      <div class="fixture-tip-amount">
+                        <label for="tip-amount-<%= match.match_id %>">Amount</label>
+                        <input
+                          type="number"
+                          min="1"
+                          step="0.01"
+                          id="tip-amount-<%= match.match_id %>"
+                          class="tip-amount-input"
+                          placeholder="Enter credits"
+                          value="<%= existingTip ? Number(existingTip.amount_tipped).toFixed(2) : '' %>"
+                        >
+                      </div>
+
+                      <div class="fixture-tip-buttons">
+                        <button
+                          class="tip-team-btn <%= existingTip && existingTip.selected_team_id === match.team_1_db_id ? 'tip-team-btn--selected' : '' %>"
+                          data-match-id="<%= match.match_id %>"
+                          data-team-id="<%= match.team_1_db_id %>"
+                          data-odds="<%= match.team_1_odds %>"
+                        >
+                          Tip <%= match.team_1_abbreviation %> @ <%= Number(match.team_1_odds).toFixed(2) %>
+                        </button>
+
+                        <button
+                          class="tip-team-btn <%= existingTip && existingTip.selected_team_id === match.team_2_db_id ? 'tip-team-btn--selected' : '' %>"
+                          data-match-id="<%= match.match_id %>"
+                          data-team-id="<%= match.team_2_db_id %>"
+                          data-odds="<%= match.team_2_odds %>"
+                        >
+                          Tip <%= match.team_2_abbreviation %> @ <%= Number(match.team_2_odds).toFixed(2) %>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                <% } else { %>
+                  <div class="fixture-login-prompt">
+                    <p>You must be logged in to place tips on fixtures.</p>
+                    <a href="/login" class="btn btn-secondary">Log In</a>
+                  </div>
+                <% } %>
+              </div>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    document.querySelectorAll('.tip-team-btn').forEach((button) => {
+      button.addEventListener('click', async () => {
+        const matchId = button.dataset.matchId;
+        const teamId = button.dataset.teamId;
+        const odds = button.dataset.odds;
+        const amountInput = document.getElementById(`tip-amount-${matchId}`);
+        const amount = amountInput.value;
+
+        if (!amount || Number(amount) <= 0) {
+          alert('Please enter a valid tip amount.');
+          return;
+        }
+
+        try {
+          const res = await fetch('/api/tips', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({
+              match_id: matchId,
+              selected_team_id: teamId,
+              odds: odds,
+              amount_tipped: amount
+            })
+          });
+
+          const data = await res.text();
+
+          if (!res.ok) {
+            alert(data);
+            return;
+          }
+
+          alert('Tip saved successfully.');
+          window.location.reload();
+        } catch (err) {
+          console.error(err);
+          alert('Error saving tip.');
+        }
+      });
+    });
+  </script>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

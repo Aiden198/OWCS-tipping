@@ -1,0 +1,52 @@
+.rules-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.rules-card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.025));
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.rules-card h2 {
+  margin-top: 0;
+  margin-bottom: 0.9rem;
+  font-size: 1.35rem;
+  color: white;
+}
+
+.rules-card p {
+  margin: 0 0 1rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.rules-card p:last-child {
+  margin-bottom: 0;
+}
+
+.rules-list {
+  margin: 0 0 1rem 1.2rem;
+  padding: 0;
+  color: var(--muted);
+}
+
+.rules-list li {
+  margin-bottom: 0.65rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 600px) {
+  .rules-card {
+    padding: 1.2rem;
+    border-radius: 20px;
+  }
+
+  .rules-card h2 {
+    font-size: 1.2rem;
+  }
+}

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Tips - OWCS Tipping</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/tips.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>My Tips</h1>
+        <p>View your tipped matches, locked-in odds, and current stake details for upcoming fixtures.</p>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <div class="container">
+        <% if (!tips || tips.length === 0) { %>
+          <div class="feature-card">
+            <h3>No Current Tips</h3>
+            <p>You have not placed any tips on upcoming matches yet.</p>
+          </div>
+        <% } else { %>
+          <div class="my-tips-list">
+            <% tips.forEach((tip) => { %>
+              <div class="my-tip-card">
+                <div class="my-tip-card__top">
+                  <div class="my-tip-card__meta">
+                    <span class="my-tip-card__region"><%= tip.team_1_region %></span>
+                    <span class="my-tip-card__time">
+                      <%= new Date(tip.match_datetime).toLocaleString('en-AU', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                      }) %>
+                    </span>
+                  </div>
+
+                  <div class="my-tip-card__matchup">
+                    <div class="my-tip-team">
+                      <img src="<%= tip.team_1_icon %>" alt="<%= tip.team_1_name %> logo" class="my-tip-team__logo">
+                      <div class="my-tip-team__text">
+                        <span class="my-tip-team__abbr"><%= tip.team_1_abbreviation %></span>
+                        <span class="my-tip-team__name"><%= tip.team_1_name %></span>
+                      </div>
+                    </div>
+
+                    <div class="my-tip-card__vs">VS</div>
+
+                    <div class="my-tip-team my-tip-team--right">
+                      <div class="my-tip-team__text my-tip-team__text--right">
+                        <span class="my-tip-team__abbr"><%= tip.team_2_abbreviation %></span>
+                        <span class="my-tip-team__name"><%= tip.team_2_name %></span>
+                      </div>
+                      <img src="<%= tip.team_2_icon %>" alt="<%= tip.team_2_name %> logo" class="my-tip-team__logo">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="my-tip-card__bottom">
+                  <div class="my-tip-details-grid">
+                    <div class="my-tip-detail">
+                      <span class="my-tip-detail__label">Your Pick</span>
+                      <span class="my-tip-detail__value"><%= tip.selected_team_abbreviation %> — <%= tip.selected_team_name %></span>
+                    </div>
+
+                    <div class="my-tip-detail">
+                      <span class="my-tip-detail__label">Odds at Tip Time</span>
+                      <span class="my-tip-detail__value"><%= Number(tip.odds).toFixed(2) %></span>
+                    </div>
+
+                    <div class="my-tip-detail">
+                      <span class="my-tip-detail__label">Amount Tipped</span>
+                      <span class="my-tip-detail__value"><%= Number(tip.amount_tipped).toFixed(2) %></span>
+                    </div>
+
+                    <div class="my-tip-detail">
+                      <span class="my-tip-detail__label">Potential Payout</span>
+                      <span class="my-tip-detail__value my-tip-detail__value--highlight"><%= Number(tip.potential_payout).toFixed(2) %></span>
+                    </div>
+
+                    <div class="my-tip-detail">
+                      <span class="my-tip-detail__label">Tip Status</span>
+                      <span class="my-tip-detail__value"><%= tip.status %></span>
+                    </div>
+
+                    <div class="my-tip-detail">
+                      <span class="my-tip-detail__label">Placed At</span>
+                      <span class="my-tip-detail__value">
+                        <%= new Date(tip.tip_time).toLocaleString('en-AU', {
+                          day: 'numeric',
+                          month: 'short',
+                          hour: 'numeric',
+                          minute: '2-digit'
+                        }) %>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

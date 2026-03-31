@@ -11,7 +11,7 @@ router.post('/', async function (req, res, next) {
   }
 
   try {
-    const [result] = await db.promise().query('SELECT * FROM user WHERE email = ?', [email]);
+    const [result] = await db.promise().query('SELECT * FROM users WHERE email = ?', [email]);
 
     if (result.length == 0) {
       return res.status(401).send("Invalid email or password");
@@ -38,7 +38,8 @@ router.post('/', async function (req, res, next) {
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        is_admin: user.is_admin
+        is_admin: user.is_admin,
+        credits: user.credits
       };
 
       res.status(200).json({
@@ -46,7 +47,8 @@ router.post('/', async function (req, res, next) {
         firstname: user.firstname,
         lastname: user.lastname,
         email: user.email,
-        is_admin: user.is_admin
+        is_admin: user.is_admin,
+        credits: user.credits
       });
     });
 

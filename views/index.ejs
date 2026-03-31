@@ -1,11 +1,92 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OWCS Tipping</title>
+  <link rel="stylesheet" href="/stylesheets/style.css">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__grid">
+        <div class="hero__text">
+          <h1>Tip OWCS matches.<br>Climb the leaderboard.</h1>
+          <p>
+            Follow upcoming Overwatch Champions Series matches, submit your predictions,
+            and compete against others to see who knows the scene best.
+          </p>
+
+          <div class="hero__actions">
+            <a href="#" class="btn btn-primary">Start Tipping</a>
+            <a href="#" class="btn btn-secondary">View Leaderboard</a>
+          </div>
+
+          <p class="hero__notice">
+            This is an unofficial, independent tipping platform for OWCS matches and is not the official OWCS website.
+          </p>
+        </div>
+
+        <div class="hero-card">
+          <h3>Upcoming Matches</h3>
+
+          <div class="match-list">
+            <% featuredMatches.forEach((match) => { %>
+              <div class="match-item">
+                <div class="match-item__meta"><%= match.time %></div>
+                <div class="match-item__teams">
+                  <div class="match-team">
+                    <img src="<%= match.team1.icon %>" alt="<%= match.team1.name %> logo" class="match-team__logo">
+                    <span class="match-team__abbr"><%= match.team1.abbreviation %></span>
+                  </div>
+
+                  <span class="match-item__vs">vs</span>
+
+                  <div class="match-team">
+                    <img src="<%= match.team2.icon %>" alt="<%= match.team2.name %> logo" class="match-team__logo">
+                    <span class="match-team__abbr"><%= match.team2.abbreviation %></span>
+                  </div>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2 class="section-title">What you can do</h2>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>Submit Predictions</h3>
+            <p>
+              Make your tips for upcoming OWCS matches and lock in your picks before games begin.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <h3>Track Results</h3>
+            <p>
+              See how your predictions performed and keep up with completed matches and outcomes.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <h3>Compete on the Ladder</h3>
+            <p>
+              Compare your performance against other users and push your way up the tipping leaderboard.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
 </html>

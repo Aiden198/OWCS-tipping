@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 require('dotenv').config();
 
 const db = mysql.createPool({
@@ -7,17 +7,21 @@ const db = mysql.createPool({
   user: process.env.MYSQLUSER || process.env.DB_USER || 'owcs_user',
   password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || 'owcs_password',
   database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'owcs_db',
-  multipleStatements: true,
-  connectionLimit: 10
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
-db.getConnection((err, connection) => {
-  if (err) {
-    console.error('Database connection failed:', err);
-  } else {
+async function testConnection() {
+  try {
+    const connection = await db.getConnection();
     console.log('Connected to MySQL');
     connection.release();
+  } catch (err) {
+    console.error('Database connection failed:', err);
   }
-});
+}
+
+testConnection();
 
 module.exports = db;

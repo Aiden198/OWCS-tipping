@@ -1,4 +1,4 @@
-const db = require("./database/db");
+const db = require("./db");
 
 db.promise().query("SHOW TABLES")
   .then(([rows]) => {

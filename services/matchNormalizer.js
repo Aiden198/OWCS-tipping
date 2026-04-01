@@ -9,7 +9,7 @@ exports.normalizeMatch = async (rawMatch) => {
   const team1 = await matchModel.findTeamByName(normalizedTeam1Name);
   const team2 = await matchModel.findTeamByName(normalizedTeam2Name);
 
-  return {
+    return {
     source_id: rawMatch.source_id,
     source_url: rawMatch.source_url,
     team_1_id: team1 ? team1.team_id : null,
@@ -20,20 +20,10 @@ exports.normalizeMatch = async (rawMatch) => {
     stage: rawMatch.stage,
     region: rawMatch.region,
     status: rawMatch.status,
-    team_1_odds: null,
-    team_2_odds: null,
     completed: rawMatch.status === 'completed',
-    resolved: false,
     team_1_score: rawMatch.team_1_score,
     team_2_score: rawMatch.team_2_score,
-    winning_team_id:
-      rawMatch.status === 'completed' && team1 && team2
-        ? rawMatch.team_1_score > rawMatch.team_2_score
-          ? team1.team_id
-          : rawMatch.team_2_score > rawMatch.team_1_score
-            ? team2.team_id
-            : null
-        : null,
+    winning_team_id: winningTeamId,
     last_synced_at: new Date()
-  };
+    };
 };

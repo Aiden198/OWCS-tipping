@@ -8,21 +8,6 @@ async function addTeamRatings() {
 
     console.log('Checking if teams.rating exists...');
 
-    const [columns] = await connection.query(`
-      SHOW COLUMNS FROM teams LIKE 'rating'
-    `);
-
-    if (columns.length === 0) {
-      console.log('Adding rating column to teams...');
-      await connection.query(`
-        ALTER TABLE teams
-        ADD COLUMN rating INT NOT NULL DEFAULT 1500
-      `);
-      console.log('rating column added ✅');
-    } else {
-      console.log('rating column already exists ✅');
-    }
-
     console.log('Applying initial team ratings...');
 
     const ratings = [

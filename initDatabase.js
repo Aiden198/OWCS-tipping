@@ -32,6 +32,7 @@ CREATE TABLE teams (
     icon_path VARCHAR(255) NOT NULL,
     liquipedia_url VARCHAR(255) DEFAULT NULL,
     active BOOL NOT NULL DEFAULT TRUE,
+    ADD COLUMN rating INT NOT NULL DEFAULT 1500,
     PRIMARY KEY (team_id),
     UNIQUE KEY uc_teams_slug (slug),
     UNIQUE KEY uc_teams_abbreviation (abbreviation)

@@ -20,7 +20,8 @@ async function resolveAllMatches() {
           match_id: match.match_id,
           success: true,
           message: result.message,
-          resolvedTips: result.resolvedTips
+          resolvedTips: result.resolvedTips,
+          eloUpdate: result.eloUpdate
         });
       } catch (err) {
         results.push({

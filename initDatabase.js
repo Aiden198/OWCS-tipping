@@ -39,17 +39,37 @@ CREATE TABLE teams (
 
 CREATE TABLE matches (
     match_id INT NOT NULL AUTO_INCREMENT,
-    team_1_id INT NOT NULL,
-    team_2_id INT NOT NULL,
+    source_id VARCHAR(255) DEFAULT NULL,
+    source_url VARCHAR(500) DEFAULT NULL,
+
+    team_1_id INT DEFAULT NULL,
+    team_2_id INT DEFAULT NULL,
+
+    source_team_1_name VARCHAR(100) DEFAULT NULL,
+    source_team_2_name VARCHAR(100) DEFAULT NULL,
+
     match_datetime DATETIME NOT NULL,
-    team_1_odds DECIMAL(6,2) NOT NULL,
-    team_2_odds DECIMAL(6,2) NOT NULL,
+    stage VARCHAR(100) DEFAULT NULL,
+    region VARCHAR(50) DEFAULT NULL,
+    status VARCHAR(20) NOT NULL DEFAULT 'upcoming',
+
+    team_1_odds DECIMAL(6,2) DEFAULT NULL,
+    team_2_odds DECIMAL(6,2) DEFAULT NULL,
+
     completed BOOL NOT NULL DEFAULT FALSE,
     resolved BOOL NOT NULL DEFAULT FALSE,
+
     team_1_score INT DEFAULT NULL,
     team_2_score INT DEFAULT NULL,
     winning_team_id INT DEFAULT NULL,
+
+    last_synced_at DATETIME DEFAULT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
     PRIMARY KEY (match_id),
+    UNIQUE KEY unique_source_id (source_id),
+
     FOREIGN KEY (team_1_id) REFERENCES teams(team_id),
     FOREIGN KEY (team_2_id) REFERENCES teams(team_id),
     FOREIGN KEY (winning_team_id) REFERENCES teams(team_id)

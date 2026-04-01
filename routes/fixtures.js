@@ -11,6 +11,8 @@ router.get('/', async function(req, res) {
         m.team_1_odds,
         m.team_2_odds,
         m.completed,
+        m.status,
+        m.region,
         m.team_1_score,
         m.team_2_score,
 
@@ -31,7 +33,7 @@ router.get('/', async function(req, res) {
       FROM matches m
       JOIN teams t1 ON m.team_1_id = t1.team_id
       JOIN teams t2 ON m.team_2_id = t2.team_id
-      WHERE m.completed = FALSE
+      WHERE m.status = 'upcoming'
       ORDER BY m.match_datetime ASC
       LIMIT 10
     `);

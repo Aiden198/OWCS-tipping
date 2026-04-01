@@ -29,105 +29,127 @@
             <h3>No Upcoming Matches</h3>
             <p>There are currently no scheduled fixtures to tip on.</p>
           </div>
+        <% } else { %>
+          <div class="fixtures-list">
+            <% matches.forEach((match) => {
+                const existingTip = existingTips[match.match_id];
+                const hasOdds = match.team_1_odds !== null && match.team_2_odds !== null;
+            %>
+              <div class="fixture-card">
+                <div class="fixture-card__top">
+                  <div class="fixture-card__meta">
+                    <span class="fixture-card__region"><%= match.region %></span>
+                    <span class="fixture-card__time">
+                      <%= new Date(match.match_datetime).toLocaleString('en-AU', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short',
+                        hour: 'numeric',
+                        minute: '2-digit'
+                      }) %>
+                    </span>
+                  </div>
+
+                  <div class="fixture-card__matchup">
+                    <div class="fixture-team">
+                      <img
+                        src="<%= match.team_1_icon %>"
+                        alt="<%= match.team_1_name %> logo"
+                        class="fixture-team__logo"
+                      >
+                      <div class="fixture-team__text">
+                        <span class="fixture-team__abbr"><%= match.team_1_abbreviation %></span>
+                        <span class="fixture-team__name"><%= match.team_1_name %></span>
+                      </div>
+                    </div>
+
+                    <div class="fixture-card__vs">VS</div>
+
+                    <div class="fixture-team fixture-team--right">
+                      <div class="fixture-team__text fixture-team__text--right">
+                        <span class="fixture-team__abbr"><%= match.team_2_abbreviation %></span>
+                        <span class="fixture-team__name"><%= match.team_2_name %></span>
+                      </div>
+                      <img
+                        src="<%= match.team_2_icon %>"
+                        alt="<%= match.team_2_name %> logo"
+                        class="fixture-team__logo"
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <div class="fixture-card__bottom">
+                  <% if (user) { %>
+                    <div class="fixture-tip-box">
+                      <div class="fixture-tip-box__header">
+                        <h3>Place Your Tip</h3>
+                        <% if (existingTip) { %>
+                          <span class="fixture-tip-box__status">
+                            Current tip: <%= Number(existingTip.amount_tipped).toFixed(2) %>
+                            <% if (existingTip.odds !== null && existingTip.odds !== undefined) { %>
+                              at <%= Number(existingTip.odds).toFixed(2) %> odds
+                            <% } %>
+                          </span>
+                        <% } %>
+                      </div>
+
+                      <div class="fixture-tip-controls" data-match-id="<%= match.match_id %>">
+                        <div class="fixture-tip-amount">
+                          <label for="tip-amount-<%= match.match_id %>">Amount</label>
+                          <input
+                            type="number"
+                            min="1"
+                            step="0.01"
+                            id="tip-amount-<%= match.match_id %>"
+                            class="tip-amount-input"
+                            placeholder="Enter credits"
+                            value="<%= existingTip ? Number(existingTip.amount_tipped).toFixed(2) : '' %>"
+                          >
+                        </div>
+
+                        <div class="fixture-tip-buttons">
+                          <button
+                            class="tip-team-btn <%= existingTip && existingTip.selected_team_id === match.team_1_db_id ? 'tip-team-btn--selected' : '' %>"
+                            data-match-id="<%= match.match_id %>"
+                            data-team-id="<%= match.team_1_db_id %>"
+                            data-odds="<%= match.team_1_odds %>"
+                            <%= hasOdds ? '' : 'disabled' %>
+                          >
+                            <% if (hasOdds) { %>
+                              Tip <%= match.team_1_abbreviation %> @ <%= Number(match.team_1_odds).toFixed(2) %>
+                            <% } else { %>
+                              Tip <%= match.team_1_abbreviation %> (odds coming soon)
+                            <% } %>
+                          </button>
+
+                          <button
+                            class="tip-team-btn <%= existingTip && existingTip.selected_team_id === match.team_2_db_id ? 'tip-team-btn--selected' : '' %>"
+                            data-match-id="<%= match.match_id %>"
+                            data-team-id="<%= match.team_2_db_id %>"
+                            data-odds="<%= match.team_2_odds %>"
+                            <%= hasOdds ? '' : 'disabled' %>
+                          >
+                            <% if (hasOdds) { %>
+                              Tip <%= match.team_2_abbreviation %> @ <%= Number(match.team_2_odds).toFixed(2) %>
+                            <% } else { %>
+                              Tip <%= match.team_2_abbreviation %> (odds coming soon)
+                            <% } %>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  <% } else { %>
+                    <div class="fixture-login-prompt">
+                      <p>You must be logged in to place tips on fixtures.</p>
+                      <a href="/login" class="btn btn-secondary">Log In</a>
+                    </div>
+                  <% } %>
+                </div>
+              </div>
+            <% }) %>
+          </div>
         <% } %>
-
-        <div class="fixtures-list">
-          <% matches.forEach((match) => {
-              const existingTip = existingTips[match.match_id];
-          %>
-            <div class="fixture-card">
-              <div class="fixture-card__top">
-                <div class="fixture-card__meta">
-                  <span class="fixture-card__region"><%= match.team_1_region %></span>
-                  <span class="fixture-card__time">
-                    <%= new Date(match.match_datetime).toLocaleString('en-AU', {
-                      weekday: 'short',
-                      day: 'numeric',
-                      month: 'short',
-                      hour: 'numeric',
-                      minute: '2-digit'
-                    }) %>
-                  </span>
-                </div>
-
-                <div class="fixture-card__matchup">
-                  <div class="fixture-team">
-                    <img src="<%= match.team_1_icon %>" alt="<%= match.team_1_name %> logo" class="fixture-team__logo">
-                    <div class="fixture-team__text">
-                      <span class="fixture-team__abbr"><%= match.team_1_abbreviation %></span>
-                      <span class="fixture-team__name"><%= match.team_1_name %></span>
-                    </div>
-                  </div>
-
-                  <div class="fixture-card__vs">VS</div>
-
-                  <div class="fixture-team fixture-team--right">
-                    <div class="fixture-team__text fixture-team__text--right">
-                      <span class="fixture-team__abbr"><%= match.team_2_abbreviation %></span>
-                      <span class="fixture-team__name"><%= match.team_2_name %></span>
-                    </div>
-                    <img src="<%= match.team_2_icon %>" alt="<%= match.team_2_name %> logo" class="fixture-team__logo">
-                  </div>
-                </div>
-              </div>
-
-              <div class="fixture-card__bottom">
-                <% if (user) { %>
-                  <div class="fixture-tip-box">
-                    <div class="fixture-tip-box__header">
-                      <h3>Place Your Tip</h3>
-                      <% if (existingTip) { %>
-                        <span class="fixture-tip-box__status">
-                          Current tip: <%= Number(existingTip.amount_tipped).toFixed(2) %> at <%= Number(existingTip.odds).toFixed(2) %> odds
-                        </span>
-                      <% } %>
-                    </div>
-
-                    <div class="fixture-tip-controls" data-match-id="<%= match.match_id %>">
-                      <div class="fixture-tip-amount">
-                        <label for="tip-amount-<%= match.match_id %>">Amount</label>
-                        <input
-                          type="number"
-                          min="1"
-                          step="0.01"
-                          id="tip-amount-<%= match.match_id %>"
-                          class="tip-amount-input"
-                          placeholder="Enter credits"
-                          value="<%= existingTip ? Number(existingTip.amount_tipped).toFixed(2) : '' %>"
-                        >
-                      </div>
-
-                      <div class="fixture-tip-buttons">
-                        <button
-                          class="tip-team-btn <%= existingTip && existingTip.selected_team_id === match.team_1_db_id ? 'tip-team-btn--selected' : '' %>"
-                          data-match-id="<%= match.match_id %>"
-                          data-team-id="<%= match.team_1_db_id %>"
-                          data-odds="<%= match.team_1_odds %>"
-                        >
-                          Tip <%= match.team_1_abbreviation %> @ <%= Number(match.team_1_odds).toFixed(2) %>
-                        </button>
-
-                        <button
-                          class="tip-team-btn <%= existingTip && existingTip.selected_team_id === match.team_2_db_id ? 'tip-team-btn--selected' : '' %>"
-                          data-match-id="<%= match.match_id %>"
-                          data-team-id="<%= match.team_2_db_id %>"
-                          data-odds="<%= match.team_2_odds %>"
-                        >
-                          Tip <%= match.team_2_abbreviation %> @ <%= Number(match.team_2_odds).toFixed(2) %>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                <% } else { %>
-                  <div class="fixture-login-prompt">
-                    <p>You must be logged in to place tips on fixtures.</p>
-                    <a href="/login" class="btn btn-secondary">Log In</a>
-                  </div>
-                <% } %>
-              </div>
-            </div>
-          <% }) %>
-        </div>
       </div>
     </section>
   </main>
@@ -143,6 +165,11 @@
 
         if (!amount || Number(amount) <= 0) {
           alert('Please enter a valid tip amount.');
+          return;
+        }
+
+        if (!odds || odds === 'null') {
+          alert('Odds are not available for this match yet.');
           return;
         }
 

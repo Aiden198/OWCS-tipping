@@ -14,4 +14,6 @@ router.get('/users', isAuthenticated, isAdmin, async (req, res) => {
     }
 });
 
+//router.post('/api/admin/sync-matches', matchesController.syncMatchesNow);
+
 module.exports = router;

@@ -40,17 +40,19 @@ async function resolveMatch(matchId) {
     }
 
     const [tips] = await connection.query(
-      `
-      SELECT
+    `
+    SELECT
         tip_id,
         user_id,
         selected_team_id,
         amount_tipped,
-        odds
-      FROM tips
-      WHERE match_id = ?
-      `,
-      [matchId]
+        odds,
+        status
+    FROM tips
+    WHERE match_id = ?
+        AND status = 'pending'
+    `,
+    [matchId]
     );
 
     for (const tip of tips) {

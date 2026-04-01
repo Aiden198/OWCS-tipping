@@ -104,3 +104,81 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
 }
+
+.matches-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.match-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1rem;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.match-card__meta {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.match-card__time {
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.match-card__teams {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.match-card__team {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.match-card__team-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+}
+
+.match-card__team-name {
+  font-weight: 600;
+}
+
+.match-card__team-score {
+  font-size: 1.2rem;
+  font-weight: 700;
+  min-width: 1.5rem;
+  text-align: right;
+}
+
+.match-card__status {
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.match-card__status--upcoming {
+  color: #9a6700;
+}
+
+.match-card__status--live {
+  color: #b00020;
+}
+
+.match-card__status--completed {
+  color: #1a7f37;
+}
+
+.matches-empty {
+  opacity: 0.7;
+}

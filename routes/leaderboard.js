@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-console.log("LEADERBOARD ROUTE VERSION: using ../db import");
 const db = require('../db');
 
 router.get('/', async function(req, res) {

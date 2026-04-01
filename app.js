@@ -4,6 +4,8 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const { startMatchSyncScheduler, runFullSyncCycle } = require('./jobs/matchSyncScheduler');
+
 // Session Middleware
 const sessionMiddleware = require('./middlewares/session');
 const isAuthenticated = require('./middlewares/auth');
@@ -34,6 +36,7 @@ const logoutApiRouter = require('./routes/api/logout');
 const signupApiRouter = require('./routes/api/signup');
 const accountApiRouter = require('./routes/api/account');
 const tipsApiRouter = require('./routes/api/tips');
+var matchesApiRouter = require('./routes/api/matches');
 
 var app = express();
 
@@ -119,6 +122,10 @@ app.use('/api/logout', logoutApiRouter);
 app.use('/api/signup', signupApiRouter);
 app.use('/api/account', accountApiRouter);
 app.use('/api/tips', tipsApiRouter);
+app.use('/api/matches', matchesApiRouter);
+
+runFullSyncCycle();
+startMatchSyncScheduler();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

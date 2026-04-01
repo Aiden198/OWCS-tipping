@@ -9,7 +9,8 @@ const db = mysql.createPool({
   database: process.env.MYSQLDATABASE || process.env.DB_NAME || 'owcs_db',
   waitForConnections: true,
   connectionLimit: 10,
-  queueLimit: 0
+  queueLimit: 0,
+  multipleStatements: true
 });
 
 async function testConnection() {

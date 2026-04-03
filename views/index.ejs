@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/stylesheets/components.css">
   <link rel="stylesheet" href="/stylesheets/interactive.css">
   <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/home.css">
 </head>
 <body>
   <%- include('partials/header') %>
@@ -24,8 +25,8 @@
           </p>
 
           <div class="hero__actions">
-            <a href="#" class="btn btn-primary">Start Tipping</a>
-            <a href="#" class="btn btn-secondary">View Leaderboard</a>
+            <a href="/fixtures" class="btn btn-primary">Start Tipping</a>
+            <a href="/leaderboard" class="btn btn-secondary">View Leaderboard</a>
           </div>
 
           <p class="hero__notice">
@@ -60,7 +61,26 @@
         </div>
       </div>
     </section>
+    <section class="how-it-works">
+      <div class="container">
+        <div class="how-it-works__content">
+          <h2>How to use the site</h2>
+          <p>
+            To place tips, you need to create an account so your credits and match tips can be tracked.
+          </p>
+          <p>
+            Once you have an account, head to the Fixtures page, enter the amount you want to tip,
+            and select the team you want to back.
+          </p>
 
+          <h3 class="credit-FAQ">What if I run out of credits?</h3>
+          <p>
+            Every couple of days, accounts with fewer than 500 credits are topped back up to 500,
+            so everyone can keep playing even after an unlucky streak.
+          </p>
+        </div>
+      </div>
+    </section>
     <section class="features">
       <div class="container">
         <h2 class="section-title">What you can do</h2>

@@ -1,27 +1,51 @@
 const express = require("express");
 const router = express.Router();
-const { getTeamById } = require("../data/teamHelpers");
+const db = require("../db");
 
-router.get("/", function (req, res) {
-  const featuredMatches = [
-    {
-      time: "SATURDAY • 7:30 PM",
-      team1: getTeamById("team-peps"),
-      team2: getTeamById("twisted-minds")
-    },
-    {
-      time: "SATURDAY • 9:00 PM",
-      team1: getTeamById("team-liquid"),
-      team2: getTeamById("space-station-gaming")
-    },
-    {
-      time: "SUNDAY • 6:00 PM",
-      team1: getTeamById("al-qadsiah"),
-      team2: getTeamById("virtus.pro")
-    }
-  ];
+router.get("/", async function (req, res, next) {
+  try {
+    const [rows] = await db.query(`
+      SELECT
+        m.match_id,
+        m.match_datetime,
+        t1.name AS team1_name,
+        t1.abbreviation AS team1_abbreviation,
+        t1.icon_path AS team1_icon,
+        t2.name AS team2_name,
+        t2.abbreviation AS team2_abbreviation,
+        t2.icon_path AS team2_icon
+      FROM matches m
+      JOIN teams t1 ON m.team_1_id = t1.team_id
+      JOIN teams t2 ON m.team_2_id = t2.team_id
+      WHERE m.completed = FALSE
+        AND m.match_datetime >= NOW()
+      ORDER BY m.match_datetime ASC
+      LIMIT 3
+    `);
 
-  res.render("index", { featuredMatches });
+    const featuredMatches = rows.map((match) => ({
+      time: new Date(match.match_datetime).toLocaleString("en-AU", {
+        weekday: "long",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true
+      }).replace(",", " •"),
+      team1: {
+        name: match.team1_name,
+        abbreviation: match.team1_abbreviation,
+        icon: match.team1_icon
+      },
+      team2: {
+        name: match.team2_name,
+        abbreviation: match.team2_abbreviation,
+        icon: match.team2_icon
+      }
+    }));
+
+    res.render("index", { featuredMatches });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;

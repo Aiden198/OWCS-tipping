@@ -1,0 +1,26 @@
+.how-it-works {
+  padding: 1rem 0;
+}
+
+.how-it-works__content {
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.how-it-works__content h2 {
+  margin-bottom: 1rem;
+}
+
+.how-it-works__content h3 {
+  margin-top: rem;
+  margin-bottom: 0.75rem;
+}
+
+.how-it-works__content p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+}
+
+.credit-FAQ {
+    margin-top: 3rem
+}

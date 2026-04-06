@@ -1,24 +1,15 @@
-const matchModel = require('../models/matchModel');
-const owcsScheduleService = require('../services/owcsScheduleService');
-const matchNormalizer = require('../services/matchNormalizer');
+const upsertLiquipediaMatches = require('../services/liquipedia/upsertLiquipediaMatches');
 
 exports.runScheduleSync = async () => {
-  const rawMatches = await owcsScheduleService.fetchSchedule();
-
-  let inserted = 0;
-  let updated = 0;
-
-  for (const rawMatch of rawMatches) {
-    const normalizedMatch = await matchNormalizer.normalizeMatch(rawMatch);
-    const result = await matchModel.upsertMatch(normalizedMatch);
-
-    if (result === 'inserted') inserted++;
-    if (result === 'updated') updated++;
-  }
+  const summary = await upsertLiquipediaMatches();
 
   return {
-    total: rawMatches.length,
-    inserted,
-    updated
+    total: summary.matchesFound,
+    inserted: summary.inserted,
+    updated: summary.updated,
+    skipped: summary.skipped,
+    pages: summary.pages,
+    competitions: summary.competitions,
+    unmatchedTeams: summary.unmatchedTeams
   };
 };

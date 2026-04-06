@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Disclaimer - OWCS Tipping</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/userTips.css">
+</head>
+<body>
+
+<%- include('partials/header') %>
+
+<main class="page-content">
+    <section class="user-tips-header">
+        <!-- <% if (viewedUser.profile_pic) { %>
+            <img src="<%= viewedUser.profile_pic %>" alt="<%= viewedUser.username %>" class="user-tips-avatar">
+        <% } %> -->
+
+        <h1><%= viewedUser.username %></h1>
+        <p>Public tipping history</p>
+    </section>
+
+    <section class="tips-tabs">
+        <div class="tab-buttons">
+            <button class="tab-btn active" data-tab="active">Active Tips</button>
+            <button class="tab-btn" data-tab="past">Past Tips</button>
+        </div>
+
+        <div id="active" class="tab-panel active">
+            <% if (activeTips.length === 0) { %>
+                <p>No active tips right now.</p>
+            <% } %>
+
+            <% activeTips.forEach(tip => { %>
+                <div class="tip-card">
+                    <div class="tip-match">
+                        <div class="team">
+                            <img src="<%= tip.team_1_icon %>" alt="<%= tip.team_1_name %>">
+                            <span><%= tip.team_1_abbreviation %></span>
+                        </div>
+
+                        <span class="vs">vs</span>
+
+                        <div class="team">
+                            <img src="<%= tip.team_2_icon %>" alt="<%= tip.team_2_name %>">
+                            <span><%= tip.team_2_abbreviation %></span>
+                        </div>
+                    </div>
+
+                    <div class="tip-details">
+                        <p><strong>Selected:</strong> <%= tip.selected_team_name %></p>
+                        <p><strong>Amount:</strong> <%= tip.amount_tipped %></p>
+                        <p><strong>Odds:</strong> <%= tip.odds %></p>
+                        <p>
+                            <strong>Match Time:</strong>
+                            <span class="result-card__time local-time" data-time="<%= new Date(tip.match_datetime).toISOString() %>"></span>
+                        </p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+
+        <div id="past" class="tab-panel">
+            <% if (pastTips.length === 0) { %>
+                <p>No past tips yet.</p>
+            <% } %>
+
+            <% pastTips.forEach(tip => { %>
+                <div class="tip-card <%= tip.status %>">
+                    <div class="tip-match">
+                        <div class="team">
+                            <img src="<%= tip.team_1_icon %>" alt="<%= tip.team_1_name %>">
+                            <span><%= tip.team_1_abbreviation %></span>
+                        </div>
+
+                        <span class="vs">vs</span>
+
+                        <div class="team">
+                            <img src="<%= tip.team_2_icon %>" alt="<%= tip.team_2_name %>">
+                            <span><%= tip.team_2_abbreviation %></span>
+                        </div>
+                    </div>
+
+                    <div class="tip-details">
+                        <p><strong>Selected:</strong> <%= tip.selected_team_name %></p>
+                        <p><strong>Result:</strong> <%= tip.status %></p>
+                        <p><strong>Amount:</strong> <%= tip.amount_tipped %></p>
+                        <p><strong>Odds:</strong> <%= tip.odds %></p>
+                        <p><strong>Score:</strong> <%= tip.team_1_score %> - <%= tip.team_2_score %></p>
+                        <p><strong>Winner:</strong> <%= tip.winning_team_name %></p>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </section>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.tab-btn');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tab = button.dataset.tab;
+
+            buttons.forEach(btn => btn.classList.remove('active'));
+            panels.forEach(panel => panel.classList.remove('active'));
+
+            button.classList.add('active');
+            document.getElementById(tab).classList.add('active');
+        });
+    });
+});
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const timeElements = document.querySelectorAll('.local-time');
+
+    timeElements.forEach(el => {
+      const timeValue = el.dataset.time;
+      const date = new Date(timeValue);
+
+      el.textContent = date.toLocaleString(undefined, {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+    });
+  });
+</script>
+
+<%- include('partials/footer') %>
+
+</body>
+</html>

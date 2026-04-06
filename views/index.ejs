@@ -40,7 +40,7 @@
           <div class="match-list">
             <% featuredMatches.forEach((match) => { %>
               <div class="match-item">
-                <div class="match-item__meta"><%= match.time %></div>
+                <span class="result-card__time local-time" data-time="<%= new Date(match.match_datetime).toISOString() %>"></span>
                 <div class="match-item__teams">
                   <div class="match-team">
                     <img src="<%= match.team1.icon %>" alt="<%= match.team1.name %> logo" class="match-team__logo">
@@ -110,7 +110,26 @@
       </div>
     </section>
   </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const timeElements = document.querySelectorAll('.local-time');
 
+      timeElements.forEach(el => {
+        const timeValue = el.dataset.time;
+        const date = new Date(timeValue);
+
+        el.textContent = date.toLocaleString(undefined, {
+          weekday: 'short',
+          day: 'numeric',
+          month: 'short',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        });
+      });
+    });
+  </script>
   <%- include('partials/footer') %>
 </body>
 </html>

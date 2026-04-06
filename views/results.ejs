@@ -38,15 +38,7 @@
                 <div class="result-card__top">
                   <div class="result-card__meta">
                     <span class="result-card__region"><%= match.team_1_region %></span>
-                    <span class="result-card__time">
-                      <%= new Date(match.match_datetime).toLocaleString('en-AU', {
-                        weekday: 'short',
-                        day: 'numeric',
-                        month: 'short',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                      }) %>
-                    </span>
+                    <span class="result-card__time local-time" data-time="<%= new Date(match.match_datetime).toISOString() %>"></span>
                   </div>
 
                   <div class="result-card__matchup">
@@ -122,5 +114,25 @@
   </main>
 
   <%- include('partials/footer') %>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const timeElements = document.querySelectorAll('.local-time');
+
+    timeElements.forEach(el => {
+      const timeValue = el.dataset.time;
+      const date = new Date(timeValue);
+
+      el.textContent = date.toLocaleString(undefined, {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+    });
+  });
+</script>
 </body>
 </html>

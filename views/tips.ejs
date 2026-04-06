@@ -36,15 +36,7 @@
                 <div class="my-tip-card__top">
                   <div class="my-tip-card__meta">
                     <span class="my-tip-card__region"><%= tip.team_1_region %></span>
-                    <span class="my-tip-card__time">
-                      <%= new Date(tip.match_datetime).toLocaleString('en-AU', {
-                        weekday: 'short',
-                        day: 'numeric',
-                        month: 'short',
-                        hour: 'numeric',
-                        minute: '2-digit'
-                      }) %>
-                    </span>
+                    <span class="result-card__time local-time" data-time="<%= new Date(tip.match_datetime).toISOString() %>"></span>
                   </div>
 
                   <div class="my-tip-card__matchup">
@@ -97,14 +89,7 @@
 
                     <div class="my-tip-detail">
                       <span class="my-tip-detail__label">Placed At</span>
-                      <span class="my-tip-detail__value">
-                        <%= new Date(tip.tip_time).toLocaleString('en-AU', {
-                          day: 'numeric',
-                          month: 'short',
-                          hour: 'numeric',
-                          minute: '2-digit'
-                        }) %>
-                      </span>
+                      <span class="result-card__time local-time" data-time="<%= new Date(tip.tip_time).toISOString() %>"></span>
                     </div>
                   </div>
                 </div>
@@ -117,5 +102,26 @@
   </main>
 
   <%- include('partials/footer') %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const timeElements = document.querySelectorAll('.local-time');
+
+    timeElements.forEach(el => {
+      const timeValue = el.dataset.time;
+      const date = new Date(timeValue);
+
+      el.textContent = date.toLocaleString(undefined, {
+        weekday: 'short',
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+    });
+  });
+</script>
 </body>
 </html>

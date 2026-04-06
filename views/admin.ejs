@@ -22,8 +22,7 @@
     <table id="users-table" border="1" style="width: 100%;">
       <thead>
         <tr>
-          <th>First</th>
-          <th>Last</th>
+          <th>Username</th>
           <th>Email</th>
           <th>Admin?</th>
         </tr>
@@ -45,8 +44,7 @@
           const row = document.createElement('tr');
           console.log(user.is_admin)
           row.innerHTML = `
-            <td>${user.firstname}</td>
-            <td>${user.lastname}</td>
+            <td>${user.username}</td>
             <td>${user.email}</td>
             <td>${Number(user.is_admin) === 1 ? '✅' : '❌'}</td>
           `;

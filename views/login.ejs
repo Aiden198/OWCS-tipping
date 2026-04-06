@@ -36,8 +36,7 @@
                 <h2>Sign Up</h2>
                 <p class="auth-subtext">Create an account to start tipping OWCS matches and climb the leaderboard.</p>
 
-                <input type="text" name="firstname" placeholder="First Name">
-                <input type="text" name="lastname" placeholder="Last Name">
+                <input type="text" name="username" placeholder="Username">
                 <input type="email" name="email" placeholder="Email">
                 <input type="password" name="password" placeholder="Password">
                 <button id="signup-btn" class="auth-btn">Sign Up</button>
@@ -89,8 +88,7 @@
 
         document.getElementById("signup-btn").addEventListener("click", async () => {
             console.log("Signup button clicked");
-            const firstname = signupForm.querySelector('input[name="firstname"]').value;
-            const lastname = signupForm.querySelector('input[name="lastname"]').value;
+            const username = signupForm.querySelector('input[name="username"]').value;
             const email = signupForm.querySelector('input[name="email"]').value;
             const password = signupForm.querySelector('input[name="password"]').value;
 
@@ -100,7 +98,7 @@
                     'Content-Type': 'application/json'
                 },
                 credentials: 'include',
-                body: JSON.stringify({ firstname, lastname, email, password }),
+                body: JSON.stringify({ username, email, password }),
             });
 
             const data = await res.text();

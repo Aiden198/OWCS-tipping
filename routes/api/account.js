@@ -21,10 +21,10 @@ router.put('/', isAuthenticated, async (req, res) => {
     return res.status(401).send("Not authenticated");
   }
 
-  const { firstname, lastname, email, password } = req.body;
+  const { username, email, password } = req.body;
   const userId = req.session.user.userID;
 
-  if (!firstname || !lastname || !email || !password) {
+  if (!username || !email || !password) {
     return res.status(400).send("Missing fields");
   }
 
@@ -32,12 +32,11 @@ router.put('/', isAuthenticated, async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await db.query(
-      'UPDATE users SET firstname = ?, lastname = ?, email = ?, password = ? WHERE user_id = ?',
-      [firstname, lastname, email, hashedPassword, userId]
+      'UPDATE users SET username = ?, email = ?, password = ? WHERE user_id = ?',
+      [username, email, hashedPassword, userId]
     );
 
-    req.session.user.firstname = firstname;
-    req.session.user.lastname = lastname;
+    req.session.user.username = username;
     req.session.user.email = email;
 
     res.send("Account updated");
@@ -108,7 +107,7 @@ router.get('/', isAuthenticated, async (req, res) => {
   try {
     const [rows] = await db.query(
       `
-      SELECT firstname, lastname, email, profile_pic, is_admin, credits
+      SELECT username, email, profile_pic, is_admin, credits
       FROM users
       WHERE user_id = ?
       `,

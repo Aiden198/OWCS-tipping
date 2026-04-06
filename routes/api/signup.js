@@ -6,9 +6,9 @@ var router = express.Router();
 router.post('/', async function (req, res, next) {
     console.log("Signup request received");
 
-    const { email, firstname, lastname, password } = req.body;
+    const { email, username, password } = req.body;
 
-    if (!email || !firstname || !lastname || !password) {
+    if (!email || !username || !password) {
         console.log("Input fields are empty!");
         return res.status(400).send("Ensure all fields are filled in.");
     }
@@ -39,15 +39,14 @@ router.post('/', async function (req, res, next) {
         const isAdmin = count === 0 ? 1 : 0;
 
         const [insertUser] = await db.query(
-            'INSERT INTO users (firstname, lastname, email, password, is_admin) VALUES (?, ?, ?, ?, ?)',
-            [firstname, lastname, email, hashedPassword, isAdmin]
+            'INSERT INTO users (username, email, password, is_admin) VALUES (?, ?, ?, ?)',
+            [username, email, hashedPassword, isAdmin]
         );
 
         console.log(`User ${email} successfully added to database`);
 
         req.session.user = {
-            firstname: firstname,
-            lastname: lastname,
+            username: username,
             email: email,
             userID: insertUser.insertId,
             is_admin: isAdmin,

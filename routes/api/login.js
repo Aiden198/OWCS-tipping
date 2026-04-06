@@ -35,8 +35,7 @@ router.post('/', async function (req, res, next) {
 
       req.session.user = {
         userID: user.user_id,
-        firstname: user.firstname,
-        lastname: user.lastname,
+        username: user.username,
         email: user.email,
         is_admin: user.is_admin,
         credits: user.credits
@@ -44,8 +43,7 @@ router.post('/', async function (req, res, next) {
 
       res.status(200).json({
         userID: user.user_id,
-        firstname: user.firstname,
-        lastname: user.lastname,
+        username: user.username,
         email: user.email,
         is_admin: user.is_admin,
         credits: user.credits

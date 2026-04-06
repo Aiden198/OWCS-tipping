@@ -7,7 +7,7 @@ router.get('/', async function(req, res) {
     const [topUsers] = await db.query(`
       SELECT
         user_id,
-        firstname,
+        username,
         credits
       FROM users
       ORDER BY credits DESC, user_id ASC
@@ -22,7 +22,7 @@ router.get('/', async function(req, res) {
       const [allUsersOrdered] = await db.query(`
         SELECT
           user_id,
-          firstname,
+          username,
           credits
         FROM users
         ORDER BY credits DESC, user_id ASC
@@ -35,7 +35,7 @@ router.get('/', async function(req, res) {
       if (foundIndex !== -1) {
         currentUserRank = {
           rank: foundIndex + 1,
-          firstname: allUsersOrdered[foundIndex].firstname,
+          username: allUsersOrdered[foundIndex].username,
           credits: allUsersOrdered[foundIndex].credits
         };
       }

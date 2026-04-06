@@ -27,18 +27,18 @@ async function seedTestTipsUser() {
       await connection.query(
         `
         UPDATE users
-        SET firstname = ?, lastname = ?, password = ?, credits = ?, is_admin = ?
+        SET username = ?, password = ?, credits = ?, is_admin = ?
         WHERE user_id = ?
         `,
-        ["Test", "User", hashedPassword, 2500.00, 1, userId]
+        ["Test", hashedPassword, 2500.00, 1, userId]
       );
     } else {
       const [insertUser] = await connection.query(
         `
-        INSERT INTO users (firstname, lastname, email, profile_pic, credits, is_admin, password)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
+        INSERT INTO users (username, email, profile_pic, credits, is_admin, password)
+        VALUES (?, ?, ?, ?, ?, ?)
         `,
-        ["Test", "User", TEST_EMAIL, null, 2500.00, 0, hashedPassword]
+        ["Test", TEST_EMAIL, null, 2500.00, 0, hashedPassword]
       );
 
       userId = insertUser.insertId;

@@ -63,7 +63,7 @@ app.use(async (req, res, next) => {
 
     const [rows] = await db.query(
       `
-      SELECT user_id, firstname, lastname, email, is_admin, credits
+      SELECT user_id, username, email, is_admin, credits
       FROM users
       WHERE user_id = ?
       LIMIT 1
@@ -79,8 +79,7 @@ app.use(async (req, res, next) => {
 
     req.session.user = {
       userID: rows[0].user_id,
-      firstname: rows[0].firstname,
-      lastname: rows[0].lastname,
+      username: rows[0].username,
       email: rows[0].email,
       is_admin: rows[0].is_admin,
       credits: rows[0].credits

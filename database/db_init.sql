@@ -9,8 +9,7 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE users (
     user_id INT NOT NULL AUTO_INCREMENT,
-    firstname VARCHAR(255) NOT NULL,
-    lastname VARCHAR(255) NOT NULL,
+    username VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     profile_pic VARCHAR(255),
     credits DECIMAL(10,2) NOT NULL DEFAULT 1000.00,
@@ -29,7 +28,7 @@ CREATE TABLE teams (
     icon_path VARCHAR(255) NOT NULL,
     liquipedia_url VARCHAR(255) DEFAULT NULL,
     active BOOL NOT NULL DEFAULT TRUE,
-    ADD COLUMN rating INT NOT NULL DEFAULT 1500,
+    rating INT NOT NULL DEFAULT 1500,
     PRIMARY KEY (team_id),
     UNIQUE KEY uc_teams_slug (slug),
     UNIQUE KEY uc_teams_abbreviation (abbreviation)

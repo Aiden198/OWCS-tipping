@@ -1,7 +1,7 @@
 const db = require("../db");
 const bcrypt = require("bcrypt");
 
-const firstNames = [
+const usernames = [
   "Aiden", "Luca", "Noah", "Mason", "Ethan", "Jack", "Oliver", "Levi",
   "Isaac", "Logan", "Ryan", "Zane", "Cooper", "Jayden", "Finn", "Tyler",
   "Harvey", "Callum", "Max", "Blake", "Harrison", "Jesse", "Kai", "Reid",
@@ -11,12 +11,6 @@ const firstNames = [
   "Angus", "Declan", "Brody", "Rhys", "Seb", "Tom", "Caleb", "Ari"
 ];
 
-const lastNames = [
-  "Smith", "Jones", "Brown", "Taylor", "Wilson", "White", "Martin", "Hall",
-  "Walker", "Young", "Allen", "King", "Scott", "Green", "Baker", "Wright",
-  "Harris", "Mitchell", "Parker", "Adams", "Campbell", "Murphy", "Kelly",
-  "Morgan", "Reed", "Ward", "Evans", "Turner", "Collins", "Cooper"
-];
 
 function randomFrom(array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -44,15 +38,13 @@ async function seedTestUsers() {
     const usersToInsert = [];
 
     for (let i = 1; i <= 60; i++) {
-      const firstname = randomFrom(firstNames);
-      const lastname = randomFrom(lastNames);
-      const email = `${firstname.toLowerCase()}.${lastname.toLowerCase()}${i}@example.com`;
+      const username = randomFrom(usernames);
+      const email = `${username.toLowerCase()}${i}@example.com`;
       const credits = randomCredits();
       const isAdmin = i === 1 ? 1 : 0; // make first user admin for convenience
 
       usersToInsert.push([
-        firstname,
-        lastname,
+        username,
         email,
         null,
         credits,
@@ -63,8 +55,7 @@ async function seedTestUsers() {
 
     await connection.query(`
       INSERT INTO users (
-        firstname,
-        lastname,
+        username,
         email,
         profile_pic,
         credits,

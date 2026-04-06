@@ -43,13 +43,8 @@
 
             <div class="account-info-grid">
               <div class="account-info-item">
-                <span class="account-info-item__label">First Name</span>
-                <span class="account-info-item__value" id="first-name">Loading...</span>
-              </div>
-
-              <div class="account-info-item">
-                <span class="account-info-item__label">Last Name</span>
-                <span class="account-info-item__value" id="last-name">Loading...</span>
+                <span class="account-info-item__label">Username</span>
+                <span class="account-info-item__value" id="username">Loading...</span>
               </div>
 
               <div class="account-info-item">
@@ -91,8 +86,7 @@
 
         const user = await res.json();
 
-        document.getElementById('first-name').textContent = user.firstname;
-        document.getElementById('last-name').textContent = user.lastname;
+        document.getElementById('username').textContent = user.username;
         document.getElementById('email').textContent = user.email;
         document.getElementById('credits').textContent = Number(user.credits).toFixed(2);
         document.getElementById('account-type').textContent = Number(user.is_admin) === 1 ? 'Admin' : 'User';

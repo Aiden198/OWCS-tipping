@@ -40,7 +40,7 @@
           <div class="match-list">
             <% featuredMatches.forEach((match) => { %>
               <div class="match-item">
-                <span class="result-card__time local-time" data-time="<%= new Date(match.match_datetime).toISOString() %>"></span>
+                <span class="result-card__time local-time" data-time="<%= match.match_datetime %>"></span>
                 <div class="match-item__teams">
                   <div class="match-team">
                     <img src="<%= match.team1.icon %>" alt="<%= match.team1.name %> logo" class="match-team__logo">
@@ -117,6 +117,11 @@
       timeElements.forEach(el => {
         const timeValue = el.dataset.time;
         const date = new Date(timeValue);
+
+        if (isNaN(date.getTime())) {
+          el.textContent = 'Time unavailable';
+          return;
+        }
 
         el.textContent = date.toLocaleString(undefined, {
           weekday: 'short',

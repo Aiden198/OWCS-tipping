@@ -15,7 +15,7 @@ router.post('/', async function (req, res) {
   const selectedTeamId = Number(selected_team_id);
   const amountTipped = Number(amount_tipped);
 
-  if (!matchId || !selectedTeamId || !amountTipped) {
+  if (!matchId || !selectedTeamId || amount_tipped === undefined || amount_tipped === null) {
     return res.status(400).send('Missing required tip information.');
   }
 
@@ -37,7 +37,8 @@ router.post('/', async function (req, res) {
         team_1_odds,
         team_2_odds,
         match_datetime,
-        completed
+        completed,
+        status
       FROM matches
       WHERE match_id = ?
       LIMIT 1
@@ -50,9 +51,9 @@ router.post('/', async function (req, res) {
 
     const match = matchRows[0];
 
-    if (match.completed) {
+    if (match.completed || match.status !== 'upcoming') {
       await connection.rollback();
-      return res.status(400).send('This match has already been completed.');
+      return res.status(400).send('Tipping for this match has closed.');
     }
 
     const now = new Date();
@@ -72,6 +73,11 @@ router.post('/', async function (req, res) {
     } else {
       await connection.rollback();
       return res.status(400).send('Selected team is not part of this match.');
+    }
+
+    if (!Number.isFinite(lockedOdds) || lockedOdds <= 0) {
+      await connection.rollback();
+      return res.status(400).send('Odds are not available for this match yet.');
     }
 
     const [userRows] = await connection.query(`

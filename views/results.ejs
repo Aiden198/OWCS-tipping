@@ -14,113 +14,145 @@
 <body>
   <%- include('partials/header') %>
 
-  <main class="page-shell">
-    <section class="page-hero">
-      <div class="container">
-        <h1>Results</h1>
-        <p>
-          View completed OWCS matches and, if you tipped on them, see how your selections performed.
-        </p>
-      </div>
-    </section>
+<main class="page-shell">
+  <section class="page-hero">
+    <div class="container">
+      <h1>Results</h1>
+      <p>
+        View completed OWCS matches and, if you tipped on them, see how your selections performed.
+      </p>
+    </div>
+  </section>
 
-    <section class="page-content">
-      <div class="container">
-        <% if (!results || results.length === 0) { %>
-          <div class="feature-card">
-            <h3>No Results Yet</h3>
-            <p>No completed matches are available at the moment.</p>
-          </div>
-        <% } else { %>
-          <div class="results-list">
-            <% results.forEach((match) => { %>
-              <div class="result-card">
-                <div class="result-card__top">
-                  <div class="result-card__meta">
-                    <span class="result-card__region"><%= match.team_1_region %></span>
-                    <span class="result-card__time local-time" data-time="<%= new Date(match.match_datetime).toISOString() %>"></span>
-                  </div>
-
-                  <div class="result-card__matchup">
-                    <div class="result-team">
-                      <img src="<%= match.team_1_icon %>" alt="<%= match.team_1_name %> logo" class="result-team__logo">
-                      <div class="result-team__text">
-                        <span class="result-team__abbr"><%= match.team_1_abbreviation %></span>
-                        <span class="result-team__name"><%= match.team_1_name %></span>
-                      </div>
-                    </div>
-
-                    <div class="result-card__scoreblock">
-                      <span class="result-card__score">
-                        <%= match.team_1_score %> - <%= match.team_2_score %>
-                      </span>
-                      <span class="result-card__status">Final</span>
-                    </div>
-
-                    <div class="result-team result-team--right">
-                      <div class="result-team__text result-team__text--right">
-                        <span class="result-team__abbr"><%= match.team_2_abbreviation %></span>
-                        <span class="result-team__name"><%= match.team_2_name %></span>
-                      </div>
-                      <img src="<%= match.team_2_icon %>" alt="<%= match.team_2_name %> logo" class="result-team__logo">
-                    </div>
-                  </div>
+  <section class="page-content">
+    <div class="container">
+      <% if (!results || results.length === 0) { %>
+        <div class="feature-card">
+          <h3>No Results Yet</h3>
+          <p>No completed matches are available at the moment.</p>
+        </div>
+      <% } else { %>
+        <div class="results-list">
+          <% results.forEach((match) => { %>
+            <div class="result-card">
+              <div class="result-card__top">
+                <div class="result-card__meta">
+                  <span class="result-card__region">
+                    <%= match.competition_region %>
+                    <% if (match.stage_number) { %>
+                      • Stage <%= match.stage_number %>
+                    <% } %>
+                    <% if (match.stage_type && match.stage_type !== 'regular_season') { %>
+                      • <%= match.stage_type
+                        .replace(/_/g, ' ')
+                        .replace(/\b\w/g, c => c.toUpperCase()) %>
+                    <% } %>
+                  </span>
+                  <span
+                    class="result-card__time local-time"
+                    data-time="<%= match.match_datetime %>"
+                  ></span>
                 </div>
 
-                <% if (match.userTip) { %>
-                  <div class="result-card__bottom">
-                    <div class="result-tip-box">
-                      <div class="result-tip-box__header">
-                        <h3>Your Tip</h3>
-                        <span class="result-tip-box__badge <%= match.userTip.tipped_correctly ? 'result-tip-box__badge--win' : 'result-tip-box__badge--loss' %>">
-                          <%= match.userTip.tipped_correctly ? 'Won' : 'Lost' %>
+                <div class="result-card__matchup">
+                  <div class="result-team">
+                    <img
+                      src="<%= match.team_1_icon %>"
+                      alt="<%= match.team_1_name %> logo"
+                      class="result-team__logo"
+                    >
+                    <div class="result-team__text">
+                      <span class="result-team__abbr"><%= match.team_1_abbreviation %></span>
+                      <span class="result-team__name"><%= match.team_1_name %></span>
+                    </div>
+                  </div>
+
+                  <div class="result-card__scoreblock">
+                    <span class="result-card__score">
+                      <%= match.team_1_score ?? 0 %> - <%= match.team_2_score ?? 0 %>
+                    </span>
+                    <span class="result-card__status">Final</span>
+                  </div>
+
+                  <div class="result-team result-team--right">
+                    <div class="result-team__text result-team__text--right">
+                      <span class="result-team__abbr"><%= match.team_2_abbreviation %></span>
+                      <span class="result-team__name"><%= match.team_2_name %></span>
+                    </div>
+                    <img
+                      src="<%= match.team_2_icon %>"
+                      alt="<%= match.team_2_name %> logo"
+                      class="result-team__logo"
+                    >
+                  </div>
+                </div>
+              </div>
+
+              <% if (match.userTip) { %>
+                <% const odds = Number(match.userTip.odds || 0); %>
+                <% const amountTipped = Number(match.userTip.amount_tipped || 0); %>
+                <% const netChange = Number(match.userTip.net_change || 0); %>
+                <% const tippedCorrectly = Boolean(match.userTip.tipped_correctly); %>
+
+                <div class="result-card__bottom">
+                  <div class="result-tip-box">
+                    <div class="result-tip-box__header">
+                      <h3>Your Tip</h3>
+                      <span class="result-tip-box__badge <%= tippedCorrectly ? 'result-tip-box__badge--win' : 'result-tip-box__badge--loss' %>">
+                        <%= tippedCorrectly ? 'Won' : 'Lost' %>
+                      </span>
+                    </div>
+
+                    <div class="result-tip-grid">
+                      <div class="result-tip-detail">
+                        <span class="result-tip-detail__label">Your Pick</span>
+                        <span class="result-tip-detail__value">
+                          <%= match.userTip.selected_team_abbreviation %> — <%= match.userTip.selected_team_name %>
                         </span>
                       </div>
 
-                      <div class="result-tip-grid">
-                        <div class="result-tip-detail">
-                          <span class="result-tip-detail__label">Your Pick</span>
-                          <span class="result-tip-detail__value">
-                            <%= match.userTip.selected_team_abbreviation %> — <%= match.userTip.selected_team_name %>
-                          </span>
-                        </div>
+                      <div class="result-tip-detail">
+                        <span class="result-tip-detail__label">Odds</span>
+                        <span class="result-tip-detail__value"><%= odds.toFixed(2) %></span>
+                      </div>
 
-                        <div class="result-tip-detail">
-                          <span class="result-tip-detail__label">Odds</span>
-                          <span class="result-tip-detail__value"><%= match.userTip.odds.toFixed(2) %></span>
-                        </div>
+                      <div class="result-tip-detail">
+                        <span class="result-tip-detail__label">Amount Tipped</span>
+                        <span class="result-tip-detail__value"><%= amountTipped.toFixed(2) %> credits</span>
+                      </div>
 
-                        <div class="result-tip-detail">
-                          <span class="result-tip-detail__label">Amount Tipped</span>
-                          <span class="result-tip-detail__value"><%= match.userTip.amount_tipped.toFixed(2) %> credits</span>
-                        </div>
-
-                        <div class="result-tip-detail">
-                          <span class="result-tip-detail__label">Outcome</span>
-                          <span class="result-tip-detail__value <%= match.userTip.tipped_correctly ? 'result-tip-detail__value--win' : 'result-tip-detail__value--loss' %>">
-                            <%= match.userTip.tipped_correctly ? '+' : '' %><%= match.userTip.net_change.toFixed(2) %> credits
-                          </span>
-                        </div>
+                      <div class="result-tip-detail">
+                        <span class="result-tip-detail__label">Outcome</span>
+                        <span class="result-tip-detail__value <%= tippedCorrectly ? 'result-tip-detail__value--win' : 'result-tip-detail__value--loss' %>">
+                          <%= netChange > 0 ? '+' : '' %><%= netChange.toFixed(2) %> credits
+                        </span>
                       </div>
                     </div>
                   </div>
-                <% } %>
-              </div>
-            <% }) %>
-          </div>
-        <% } %>
-      </div>
-    </section>
-  </main>
+                </div>
+              <% } %>
+            </div>
+          <% }) %>
+        </div>
+      <% } %>
+    </div>
+  </section>
+</main>
 
-  <%- include('partials/footer') %>
+<%- include('partials/footer') %>
+
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const timeElements = document.querySelectorAll('.local-time');
 
-    timeElements.forEach(el => {
+    timeElements.forEach((el) => {
       const timeValue = el.dataset.time;
       const date = new Date(timeValue);
+
+      if (isNaN(date.getTime())) {
+        el.textContent = 'Time unavailable';
+        return;
+      }
 
       el.textContent = date.toLocaleString(undefined, {
         weekday: 'short',
@@ -129,10 +161,10 @@
         year: 'numeric',
         hour: 'numeric',
         minute: '2-digit',
-        hour12: true,
+        hour12: true
       });
     });
   });
 </script>
+
 </body>
-</html>

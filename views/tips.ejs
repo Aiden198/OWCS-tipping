@@ -35,8 +35,18 @@
               <div class="my-tip-card">
                 <div class="my-tip-card__top">
                   <div class="my-tip-card__meta">
-                    <span class="my-tip-card__region"><%= tip.team_1_region %></span>
-                    <span class="result-card__time local-time" data-time="<%= new Date(tip.match_datetime).toISOString() %>"></span>
+                    <span class="my-tip-card__region">
+                      <%= tip.competition_region %>
+                      <% if (tip.stage_number) { %>
+                        • Stage <%= tip.stage_number %>
+                      <% } %>
+                      <% if (tip.stage_type && tip.stage_type !== 'regular_season') { %>
+                        • <%= tip.stage_type
+                          .replace(/_/g, ' ')
+                          .replace(/\b\w/g, c => c.toUpperCase()) %>
+                      <% } %>
+                    </span>
+                    <span class="result-card__time local-time" data-time="<%= tip.match_datetime %>"></span>
                   </div>
 
                   <div class="my-tip-card__matchup">
@@ -89,7 +99,7 @@
 
                     <div class="my-tip-detail">
                       <span class="my-tip-detail__label">Placed At</span>
-                      <span class="result-card__time local-time" data-time="<%= new Date(tip.tip_time).toISOString() %>"></span>
+                      <span class="result-card__time local-time" data-time="<%= tip.tip_time %>"></span>
                     </div>
                   </div>
                 </div>
@@ -110,6 +120,11 @@
     timeElements.forEach(el => {
       const timeValue = el.dataset.time;
       const date = new Date(timeValue);
+
+      if (isNaN(date.getTime())) {
+        el.textContent = 'Time unavailable';
+        return;
+      }
 
       el.textContent = date.toLocaleString(undefined, {
         weekday: 'short',

@@ -32,4 +32,4 @@ async function run() {
   }
 }
 
-run();
+run(); // yes

@@ -4,7 +4,33 @@ const db = require('../db');
 
 router.get('/', async function(req, res) {
   try {
-    const [matches] = await db.query(`
+    const selectedRegion = req.query.region ? req.query.region.trim() : '';
+
+    const allRegions = ['EMEA', 'NA', 'China', 'Japan', 'Korea', 'Pacific'];
+
+    const [regionRows] = await db.query(`
+      SELECT
+        c.competition_region,
+        COUNT(*) AS match_count
+      FROM matches m
+      JOIN competitions c ON m.competition_id = c.competition_id
+      WHERE m.status = 'upcoming'
+        AND c.competition_region IS NOT NULL
+        AND c.competition_region <> ''
+      GROUP BY c.competition_region
+    `);
+
+    const regionCountMap = {};
+    regionRows.forEach(row => {
+      regionCountMap[row.competition_region] = row.match_count;
+    });
+
+    const regions = allRegions.map(region => ({
+      name: region,
+      count: regionCountMap[region] || 0
+    }));
+
+    let matchQuery = `
       SELECT
         m.match_id,
         m.match_datetime,
@@ -42,9 +68,21 @@ router.get('/', async function(req, res) {
       JOIN teams t1 ON m.team_1_id = t1.team_id
       JOIN teams t2 ON m.team_2_id = t2.team_id
       WHERE m.status = 'upcoming'
+    `;
+
+    const matchParams = [];
+
+    if (selectedRegion) {
+      matchQuery += ` AND c.competition_region = ?`;
+      matchParams.push(selectedRegion);
+    }
+
+    matchQuery += `
       ORDER BY m.match_datetime ASC
       LIMIT 10
-    `);
+    `;
+
+    const [matches] = await db.query(matchQuery, matchParams);
 
     let existingTips = {};
 
@@ -64,7 +102,9 @@ router.get('/', async function(req, res) {
     res.render('fixtures', {
       matches,
       existingTips,
-      user: req.session.user || null
+      user: req.session.user || null,
+      regions,
+      selectedRegion
     });
   } catch (err) {
     console.error('Fixtures page error:', err);

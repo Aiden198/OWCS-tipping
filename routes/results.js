@@ -5,6 +5,31 @@ const db = require('../db');
 router.get('/', async function(req, res) {
   try {
     const currentUserId = req.session.user ? req.session.user.userID : null;
+    const selectedRegion = req.query.region ? req.query.region.trim() : '';
+
+    const allRegions = ['EMEA', 'NA', 'China', 'Japan', 'Korea', 'Pacific'];
+
+    const [regionRows] = await db.query(`
+      SELECT
+        c.competition_region,
+        COUNT(*) AS match_count
+      FROM matches m
+      JOIN competitions c ON m.competition_id = c.competition_id
+      WHERE m.completed = TRUE
+        AND c.competition_region IS NOT NULL
+        AND c.competition_region <> ''
+      GROUP BY c.competition_region
+    `);
+
+    const regionCountMap = {};
+    regionRows.forEach(row => {
+      regionCountMap[row.competition_region] = row.match_count;
+    });
+
+    const regions = allRegions.map(region => ({
+      name: region,
+      count: regionCountMap[region] || 0
+    }));
 
     let query = `
       SELECT
@@ -64,13 +89,25 @@ router.get('/', async function(req, res) {
 
     query += `
       WHERE m.completed = TRUE
-      ORDER BY m.match_datetime DESC
-      LIMIT 25
     `;
 
-    const [rows] = currentUserId
-      ? await db.query(query, [currentUserId])
-      : await db.query(query);
+    const queryParams = [];
+
+    if (currentUserId) {
+      queryParams.push(currentUserId);
+    }
+
+    if (selectedRegion) {
+      query += ` AND c.competition_region = ?`;
+      queryParams.push(selectedRegion);
+    }
+
+    query += `
+      ORDER BY m.match_datetime DESC
+      LIMIT 20
+    `;
+
+    const [rows] = await db.query(query, queryParams);
 
     const results = rows.map((match) => {
       let userTip = null;
@@ -114,7 +151,9 @@ router.get('/', async function(req, res) {
 
     res.render('results', {
       results,
-      user: req.session.user || null
+      user: req.session.user || null,
+      regions,
+      selectedRegion
     });
   } catch (err) {
     console.error('Results page error:', err);

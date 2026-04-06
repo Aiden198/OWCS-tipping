@@ -24,10 +24,39 @@
 
     <section class="page-content">
       <div class="container">
+        <div class="fixtures-filter-bar">
+          <div class="fixtures-filter-buttons">
+            <a
+              href="/fixtures"
+              class="fixtures-filter-btn <%= !selectedRegion ? 'fixtures-filter-btn--active' : '' %>"
+            >
+              All
+            </a>
+
+            <% regions.forEach(region => { %>
+              <% if (region.count > 0) { %>
+                <a
+                  href="/fixtures?region=<%= encodeURIComponent(region.name) %>"
+                  class="fixtures-filter-btn <%= selectedRegion === region.name ? 'fixtures-filter-btn--active' : '' %>"
+                >
+                  <%= region.name %> (<%= region.count %>)
+                </a>
+              <% } else { %>
+                <span class="fixtures-filter-btn fixtures-filter-btn--disabled">
+                  <%= region.name %> (0)
+                </span>
+              <% } %>
+            <% }) %>
+          </div>
+        </div>
         <% if (matches.length === 0) { %>
           <div class="feature-card">
             <h3>No Upcoming Matches</h3>
-            <p>There are currently no scheduled fixtures to tip on.</p>
+            <% if (selectedRegion) { %>
+              <p>There are currently no scheduled fixtures for <strong><%= selectedRegion %></strong>.</p>
+            <% } else { %>
+              <p>There are currently no scheduled fixtures to tip on.</p>
+            <% } %>
           </div>
         <% } else { %>
           <div class="fixtures-list">

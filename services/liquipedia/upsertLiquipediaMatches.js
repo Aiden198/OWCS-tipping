@@ -8,65 +8,7 @@ const resolveTeamAlias = require('./resolveTeamAlias');
 const upsertCompetition = require('./upsertCompetition');
 
 async function upsertSingleMatch(match) {
-  const [existingRows] = await db.query(
-    `
-      SELECT match_id
-      FROM matches
-      WHERE source_match_key = ?
-      LIMIT 1
-    `,
-    [match.source_match_key]
-  );
-
-  if (existingRows.length > 0) {
-    const matchId = existingRows[0].match_id;
-
-    await db.query(
-      `
-        UPDATE matches
-        SET
-          competition_id = ?,
-          source_page = ?,
-          source_url = ?,
-          team_1_id = ?,
-          team_2_id = ?,
-          source_team_1_name = ?,
-          source_team_2_name = ?,
-          match_datetime = ?,
-          round_label = ?,
-          match_format = ?,
-          status = ?,
-          completed = ?,
-          team_1_score = ?,
-          team_2_score = ?,
-          winning_team_id = ?,
-          last_synced_at = NOW()
-        WHERE match_id = ?
-      `,
-      [
-        match.competition_id,
-        match.source_page,
-        match.source_url,
-        match.team_1_id,
-        match.team_2_id,
-        match.source_team_1_name,
-        match.source_team_2_name,
-        match.match_datetime,
-        match.round_label,
-        match.match_format,
-        match.status,
-        match.completed,
-        match.team_1_score,
-        match.team_2_score,
-        match.winning_team_id,
-        matchId
-      ]
-    );
-
-    return { type: 'updated', match_id: matchId };
-  }
-
-  const [insertResult] = await db.query(
+  const [result] = await db.query(
     `
       INSERT INTO matches (
         competition_id,
@@ -88,6 +30,23 @@ async function upsertSingleMatch(match) {
         winning_team_id,
         last_synced_at
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
+      ON DUPLICATE KEY UPDATE
+        competition_id = VALUES(competition_id),
+        source_page = VALUES(source_page),
+        source_url = VALUES(source_url),
+        team_1_id = VALUES(team_1_id),
+        team_2_id = VALUES(team_2_id),
+        source_team_1_name = VALUES(source_team_1_name),
+        source_team_2_name = VALUES(source_team_2_name),
+        match_datetime = VALUES(match_datetime),
+        round_label = VALUES(round_label),
+        match_format = VALUES(match_format),
+        status = VALUES(status),
+        completed = VALUES(completed),
+        team_1_score = VALUES(team_1_score),
+        team_2_score = VALUES(team_2_score),
+        winning_team_id = VALUES(winning_team_id),
+        last_synced_at = NOW()
     `,
     [
       match.competition_id,
@@ -110,7 +69,8 @@ async function upsertSingleMatch(match) {
     ]
   );
 
-  return { type: 'inserted', match_id: insertResult.insertId };
+  const wasInsert = result.insertId && result.affectedRows === 1;
+  return { type: wasInsert ? 'inserted' : 'updated' };
 }
 
 async function upsertLiquipediaMatches() {
@@ -135,7 +95,7 @@ async function upsertLiquipediaMatches() {
 
     let apiMatches = [];
     let offset = 0;
-    const limit = 20;
+    const limit = 50;
 
     while (true) {
       const pageName = new URL(pageUrl).pathname.replace(/^\/overwatch\//, '');

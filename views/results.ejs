@@ -26,10 +26,39 @@
 
   <section class="page-content">
     <div class="container">
+      <div class="results-filter-bar">
+        <div class="results-filter-buttons">
+          <a
+            href="/results"
+            class="results-filter-btn <%= !selectedRegion ? 'results-filter-btn--active' : '' %>"
+          >
+            All
+          </a>
+
+          <% regions.forEach(region => { %>
+            <% if (region.count > 0) { %>
+              <a
+                href="/results?region=<%= encodeURIComponent(region.name) %>"
+                class="results-filter-btn <%= selectedRegion === region.name ? 'results-filter-btn--active' : '' %>"
+              >
+                <%= region.name %> (<%= region.count %>)
+              </a>
+            <% } else { %>
+              <span class="results-filter-btn results-filter-btn--disabled">
+                <%= region.name %> (0)
+              </span>
+            <% } %>
+          <% }) %>
+        </div>
+      </div>
       <% if (!results || results.length === 0) { %>
         <div class="feature-card">
           <h3>No Results Yet</h3>
-          <p>No completed matches are available at the moment.</p>
+          <% if (selectedRegion) { %>
+            <p>No completed matches are available at the moment for <strong><%= selectedRegion %></strong>.</p>
+          <% } else { %>
+            <p>No completed matches are available at the moment.</p>
+          <% } %>
         </div>
       <% } else { %>
         <div class="results-list">

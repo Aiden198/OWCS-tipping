@@ -1,63 +1,73 @@
 require('dotenv').config();
 const db = require('../db');
 
-async function setTeamIcons() {
+async function setTeamIconsByName() {
   const updates = [
-    ['99divine', '/images/team_icons/99divide_icon.png'],
-    ['al_qadsiah', '/images/team_icons/al_qadsiah_icon.png'],
-    ['all_games', '/images/team_icons/all_games_icon.png'],
-    ["anyone's_legend", "/images/team_icons/anyones_legend_icon.png"],
-    ['cheeseburger', '/images/team_icons/cheeseburger_icon.png'],
-    ['crazy_raccoon', '/images/team_icons/crazy_raccoon_icon.png'],
-    ['dallas_fuel', '/images/team_icons/dallas_fuel_icon.png'],
-    ['disguised', '/images/team_icons/disguised_icon.png'],
-    ['enter_force.36', '/images/team_icons/enter_force_36_icon.png'],
-    ['extinction', '/images/team_icons/extinction_icon.png'],
-    ['fury', '/images/team_icons/fury_icon.png'],
-    ['geekay', '/images/team_icons/geekay_icon.png'],
-    ['homie', '/images/team_icons/homie_e_icon.png'],
-    ['jd_gaming', '/images/team_icons/jd_gaming_icon.png'],
-    ['lazuli', '/images/team_icons/lazuli_icon.png'],
-    ['lunex_gaming', '/images/team_icons/lunex_gaming_icon.png'],
-    ['milk_tea', '/images/team_icons/milk_tea_icon.png'],
-    ['mmy', '/images/team_icons/mmy_icon.png'],
-    ['naive_piggy', '/images/team_icons/naive_piggy_icon.png'],
-    ['new_era', '/images/team_icons/new_era_icon.png'],
-    ['nyam_gaming', '/images/team_icons/nyam_gaming_icon.png'],
-    ['onside_gaming', '/images/team_icons/onside_gaming_icon.png'],
-    ['please_not_hero_ban', '/images/team_icons/please_not_hero_ban_icon.png'],
-    ['quasar', '/images/team_icons/quasar_icon.png'],
-    ['rankers', '/images/team_icons/rankers_icon.png'],
-    ['solus_victorem', '/images/team_icons/solus_victorem_icon.png'],
-    ['space_station_gaming', '/images/team_icons/SSG_icon.png'],
-    ['t1', '/images/team_icons/t1_icon.png'],
-    ['team_falcons', '/images/team_icons/team_falcons_icon.png'],
-    ['team_liquid', '/images/team_icons/team_liquid_icon.png'],
-    ['team_peps', '/images/team_icons/team_peps_icon.png'],
-    ['team_secret', '/images/team_icons/team_secret_icon.png'],
-    ['telomere', '/images/team_icons/telomere_icon.png'],
-    ['the_gatos_guapos', '/images/team_icons/the_gatos_guapos_icon.png'],
-    ["tokyo_ta1yo's", "/images/team_icons/tokyo_ta1yo's_icon.png"],
-    ['twisted_minds', '/images/team_icons/twisted_minds_icon.png'],
-    ['varrel', '/images/team_icons/varrel_icon.png'],
-    ['virtus.pro', '/images/team_icons/virtus.pro_icon.png'],
-    ['weibo_gaming', '/images/team_icons/weibo_gaming_icon.png'],
-    ['zan_esports', '/images/team_icons/zan_esports_icon.png'],
-    ['zeta_division', '/images/team_icons/zeta_division_icon.png'],
-    ['poker_face', '/images/team_icons/poker_face_icon.png']
+    ['Twisted Minds', '/images/team_icons/twisted_minds_icon.png'],
+    ['Dallas Fuel', '/images/team_icons/dallas_fuel_icon.png'],
+    ['Space Station Gaming', '/images/team_icons/SSG_icon.png'],
+    ['Virtus.pro', '/images/team_icons/virtus.pro_icon.png'],
+    ['VARREL', '/images/team_icons/varrel_icon.png'],
+    ['Weibo Gaming', '/images/team_icons/weibo_gaming_icon.png'],
+    ['ZETA DIVISION', '/images/team_icons/zeta_division_icon.png'],
+    ['All Gamers', '/images/team_icons/all_games_icon.png'],
+    ['Please Not Hero Ban', '/images/team_icons/please_not_hero_ban_icon.png'],
+    ['Geekay', '/images/team_icons/geekay_icon.png'],
+    ['Team Secret', '/images/team_icons/team_secret_icon.png'],
+    ['The Gatos Guapos', '/images/team_icons/the_gatos_guapos_icon.png'],
+    ['Crazy Raccoon', '/images/team_icons/crazy_raccoon_icon.png'],
+    ['Team Falcons', '/images/team_icons/team_falcons_icon.png'],
+    ['ONSIDE GAMING', '/images/team_icons/onside_gaming_icon.png'],
+    ['ENTER FORCE.36', '/images/team_icons/enter_force_36_icon.png'],
+    ['LuneX Gaming', '/images/team_icons/lunex_gaming_icon.png'],
+    ['99DIVINE', '/images/team_icons/99divide_icon.png'],
+    ['Naive Piggy', '/images/team_icons/naive_piggy_icon.png'],
+    ['JD Gaming', '/images/team_icons/jd_gaming_icon.png'],
+    ['Rankers', '/images/team_icons/rankers_icon.png'],
+    ['T1', '/images/team_icons/t1_icon.png'],
+    ['Quasar Esports', '/images/team_icons/quasar_icon.png'],
+    ['Poker Face', '/images/team_icons/poker_face_icon.png'],
+    ['Team Liquid', '/images/team_icons/team_liquid_icon.png'],
+    ['Solus Victorem', '/images/team_icons/solus_victorem_icon.png'],
+    ['Nyam Gaming', '/images/team_icons/nyam_gaming_icon.png'],
+    ['Al Qadsiah', '/images/team_icons/al_qadsiah_icon.png'],
+    ['ZAN Esports', '/images/team_icons/zan_esports_icon.png'],
+    ['FURY', '/images/team_icons/fury_icon.png'],
+    ['MMY', '/images/team_icons/mmy_icon.png'],
+    ['Homie E', '/images/team_icons/homie_e_icon.png'],
+    ["Tokyo Ta1yo's", '/images/team_icons/tokyo_talyos_icon.png'],
+    ['Lazuli', '/images/team_icons/lazuli_icon.png'],
+    ['DEG', '/images/team_icons/deg_icon.png'],
+    ['Milk Tea', '/images/team_icons/milk_tea_icon.png'],
+    ['New Era', '/images/team_icons/new_era_icon.png'],
+    ['Cheeseburger', '/images/team_icons/cheeseburger_icon.png'],
+    ['Telomere', '/images/team_icons/telomere_icon.png'],
+    ['Extinction', '/images/team_icons/extinction_icon.png'],
+    ['Disguised', '/images/team_icons/disguised_icon.png'],
+    ["Anyone's Legend", '/images/team_icons/anyones_legend_icon.png'],
+    ['Team Peps', '/images/team_icons/team_peps_icon.png']
   ];
 
   try {
-    for (const [slug, iconPath] of updates) {
+    let updated = 0;
+    let notFound = 0;
+
+    for (const [teamName, iconPath] of updates) {
       const [result] = await db.query(
-        `UPDATE teams SET icon_path = ? WHERE slug = ?`,
-        [iconPath, slug]
+        `UPDATE teams SET icon_path = ? WHERE name = ?`,
+        [iconPath, teamName]
       );
 
-      console.log(`${slug}: ${result.affectedRows > 0 ? 'updated' : 'not found'}`);
+      if (result.affectedRows > 0) {
+        console.log(`✅ ${teamName} -> ${iconPath}`);
+        updated++;
+      } else {
+        console.log(`❌ Team not found in DB: ${teamName}`);
+        notFound++;
+      }
     }
 
-    console.log('\nDone.');
+    console.log(`\nDone. Updated ${updated} teams. Not found: ${notFound}.`);
     process.exit();
   } catch (err) {
     console.error(err);
@@ -65,4 +75,4 @@ async function setTeamIcons() {
   }
 }
 
-setTeamIcons();
+setTeamIconsByName();

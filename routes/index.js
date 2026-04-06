@@ -24,12 +24,7 @@ router.get("/", async function (req, res, next) {
     `);
 
     const featuredMatches = rows.map((match) => ({
-      time: new Date(match.match_datetime).toLocaleString("en-AU", {
-        weekday: "long",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true
-      }).replace(",", " •"),
+      match_datetime: match.match_datetime,
       team1: {
         name: match.team1_name,
         abbreviation: match.team1_abbreviation,
@@ -42,10 +37,10 @@ router.get("/", async function (req, res, next) {
       }
     }));
 
-    res.render("index", { featuredMatches });
-  } catch (err) {
-    next(err);
-  }
-});
+        res.render("index", { featuredMatches, user: req.session.user || null });
+      } catch (err) {
+        next(err);
+      }
+    });
 
 module.exports = router;

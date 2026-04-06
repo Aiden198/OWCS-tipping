@@ -56,8 +56,6 @@ exports.syncMatchesNow = async (req, res) => {
     console.error('SQL message:', err.sqlMessage);
     console.error('SQL code:', err.code);
 
-    res.status(500).json({
-      error: 'Failed to sync matches'
-    });
+    res.status(500).json({ error: 'Failed to sync matches' });
   }
 };

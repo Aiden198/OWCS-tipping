@@ -12,9 +12,16 @@ router.get('/', async function(req, res) {
         m.team_2_odds,
         m.completed,
         m.status,
-        m.region,
         m.team_1_score,
         m.team_2_score,
+        m.match_format,
+        m.round_label,
+
+        c.competition_id,
+        c.title AS competition_title,
+        c.competition_region,
+        c.stage_number,
+        c.stage_type,
 
         t1.team_id AS team_1_db_id,
         t1.slug AS team_1_slug,
@@ -31,6 +38,7 @@ router.get('/', async function(req, res) {
         t2.icon_path AS team_2_icon
 
       FROM matches m
+      JOIN competitions c ON m.competition_id = c.competition_id
       JOIN teams t1 ON m.team_1_id = t1.team_id
       JOIN teams t2 ON m.team_2_id = t2.team_id
       WHERE m.status = 'upcoming'
@@ -55,7 +63,8 @@ router.get('/', async function(req, res) {
 
     res.render('fixtures', {
       matches,
-      existingTips
+      existingTips,
+      user: req.session.user || null
     });
   } catch (err) {
     console.error('Fixtures page error:', err);

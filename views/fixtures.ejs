@@ -37,10 +37,24 @@
             %>
               <div class="fixture-card">
                 <div class="fixture-card__top">
-                  <div class="fixture-card__meta">
-                    <span class="fixture-card__region"><%= match.region %></span>
-                    <span class="result-card__time local-time" data-time="<%= new Date(match.match_datetime).toISOString() %>"></span>
-                  </div>
+                <div class="fixture-card__meta">
+                  <span class="fixture-card__region">
+                    <%= match.competition_region %>
+                    <% if (match.stage_number) { %>
+                      • Stage <%= match.stage_number %>
+                    <% } %>
+                    <% if (match.stage_type && match.stage_type !== 'regular_season') { %>
+                      <%= match.stage_type
+                        .replace(/_/g, ' ')
+                        .replace(/\b\w/g, c => c.toUpperCase()) %>
+                    <% } %>
+                  </span>
+
+                  <span
+                    class="result-card__time local-time"
+                    data-time="<%= new Date(match.match_datetime).toISOString() %>"
+                  ></span>
+                </div>
 
                   <div class="fixture-card__matchup">
                     <div class="fixture-team">

@@ -22,21 +22,28 @@ router.get('/', async function(req, res) {
         m.completed,
         m.team_1_score,
         m.team_2_score,
+        m.match_format,
+        m.round_label,
+
+        c.competition_id,
+        c.title AS competition_title,
+        c.competition_region,
+        c.stage_number,
+        c.stage_type,
 
         team1.team_id AS team_1_id,
         team1.name AS team_1_name,
         team1.abbreviation AS team_1_abbreviation,
-        team1.region AS team_1_region,
         team1.icon_path AS team_1_icon,
 
         team2.team_id AS team_2_id,
         team2.name AS team_2_name,
         team2.abbreviation AS team_2_abbreviation,
-        team2.region AS team_2_region,
         team2.icon_path AS team_2_icon
 
       FROM tips t
       JOIN matches m ON t.match_id = m.match_id
+      JOIN competitions c ON m.competition_id = c.competition_id
       JOIN teams team1 ON m.team_1_id = team1.team_id
       JOIN teams team2 ON m.team_2_id = team2.team_id
       WHERE t.user_id = ?
@@ -47,12 +54,12 @@ router.get('/', async function(req, res) {
 
     const formattedTips = tips.map((tip) => {
       const selectedTeamName =
-        tip.selected_team_id === tip.team_1_id
+        Number(tip.selected_team_id) === Number(tip.team_1_id)
           ? tip.team_1_name
           : tip.team_2_name;
 
       const selectedTeamAbbreviation =
-        tip.selected_team_id === tip.team_1_id
+        Number(tip.selected_team_id) === Number(tip.team_1_id)
           ? tip.team_1_abbreviation
           : tip.team_2_abbreviation;
 
@@ -67,7 +74,8 @@ router.get('/', async function(req, res) {
     });
 
     res.render('tips', {
-      tips: formattedTips
+      tips: formattedTips,
+      user: req.session.user || null
     });
   } catch (err) {
     console.error('My Tips page error:', err);

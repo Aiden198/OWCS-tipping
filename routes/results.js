@@ -11,9 +11,18 @@ router.get('/', async function(req, res) {
         m.match_id,
         m.match_datetime,
         m.completed,
+        m.status,
         m.team_1_score,
         m.team_2_score,
         m.winning_team_id,
+        m.match_format,
+        m.round_label,
+
+        c.competition_id,
+        c.title AS competition_title,
+        c.competition_region,
+        c.stage_number,
+        c.stage_type,
 
         team1.team_id AS team_1_id,
         team1.name AS team_1_name,
@@ -34,12 +43,13 @@ router.get('/', async function(req, res) {
         t.selected_team_id,
         t.odds,
         t.amount_tipped,
-        t.status
+        t.status AS tip_status
       `;
     }
 
     query += `
       FROM matches m
+      JOIN competitions c ON m.competition_id = c.competition_id
       JOIN teams team1 ON m.team_1_id = team1.team_id
       JOIN teams team2 ON m.team_2_id = team2.team_id
     `;
@@ -66,7 +76,9 @@ router.get('/', async function(req, res) {
       let userTip = null;
 
       if (currentUserId && match.tip_id) {
-        const tippedCorrectly = Number(match.selected_team_id) === Number(match.winning_team_id);
+        const tippedCorrectly =
+          Number(match.selected_team_id) === Number(match.winning_team_id);
+
         const amountTipped = Number(match.amount_tipped);
         const odds = Number(match.odds);
         const payout = tippedCorrectly ? amountTipped * odds : 0;
@@ -100,7 +112,10 @@ router.get('/', async function(req, res) {
       };
     });
 
-    res.render('results', { results });
+    res.render('results', {
+      results,
+      user: req.session.user || null
+    });
   } catch (err) {
     console.error('Results page error:', err);
     res.status(500).send('Error loading results');

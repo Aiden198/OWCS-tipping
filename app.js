@@ -123,8 +123,8 @@ app.use('/api/account', accountApiRouter);
 app.use('/api/tips', tipsApiRouter);
 app.use('/api/matches', matchesApiRouter);
 
-runFullSyncCycle();
-startMatchSyncScheduler();
+//runFullSyncCycle();
+//startMatchSyncScheduler();
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

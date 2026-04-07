@@ -264,3 +264,135 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+.fixture-tip-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.fixture-tip-amount__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.fixture-tip-amount__header label {
+  margin-bottom: 0;
+}
+
+.fixture-tip-quick-info {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.2rem;
+  height: 1.2rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: help;
+  border: 1px solid var(--border);
+}
+
+.fixture-tip-quick-bets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.quick-bet-btn {
+  padding: 0.55rem 0.85rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.quick-bet-btn:hover {
+  border-color: var(--blue);
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.quick-bet-btn--selected {
+  border-color: var(--orange);
+  background: rgba(249, 115, 22, 0.16);
+}
+
+.fixture-tip-help-text {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.fixtures-global-quick-bets {
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.fixtures-global-quick-bets__text h3 {
+  margin: 0 0 0.35rem 0;
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: white;
+}
+
+.fixtures-global-quick-bets__text p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.97rem;
+  line-height: 1.6;
+  max-width: 850px;
+}
+
+.fixtures-global-quick-bets__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+}
+
+.global-quick-bet-btn {
+  min-width: 88px;
+  padding: 0.95rem 1.4rem;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.05);
+  color: white;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: var(--shadow);
+}
+
+.global-quick-bet-btn:hover {
+  border-color: var(--orange);
+  background: rgba(249, 115, 22, 0.10);
+  transform: translateY(-2px);
+}
+
+.global-quick-bet-btn--selected {
+  border-color: var(--orange);
+  background: rgba(249, 115, 22, 0.18);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+}
+
+@media (max-width: 768px) {
+  .fixtures-global-quick-bets__text p {
+    font-size: 0.93rem;
+  }
+
+  .global-quick-bet-btn {
+    min-width: 78px;
+    padding: 0.85rem 1.15rem;
+    font-size: 1rem;
+  }
+}

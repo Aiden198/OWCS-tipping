@@ -1,7 +1,7 @@
 const db = require('../db');
 
 function winProbability(ratingA, ratingB) {
-  return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
+  return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 100));
 }
 
 function decimalOdds(probability, margin = 0.05) {

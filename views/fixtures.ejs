@@ -49,6 +49,29 @@
             <% }) %>
           </div>
         </div>
+
+        <% if (user && matches.length > 0) { %>
+          <div class="fixtures-global-quick-bets">
+            <div class="fixtures-global-quick-bets__text">
+              <h3>Quick Fill Bet Amount</h3>
+              <p>
+                Choose an amount to fill all visible matches. This only fills the amount field, you still need to click the team you want to tip on to place or update your tip.
+              </p>
+              <p>
+                If you dont select a team, or already have a bet placed this will not update the tip amount. It only submits the tip if you click the team you're tipping for, even if you already have a tip placed on that match.
+              </p>
+            </div>
+
+            <div class="fixtures-global-quick-bets__buttons">
+              <button type="button" class="global-quick-bet-btn" data-amount="50">50</button>
+              <button type="button" class="global-quick-bet-btn" data-amount="100">100</button>
+              <button type="button" class="global-quick-bet-btn" data-amount="200">200</button>
+              <button type="button" class="global-quick-bet-btn" data-amount="500">500</button>
+              <button type="button" class="global-quick-bet-btn" data-amount="1000">1000</button>
+            </div>
+          </div>
+        <% } %>
+
         <% if (matches.length === 0) { %>
           <div class="feature-card">
             <h3>No Upcoming Matches</h3>
@@ -131,11 +154,29 @@
 
                       <div class="fixture-tip-controls" data-match-id="<%= match.match_id %>">
                         <div class="fixture-tip-amount">
-                          <label for="tip-amount-<%= match.match_id %>">Amount</label>
+                          <div class="fixture-tip-amount__header">
+                            <label for="tip-amount-<%= match.match_id %>">Amount</label>
+                            <span class="fixture-tip-quick-info" title="Click one of the quick amount buttons to fill the amount box, then click the team you want to tip on to save your tip.">
+                              ?
+                            </span>
+                          </div>
+
+                          <div class="fixture-tip-quick-bets">
+                            <button type="button" class="quick-bet-btn" data-match-id="<%= match.match_id %>" data-amount="50">50</button>
+                            <button type="button" class="quick-bet-btn" data-match-id="<%= match.match_id %>" data-amount="100">100</button>
+                            <button type="button" class="quick-bet-btn" data-match-id="<%= match.match_id %>" data-amount="200">200</button>
+                            <button type="button" class="quick-bet-btn" data-match-id="<%= match.match_id %>" data-amount="500">500</button>
+                            <button type="button" class="quick-bet-btn" data-match-id="<%= match.match_id %>" data-amount="1000">1000</button>
+                          </div>
+
+                          <p class="fixture-tip-help-text">
+                            Quick buttons only fill the amount. You still need to click the team you want to tip on.
+                          </p>
+
                           <input
                             type="number"
                             min="1"
-                            step="0.01"
+                            step="10"
                             id="tip-amount-<%= match.match_id %>"
                             class="tip-amount-input"
                             placeholder="Enter credits"
@@ -254,6 +295,49 @@
           minute: '2-digit',
           hour12: true,
         });
+      });
+    });
+  </script>
+  <script>
+    document.querySelectorAll('.global-quick-bet-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        const amount = button.dataset.amount;
+
+        document.querySelectorAll('.tip-amount-input').forEach((input) => {
+          input.value = amount;
+        });
+
+        document
+          .querySelectorAll('.global-quick-bet-btn')
+          .forEach((btn) => btn.classList.remove('global-quick-bet-btn--selected'));
+
+        button.classList.add('global-quick-bet-btn--selected');
+
+        document.querySelectorAll('.quick-bet-btn').forEach((btn) => {
+          if (btn.dataset.amount === amount) {
+            btn.classList.add('quick-bet-btn--selected');
+          } else {
+            btn.classList.remove('quick-bet-btn--selected');
+          }
+        });
+      });
+    });
+
+    document.querySelectorAll('.quick-bet-btn').forEach((button) => {
+      button.addEventListener('click', () => {
+        const matchId = button.dataset.matchId;
+        const amount = button.dataset.amount;
+        const amountInput = document.getElementById(`tip-amount-${matchId}`);
+
+        if (!amountInput) return;
+
+        amountInput.value = amount;
+
+        document
+          .querySelectorAll(`.quick-bet-btn[data-match-id="${matchId}"]`)
+          .forEach((btn) => btn.classList.remove('quick-bet-btn--selected'));
+
+        button.classList.add('quick-bet-btn--selected');
       });
     });
   </script>

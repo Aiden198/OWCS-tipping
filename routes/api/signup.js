@@ -2,6 +2,7 @@ const db = require("../../db");
 const bcrypt = require("bcrypt");
 var express = require('express');
 var router = express.Router();
+const { sendNewUserAlert } = require('../../services/emailService');
 
 router.post('/', async function (req, res, next) {
     console.log("Signup request received");
@@ -44,6 +45,15 @@ router.post('/', async function (req, res, next) {
         );
 
         console.log(`User ${email} successfully added to database`);
+
+        try {
+            await sendNewUserAlert({
+                username: username,
+                email: email
+            });
+        } catch (emailErr) {
+            console.error("Failed to send new user email:", emailErr);
+        }
 
         req.session.user = {
             username: username,

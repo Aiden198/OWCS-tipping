@@ -24,3 +24,38 @@
 .credit-FAQ {
     margin-top: 3rem
 }
+
+.hero-data-credit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.62);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hero-data-credit img {
+  width: 40px;                /* slightly bigger */
+  height: 40px;
+  object-fit: contain;
+  display: block;
+  opacity: 0.85;
+
+  transform: translateY(1px); /* fine-tune vertical alignment */
+}
+
+.hero-data-credit a {
+  display: flex;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+}
+
+.hero-data-credit a:hover {
+  text-decoration: underline;
+}

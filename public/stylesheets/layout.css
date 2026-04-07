@@ -182,3 +182,34 @@
     font-size: 0.78rem;
   }
 }
+
+.footer-bottom__left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-liquipedia-credit {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.4;
+}
+
+.footer-liquipedia-credit img {
+  height: 30px;
+  width: auto;
+  display: block;
+  opacity: 0.85;
+}
+
+.footer-liquipedia-credit a {
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+}
+
+.footer-liquipedia-credit a:hover {
+  text-decoration: underline;
+}

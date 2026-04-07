@@ -46,14 +46,12 @@ router.post('/', async function (req, res, next) {
 
         console.log(`User ${email} successfully added to database`);
 
-        try {
-            await sendNewUserAlert({
-                username: username,
-                email: email
-            });
-        } catch (emailErr) {
+        sendNewUserAlert({
+            username: username,
+            email: email
+        }).catch((emailErr) => {
             console.error("Failed to send new user email:", emailErr);
-        }
+        });
 
         req.session.user = {
             username: username,

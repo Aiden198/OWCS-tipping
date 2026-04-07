@@ -1,3 +1,6 @@
+const dns = require('dns');
+dns.setDefaultResultOrder('ipv4first');
+
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');

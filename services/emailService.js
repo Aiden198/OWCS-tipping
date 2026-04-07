@@ -19,7 +19,7 @@ async function sendNewUserAlert({ username, email }) {
     timeStyle: 'short'
   });
 
-  await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: `"OWCS Tipping" <${process.env.SMTP_USER}>`,
     to: process.env.ALERT_EMAIL,
     subject: 'New user created',
@@ -30,6 +30,8 @@ Username: ${username}
 Email: ${email}
 Created at: ${createdAt}`
   });
+
+  console.log('Email sent:', info.response);
 }
 
 module.exports = {

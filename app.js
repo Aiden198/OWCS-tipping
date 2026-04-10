@@ -126,6 +126,17 @@ app.use('/api/account', accountApiRouter);
 app.use('/api/tips', tipsApiRouter);
 app.use('/api/matches', matchesApiRouter);
 
+app.get('/unblock-liquipedia', async (req, res) => {
+  const axios = require('axios');
+
+  try {
+    const response = await axios.get('https://liquipedia.net/token/generate');
+    res.send(response.data);
+  } catch (err) {
+    res.send(err.response?.data || err.message);
+  }
+});
+
 //runFullSyncCycle();
 startMatchSyncScheduler();
 

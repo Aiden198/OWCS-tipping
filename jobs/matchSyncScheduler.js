@@ -27,7 +27,7 @@ function startMatchSyncScheduler() {
     await runFullSyncCycle();
   });
 
-  console.log('[Scheduler] Started (every 5 minutes)');
+  console.log('[Scheduler] Started (every 15 minutes)');
 }
 
 module.exports = {

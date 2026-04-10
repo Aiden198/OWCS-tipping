@@ -1,10 +1,10 @@
 const db = require('../db');
 
 function winProbability(ratingA, ratingB) {
-  return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 100));
+  return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 200));
 }
 
-function decimalOdds(probability, margin = 0.05) {
+function decimalOdds(probability, margin = 0.0) {
   const fairOdds = 1 / probability;
   return Number((fairOdds * (1 - margin)).toFixed(2));
 }

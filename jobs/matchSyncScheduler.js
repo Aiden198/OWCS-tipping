@@ -23,7 +23,7 @@ async function runFullSyncCycle() {
 }
 
 function startMatchSyncScheduler() {
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('*/15 * * * *', async () => {
     await runFullSyncCycle();
   });
 

@@ -7,6 +7,7 @@ function parseCompetitionMetadata(pageUrl) {
   // Overwatch_Champions_Series/2026/NA/Stage_1/Regular_Season
   // Overwatch_Champions_Series/2026/EMEA/Stage_1/Relegation
   // Overwatch_Champions_Series/2026/Asia/Stage_1/Japan/Regular_Season
+  // Overwatch_World_Cup/2026
 
   const series = parts[0] || null;
   const seasonYear = parts[1] ? Number(parts[1]) : null;
@@ -16,7 +17,12 @@ function parseCompetitionMetadata(pageUrl) {
   let stagePart = null;
   let phasePart = null;
 
-  if (parts[2] === 'Asia') {
+  if (series === 'Overwatch_World_Cup') {
+    umbrellaRegion = 'World Cup';
+    competitionRegion = 'World Cup';
+    stagePart = parts[2] || null;
+    phasePart = parts[3] || null;
+  } else if (parts[2] === 'Asia') {
     umbrellaRegion = 'Asia';
     stagePart = parts[3] || null;
     competitionRegion = parts[4] || null; // Japan / Korea / Pacific
@@ -37,28 +43,48 @@ function parseCompetitionMetadata(pageUrl) {
     stageType = phasePart.toLowerCase();
   }
 
-  const titleParts = [
-    'OWCS',
-    seasonYear,
-    umbrellaRegion,
-    competitionRegion,
-    stagePart ? stagePart.replace(/_/g, ' ') : null,
-    phasePart ? phasePart.replace(/_/g, ' ') : null
-  ].filter(Boolean);
+  const titleParts =
+    series === 'Overwatch_World_Cup'
+      ? [
+          'Overwatch World Cup',
+          seasonYear,
+          stagePart ? stagePart.replace(/_/g, ' ') : null,
+          phasePart ? phasePart.replace(/_/g, ' ') : null
+        ].filter(Boolean)
+      : [
+          'OWCS',
+          seasonYear,
+          umbrellaRegion,
+          competitionRegion,
+          stagePart ? stagePart.replace(/_/g, ' ') : null,
+          phasePart ? phasePart.replace(/_/g, ' ') : null
+        ].filter(Boolean);
 
   const title = titleParts.join(' ');
 
-  const sourceKey = [
-    series,
-    seasonYear,
-    umbrellaRegion,
-    competitionRegion,
-    stagePart,
-    phasePart
-  ]
-    .filter(Boolean)
-    .join(':')
-    .toLowerCase();
+  const sourceKey =
+    series === 'Overwatch_World_Cup'
+      ? [
+          series,
+          seasonYear,
+          'world_cup',
+          stagePart,
+          phasePart
+        ]
+          .filter(Boolean)
+          .join(':')
+          .toLowerCase()
+      : [
+          series,
+          seasonYear,
+          umbrellaRegion,
+          competitionRegion,
+          stagePart,
+          phasePart
+        ]
+          .filter(Boolean)
+          .join(':')
+          .toLowerCase();
 
   return {
     title,

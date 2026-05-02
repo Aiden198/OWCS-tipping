@@ -1,3 +1,18 @@
+function normalizeMatchDate(rawDate) {
+  if (!rawDate) return null;
+
+  const date = new Date(rawDate);
+
+  if (Number.isNaN(date.getTime())) return null;
+
+  // Liquipedia placeholder date
+  if (date.getFullYear() === 2000) {
+    return null;
+  }
+
+  return date;
+}
+
 function normalizeLiquipediaApiMatch(apiMatch, competitionMeta) {
   const opponents = apiMatch.match2opponents || [];
 
@@ -41,7 +56,7 @@ function normalizeLiquipediaApiMatch(apiMatch, competitionMeta) {
     source_match_key: `liquipedia:${apiMatch.match2id}`,
     source_team_1_name: team1.name,
     source_team_2_name: team2.name,
-    match_datetime: apiMatch.date,
+    match_datetime: normalizeMatchDate(apiMatch.date),
     round_label: null,
     match_format: apiMatch.bestof ? `Bo${apiMatch.bestof}` : null,
     status,

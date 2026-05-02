@@ -112,10 +112,16 @@
                     <% } %>
                   </span>
 
-                  <span
-                    class="result-card__time local-time"
-                    data-time="<%= new Date(match.match_datetime).toISOString() %>"
-                  ></span>
+                  <% if (match.match_datetime) { %>
+                    <span
+                      class="result-card__time local-time"
+                      data-time="<%= new Date(match.match_datetime).toISOString() %>"
+                    ></span>
+                  <% } else { %>
+                    <span class="result-card__time">
+                      Date TBD
+                    </span>
+                  <% } %>
                 </div>
 
                   <div class="fixture-card__matchup">
@@ -152,6 +158,9 @@
                     <div class="fixture-tip-box">
                       <div class="fixture-tip-box__header">
                         <h3>Place Your Tip</h3>
+                        <% if (!hasOdds) { %>
+                          <p class="odds-unavailable">Match not ready — teams or schedule not confirmed.</p>
+                        <% } %>
                         <% if (existingTip) { %>
                           <span class="fixture-tip-box__status">
                             Current tip: <%= Number(existingTip.amount_tipped).toFixed(2) %>

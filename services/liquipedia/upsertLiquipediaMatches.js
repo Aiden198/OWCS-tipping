@@ -116,7 +116,7 @@ async function upsertLiquipediaMatches() {
     for (const apiMatch of apiMatches) {
       const normalized = normalizeLiquipediaApiMatch(apiMatch, competitionMeta);
 
-      if (!normalized || !normalized.match_datetime) {
+      if (!normalized) {
         console.log('[Skip] Invalid normalized match:', JSON.stringify(apiMatch, null, 2));
         summary.skipped += 1;
         continue;

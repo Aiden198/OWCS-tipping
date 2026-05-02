@@ -78,8 +78,10 @@ router.get('/', async function(req, res) {
     }
 
     matchQuery += `
-      ORDER BY m.match_datetime ASC
-      LIMIT 10
+      ORDER BY
+        CASE WHEN m.match_datetime IS NULL THEN 1 ELSE 0 END,
+        m.match_datetime ASC
+      LIMIT 20
     `;
 
     const [matches] = await db.query(matchQuery, matchParams);

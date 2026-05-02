@@ -24,9 +24,20 @@ function parseCompetitionMetadata(pageUrl) {
     phasePart = parts[3] || null;
   } else if (parts[2] === 'Asia') {
     umbrellaRegion = 'Asia';
-    stagePart = parts[3] || null;
-    competitionRegion = parts[4] || null; // Japan / Korea / Pacific
-    phasePart = parts[5] || null;         // Regular_Season / Relegation
+
+    const maybeSubregion = parts[4]; // Japan / Korea / Pacific OR undefined
+
+    if (['Japan', 'Korea', 'Pacific'].includes(maybeSubregion)) {
+      // Subregion page
+      competitionRegion = maybeSubregion;
+      stagePart = parts[3] || null;
+      phasePart = parts[5] || null;
+    } else {
+      // Umbrella Asia page
+      competitionRegion = 'Asia';
+      stagePart = parts[3] || null;
+      phasePart = parts[4] || null;
+    }
   } else {
     competitionRegion = parts[2] || null; // NA / EMEA / China
     stagePart = parts[3] || null;         // Stage_1

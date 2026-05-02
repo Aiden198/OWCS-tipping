@@ -19,8 +19,21 @@ function buildSlug(name) {
 }
 
 function buildAbbreviation(name) {
-  const words = String(name || '')
-    .trim()
+  const cleanName = String(name || '').trim();
+
+  // KR #1, CN #2, JP #3 etc.
+  const regionSeedMatch = cleanName.match(/^([A-Za-z]{2,})\s*#(\d+)$/);
+  if (regionSeedMatch) {
+    return `${regionSeedMatch[1].toUpperCase()}${regionSeedMatch[2]}`;
+  }
+
+  // Group A #1, Group B #2 etc.
+  const groupSeedMatch = cleanName.match(/^Group\s+([A-Za-z])\s*#(\d+)$/i);
+  if (groupSeedMatch) {
+    return `G${groupSeedMatch[1].toUpperCase()}${groupSeedMatch[2]}`;
+  }
+
+  const words = cleanName
     .split(/\s+/)
     .filter(Boolean);
 
@@ -30,10 +43,11 @@ function buildAbbreviation(name) {
       .map(word => word[0])
       .join('')
       .toUpperCase()
+      .replace(/[^A-Z0-9]/g, '')
       .slice(0, 10);
   }
 
-  return String(name || '')
+  return cleanName
     .replace(/[^a-zA-Z0-9]/g, '')
     .slice(0, 3)
     .toUpperCase();

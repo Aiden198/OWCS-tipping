@@ -158,8 +158,14 @@
                     <div class="fixture-tip-box">
                       <div class="fixture-tip-box__header">
                         <h3>Place Your Tip</h3>
-                        <% if (!hasOdds) { %>
-                          <p class="odds-unavailable">Match not ready — teams or schedule not confirmed.</p>
+                        <% if (!match.match_datetime) { %>
+                          <p class="odds-unavailable">
+                            Match time not confirmed — tipping will open once the schedule is confirmed.
+                          </p>
+                        <% } else if (!hasOdds) { %>
+                          <p class="odds-unavailable">
+                            Teams or odds not confirmed yet — tipping will open once odds are available.
+                          </p>
                         <% } %>
                         <% if (existingTip) { %>
                           <span class="fixture-tip-box__status">
@@ -250,6 +256,19 @@
   </main>
 
   <script>
+
+    function showToast(message, type = 'error') {
+      const toast = document.getElementById('toast-message');
+      if (!toast) return;
+
+      toast.textContent = message;
+      toast.className = `toast-message show ${type}`;
+
+      setTimeout(() => {
+        toast.className = 'toast-message';
+      }, 3000);
+    }
+
     document.querySelectorAll('.tip-team-btn').forEach((button) => {
       button.addEventListener('click', async () => {
         const matchId = button.dataset.matchId;
@@ -259,12 +278,12 @@
         const amount = amountInput.value;
 
         if (!amount || Number(amount) <= 0) {
-          alert('Please enter a valid tip amount.');
+          showToast('Please enter a valid tip amount.');
           return;
         }
 
         if (!odds || odds === 'null') {
-          alert('Odds are not available for this match yet.');
+          showToast('Odds are not available for this match yet.');
           return;
         }
 
@@ -284,15 +303,15 @@
           const data = await res.text();
 
           if (!res.ok) {
-            alert(data);
+            showToast(data);
             return;
           }
 
-          alert('Tip saved successfully.');
+          showToast('Tip saved successfully.', 'success');
           window.location.reload();
         } catch (err) {
           console.error(err);
-          alert('Error saving tip.');
+          showToast('Error saving tip.');
         }
       });
     });

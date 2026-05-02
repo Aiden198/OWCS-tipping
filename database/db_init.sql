@@ -86,7 +86,7 @@ CREATE TABLE matches (
     source_team_1_name VARCHAR(100) DEFAULT NULL,
     source_team_2_name VARCHAR(100) DEFAULT NULL,
 
-    match_datetime DATETIME NOT NULL,
+    match_datetime DATETIME,
     round_label VARCHAR(100) DEFAULT NULL,       -- e.g. Upper Round 1, Week 2
     match_format VARCHAR(20) DEFAULT NULL,       -- Bo3, Bo5, Bo7
     status VARCHAR(20) NOT NULL DEFAULT 'upcoming',

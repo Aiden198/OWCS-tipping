@@ -29,7 +29,7 @@
         <% if (user) { %>
         <div class="nav-credits">
             <img src="/images/credits.webp" alt="Credits" class="nav-credits__icon">
-            <span class="nav-credits__amount"><%= Number(user.credits).toFixed(2) %></span>
+            <span class="nav-credits__amount" id="user-balance"><%= Number(user.credits).toFixed(2) %></span>
         </div>
         <% } %>
 

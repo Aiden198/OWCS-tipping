@@ -6,7 +6,10 @@ router.post('/', async function (req, res) {
   const sessionUser = req.session.user;
 
   if (!sessionUser) {
-    return res.status(401).send('You must be logged in to place a tip.');
+    return res.status(401).json({
+      success: false,
+      message: 'You must be logged in to place a tip.'
+    });
   }
 
   const { match_id, selected_team_id, amount_tipped } = req.body;
@@ -16,11 +19,11 @@ router.post('/', async function (req, res) {
   const amountTipped = Number(amount_tipped);
 
   if (!matchId || !selectedTeamId || amount_tipped === undefined || amount_tipped === null) {
-    return res.status(400).send('Missing required tip information.');
+    return res.status(400).json({ success: false, message: 'Missing required tip information.' });
   }
 
   if (!Number.isFinite(amountTipped) || amountTipped <= 0) {
-    return res.status(400).send('Tip amount must be greater than 0.');
+    return res.status(400).json({ success: false, message: 'Tip amount must be greater than 0.' });
   }
 
   let connection;
@@ -46,14 +49,14 @@ router.post('/', async function (req, res) {
 
     if (matchRows.length === 0) {
       await connection.rollback();
-      return res.status(404).send('Match not found.');
+      return res.status(404).json({ success: false, message: 'Match not found.' });
     }
 
     const match = matchRows[0];
 
     if (match.completed || match.status !== 'upcoming') {
       await connection.rollback();
-      return res.status(400).send('Tipping for this match has closed.');
+      return res.status(400).json({ success: false, message: 'Tipping for this match has closed.' });
     }
 
     const now = new Date();
@@ -61,7 +64,7 @@ router.post('/', async function (req, res) {
 
     if (now >= matchTime) {
       await connection.rollback();
-      return res.status(400).send('Tipping for this match has closed.');
+      return res.status(400).json({ success: false, message: 'Tipping for this match has closed.' });
     }
 
     let lockedOdds = null;
@@ -72,12 +75,12 @@ router.post('/', async function (req, res) {
       lockedOdds = Number(match.team_2_odds);
     } else {
       await connection.rollback();
-      return res.status(400).send('Selected team is not part of this match.');
+      return res.status(400).json({ success: false, message: 'Selected team is not part of this match.' });
     }
 
     if (!Number.isFinite(lockedOdds) || lockedOdds <= 0) {
       await connection.rollback();
-      return res.status(400).send('Odds are not available for this match yet.');
+      return res.status(400).json({ success: false, message: 'Odds are not available for this match yet.' });
     }
 
     const [userRows] = await connection.query(`
@@ -89,7 +92,7 @@ router.post('/', async function (req, res) {
 
     if (userRows.length === 0) {
       await connection.rollback();
-      return res.status(404).send('User not found.');
+      return res.status(404).json({ success: false, message: 'User not found.' });
     }
 
     const user = userRows[0];
@@ -108,7 +111,7 @@ router.post('/', async function (req, res) {
 
     if (effectiveAvailableCredits < amountTipped) {
       await connection.rollback();
-      return res.status(400).send('You do not have enough credits for this tip.');
+      return res.status(400).json({ success: false, message: 'You do not have enough credits for this tip.' });
     }
 
     const newCredits = effectiveAvailableCredits - amountTipped;
@@ -137,8 +140,10 @@ router.post('/', async function (req, res) {
     await connection.commit();
 
     return res.status(200).json({
+      success: true,
       message: existingTip ? 'Tip updated successfully.' : 'Tip placed successfully.',
-      credits: newCredits
+      credits: newCredits,
+      newBalance: newCredits
     });
   } catch (err) {
     if (connection) {
@@ -146,7 +151,7 @@ router.post('/', async function (req, res) {
     }
 
     console.error('Tip submission error:', err);
-    return res.status(500).send('Internal server error.');
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
   } finally {
     if (connection) {
       connection.release();

@@ -302,14 +302,14 @@
             })
           });
 
-          const data = await res.text();
+          const data = await res.json();
 
           if (!res.ok) {
-            showToast(data);
+            showToast(data.message || 'Error placing tip');
             return;
           }
 
-          showToast('Tip saved successfully.', 'success');
+          showToast(data.message || 'Tip saved successfully.', 'success');
 
           document
             .querySelectorAll(`.tip-team-btn[data-match-id="${matchId}"]`)
@@ -324,7 +324,17 @@
           if (header) {
             header.textContent = `Current tip: ${Number(amount).toFixed(2)} at ${Number(odds).toFixed(2)} odds`;
           }
-          
+
+          console.log('data:', data);
+          console.log('balance element:', document.getElementById('user-balance'));
+          // update balance
+          const balanceEl = document.querySelector('#user-balance, .nav-credits__amount');
+          const newBalance = data.newBalance ?? data.credits;
+
+          if (balanceEl && newBalance !== undefined) {
+            balanceEl.textContent = Number(newBalance).toFixed(2);
+          }
+
         } catch (err) {
           console.error(err);
           showToast('Error saving tip.');

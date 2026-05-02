@@ -12,7 +12,7 @@
 }
 
 .how-it-works__content h3 {
-  margin-top: rem;
+  margin-top: 1rem;
   margin-bottom: 0.75rem;
 }
 
@@ -58,4 +58,126 @@
 
 .hero-data-credit a:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 2rem 0;
+  }
+
+  .hero__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .hero__text {
+    text-align: center;
+  }
+
+  .hero__text h1 {
+    font-size: 2.4rem;
+    line-height: 1.05;
+  }
+
+  .hero__text p {
+    font-size: 1rem;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+
+  .hero__actions .btn {
+    text-align: center;
+    width: 100%;
+  }
+
+  .hero-data-credit {
+    justify-content: center;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+
+  .hero-card {
+    padding: 1rem;
+    border-radius: 18px;
+  }
+
+  .match-item {
+    padding: 0.9rem;
+  }
+
+  .match-item__teams {
+    gap: 0.5rem;
+  }
+
+  .match-team {
+    min-width: 0;
+  }
+
+  .match-team__logo {
+    width: 36px;
+    height: 36px;
+  }
+
+  .match-team__abbr {
+    font-size: 0.85rem;
+  }
+
+  .how-it-works {
+    padding: 0.5rem 0 1.5rem;
+  }
+
+  .how-it-works__content {
+    text-align: center;
+  }
+
+  .credit-FAQ {
+    margin-top: 2rem;
+  }
+
+  .features {
+    padding-top: 1rem;
+  }
+
+  .section-title {
+    text-align: center;
+    font-size: 1.7rem;
+  }
+
+  .feature-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .feature-card {
+    padding: 1.2rem;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero__text h1 {
+    font-size: 2rem;
+  }
+
+  .hero-card h3 {
+    text-align: center;
+  }
+
+  .match-item__teams {
+    flex-direction: column;
+  }
+
+  .match-item__vs {
+    margin: 0.2rem 0;
+  }
 }

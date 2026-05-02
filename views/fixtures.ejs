@@ -310,6 +310,21 @@
           }
 
           showToast('Tip saved successfully.', 'success');
+
+          document
+            .querySelectorAll(`.tip-team-btn[data-match-id="${matchId}"]`)
+            .forEach(btn => btn.classList.remove('tip-team-btn--selected'));
+
+          button.classList.add('tip-team-btn--selected');
+
+          // update header text (Current tip)
+          const header = button.closest('.fixture-tip-box')
+            .querySelector('.fixture-tip-box__status');
+
+          if (header) {
+            header.textContent = `Current tip: ${Number(amount).toFixed(2)} at ${Number(odds).toFixed(2)} odds`;
+          }
+          
         } catch (err) {
           console.error(err);
           showToast('Error saving tip.');

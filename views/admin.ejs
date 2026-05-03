@@ -2,23 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin User Management</title>
+  <title>Admin Dashboard</title>
   <link rel="stylesheet" href="/stylesheets/global.css">
   <link rel="stylesheet" href="/stylesheets/layout.css">
   <link rel="stylesheet" href="/stylesheets/components.css">
   <link rel="stylesheet" href="/stylesheets/interactive.css">
   <link rel="stylesheet" href="/stylesheets/match-cards.css">
+
   <script>
     if (localStorage.getItem('darkMode') === 'true') {
       document.documentElement.classList.add('dark-mode');
     }
   </script>
 </head>
+
 <body>
-<%- include('partials/header') %>
+  <%- include('partials/header') %>
 
   <div class="account-container">
     <h2>Admin: Manage Users</h2>
+
     <table id="users-table" border="1" style="width: 100%;">
       <thead>
         <tr>
@@ -29,36 +32,158 @@
       </thead>
       <tbody></tbody>
     </table>
+
+    <hr style="margin: 2rem 0;">
+
+    <h2>Recent Tips</h2>
+
+    <table id="recent-tips-table" border="1" style="width: 100%;">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Email</th>
+          <th>Match</th>
+          <th>Selected Team</th>
+          <th>Amount</th>
+          <th>Odds</th>
+          <th>Payout</th>
+          <th>Status</th>
+          <th>Placed At</th>
+          <th>How Long Ago</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </div>
 
   <script>
+    function escapeHTML(value) {
+      if (value === null || value === undefined) return '';
+
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function formatMoney(value) {
+      const numberValue = Number(value);
+
+      if (!Number.isFinite(numberValue)) {
+        return '0.00';
+      }
+
+      return numberValue.toFixed(2);
+    }
+
+    function formatDateTime(value) {
+      if (!value) return 'Unknown';
+
+      return new Date(value).toLocaleString();
+    }
+
+    function timeAgo(date) {
+      if (!date) return 'Unknown';
+
+      const seconds = Math.floor((new Date() - new Date(date)) / 1000);
+
+      if (seconds < 60) return `${seconds}s ago`;
+
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
+
+    function getStatusColour(status) {
+      if (status === 'won') return '#4ade80';
+      if (status === 'lost') return '#f87171';
+      return '#facc15';
+    }
+
     async function loadAllUsers() {
       try {
         const res = await fetch('/api/admin/users', { credentials: 'include' });
-        if (!res.ok) throw new Error('Access denied or server error');
+
+        if (!res.ok) {
+          throw new Error('Access denied or server error');
+        }
+
         const users = await res.json();
 
         const tbody = document.querySelector('#users-table tbody');
         tbody.innerHTML = '';
+
         users.forEach(user => {
           const row = document.createElement('tr');
-          console.log(user.is_admin)
+
           row.innerHTML = `
-            <td>${user.username}</td>
-            <td>${user.email}</td>
+            <td>${escapeHTML(user.username)}</td>
+            <td>${escapeHTML(user.email)}</td>
             <td>${Number(user.is_admin) === 1 ? '✅' : '❌'}</td>
           `;
+
           tbody.appendChild(row);
         });
       } catch (err) {
         console.error(err);
-        alert("You are not authorized to view this page.");
+        alert('You are not authorized to view this page.');
         window.location.href = '/';
       }
     }
 
+    async function loadRecentTips() {
+      try {
+        const res = await fetch('/api/admin/recent-tips', { credentials: 'include' });
+
+        if (!res.ok) {
+          throw new Error('Access denied or server error');
+        }
+
+        const tips = await res.json();
+
+        const tbody = document.querySelector('#recent-tips-table tbody');
+        tbody.innerHTML = '';
+
+        tips.forEach(tip => {
+          const row = document.createElement('tr');
+
+          const amount = Number(tip.amount_tipped);
+          const odds = Number(tip.odds);
+          const payout = amount * odds;
+
+          row.innerHTML = `
+            <td>${escapeHTML(tip.username)}</td>
+            <td>${escapeHTML(tip.email)}</td>
+            <td>${escapeHTML(tip.team_1_name)} vs ${escapeHTML(tip.team_2_name)}</td>
+            <td>${escapeHTML(tip.selected_team_name)}</td>
+            <td>${formatMoney(amount)}</td>
+            <td>${formatMoney(odds)}</td>
+            <td>${formatMoney(payout)}</td>
+            <td style="color: ${getStatusColour(tip.status)}; font-weight: bold;">
+              ${escapeHTML(tip.status)}
+            </td>
+            <td>${formatDateTime(tip.tip_time)}</td>
+            <td>${timeAgo(tip.tip_time)}</td>
+          `;
+
+          tbody.appendChild(row);
+        });
+      } catch (err) {
+        console.error('Error loading recent tips:', err);
+      }
+    }
+
     loadAllUsers();
+    loadRecentTips();
   </script>
+
   <%- include('partials/footer') %>
 </body>
 </html>

@@ -39,7 +39,7 @@
               <div class="leaderboard-row leaderboard-row--head">
                 <span>Rank</span>
                 <span>Player</span>
-                <span>Credits</span>
+                <span>Total Credits</span>
               </div>
 
               <% topUsers.forEach((user, index) => { %>
@@ -48,7 +48,7 @@
                   <span class="leaderboard-name">
                     <a href="/users/<%= user.user_id %>"><%= user.username %></a>
                   </span>
-                  <span class="leaderboard-credits"><%= Number(user.credits).toFixed(2) %></span>
+                  <span class="leaderboard-credits"><%= Number(user.total_credits).toFixed(2) %></span>
                 </div>
               <% }) %>
             </div>
@@ -65,7 +65,7 @@
             <div class="leaderboard-row leaderboard-row--me">
               <span class="leaderboard-rank">#<%= currentUserRank.rank %></span>
               <span class="leaderboard-name"><%= currentUserRank.username %></span>
-              <span class="leaderboard-credits"><%= Number(currentUserRank.credits).toFixed(2) %></span>
+              <span class="leaderboard-credits"><%= Number(currentUserRank.total_credits).toFixed(2) %></span>
             </div>
           </div>
         <% } %>

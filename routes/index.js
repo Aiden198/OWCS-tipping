@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+const newsItems = require('../data/newsItems');
+
 router.get("/", async function (req, res, next) {
   try {
     const [rows] = await db.query(`
@@ -37,7 +39,9 @@ router.get("/", async function (req, res, next) {
       }
     }));
 
-        res.render("index", { featuredMatches, user: req.session.user || null });
+        res.render("index", {
+          featuredMatches, newsItems, user: req.session.user || null
+        });
       } catch (err) {
         next(err);
       }

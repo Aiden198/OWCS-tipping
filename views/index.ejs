@@ -119,6 +119,41 @@
         </div>
       </div>
     </section>
+    <section class="home-news-section">
+      <div class="container">
+        <div class="home-section-heading">
+          <h2>Latest News</h2>
+          <p>Updates about tournaments, regional results, and OWCS Tipping changes.</p>
+        </div>
+
+        <% if (!newsItems || newsItems.length === 0) { %>
+          <div class="feature-card">
+            <h3>No News Yet</h3>
+            <p>News updates will appear here once available.</p>
+          </div>
+        <% } else { %>
+          <div class="home-news-grid">
+            <% newsItems.slice(0, 3).forEach((item) => { %>
+              <article class="home-news-card">
+                <div class="home-news-card__top">
+                  <span class="home-news-card__category"><%= item.category %></span>
+                  <span class="home-news-card__date"><%= item.date %></span>
+                </div>
+
+                <h3><%= item.title %></h3>
+                <p><%= item.summary %></p>
+
+                <% if (item.linkUrl && item.linkText) { %>
+                  <a href="<%= item.linkUrl %>" class="home-news-card__link">
+                    <%= item.linkText %>
+                  </a>
+                <% } %>
+              </article>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </section>
   </main>
   <script>
     document.addEventListener('DOMContentLoaded', () => {

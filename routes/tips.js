@@ -2,13 +2,44 @@ var express = require('express');
 var router = express.Router();
 const db = require('../db');
 
+function formatTips(tips) {
+  return tips.map((tip) => {
+    const selectedTeamName =
+      Number(tip.selected_team_id) === Number(tip.team_1_id)
+        ? tip.team_1_name
+        : tip.team_2_name;
+
+    const selectedTeamAbbreviation =
+      Number(tip.selected_team_id) === Number(tip.team_1_id)
+        ? tip.team_1_abbreviation
+        : tip.team_2_abbreviation;
+
+    const winningTeamName =
+      Number(tip.winning_team_id) === Number(tip.team_1_id)
+        ? tip.team_1_name
+        : Number(tip.winning_team_id) === Number(tip.team_2_id)
+          ? tip.team_2_name
+          : null;
+
+    const potentialPayout = Number(tip.amount_tipped) * Number(tip.odds);
+
+    return {
+      ...tip,
+      selected_team_name: selectedTeamName,
+      selected_team_abbreviation: selectedTeamAbbreviation,
+      winning_team_name: winningTeamName,
+      potential_payout: potentialPayout
+    };
+  });
+}
+
 router.get('/', async function(req, res) {
   if (!req.session.user) {
     return res.redirect('/login');
   }
 
   try {
-    const [tips] = await db.query(`
+    const baseSelect = `
       SELECT
         t.tip_id,
         t.match_id,
@@ -20,10 +51,12 @@ router.get('/', async function(req, res) {
 
         m.match_datetime,
         m.completed,
+        m.resolved,
         m.team_1_score,
         m.team_2_score,
         m.match_format,
         m.round_label,
+        m.winning_team_id,
 
         c.competition_id,
         c.title AS competition_title,
@@ -47,34 +80,26 @@ router.get('/', async function(req, res) {
       JOIN teams team1 ON m.team_1_id = team1.team_id
       JOIN teams team2 ON m.team_2_id = team2.team_id
       WHERE t.user_id = ?
+    `;
+
+    const [activeTips] = await db.query(`
+      ${baseSelect}
+        AND t.status = 'pending'
         AND m.completed = FALSE
       ORDER BY m.match_datetime ASC
-      LIMIT 10
+      LIMIT 20
     `, [req.session.user.userID]);
 
-    const formattedTips = tips.map((tip) => {
-      const selectedTeamName =
-        Number(tip.selected_team_id) === Number(tip.team_1_id)
-          ? tip.team_1_name
-          : tip.team_2_name;
-
-      const selectedTeamAbbreviation =
-        Number(tip.selected_team_id) === Number(tip.team_1_id)
-          ? tip.team_1_abbreviation
-          : tip.team_2_abbreviation;
-
-      const potentialPayout = Number(tip.amount_tipped) * Number(tip.odds);
-
-      return {
-        ...tip,
-        selected_team_name: selectedTeamName,
-        selected_team_abbreviation: selectedTeamAbbreviation,
-        potential_payout: potentialPayout
-      };
-    });
+    const [pastTips] = await db.query(`
+      ${baseSelect}
+        AND t.status IN ('won', 'lost')
+      ORDER BY m.match_datetime DESC
+      LIMIT 20
+    `, [req.session.user.userID]);
 
     res.render('tips', {
-      tips: formattedTips,
+      activeTips: formatTips(activeTips),
+      pastTips: formatTips(pastTips),
       user: req.session.user || null
     });
   } catch (err) {

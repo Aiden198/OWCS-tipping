@@ -132,9 +132,9 @@
             <p>News updates will appear here once available.</p>
           </div>
         <% } else { %>
-          <div class="home-news-grid">
-            <% newsItems.slice(0, 3).forEach((item) => { %>
-              <article class="home-news-card">
+          <div class="home-news-grid" id="news-grid">
+            <% newsItems.forEach((item, index) => { %>
+              <article class="home-news-card <%= index >= 3 ? 'hidden-news' : '' %>">
                 <div class="home-news-card__top">
                   <span class="home-news-card__category"><%= item.category %></span>
                   <span class="home-news-card__date"><%= item.date %></span>
@@ -151,6 +151,14 @@
               </article>
             <% }) %>
           </div>
+
+          <% if (newsItems.length > 3) { %>
+            <div class="home-news-more">
+              <button id="news-toggle-btn" class="home-news-more-btn">
+                Show More
+              </button>
+            </div>
+          <% } %>
         <% } %>
       </div>
     </section>
@@ -179,6 +187,26 @@
         });
       });
     });
+  </script>
+
+  <script>
+    const btn = document.getElementById('news-toggle-btn');
+
+    if (btn) {
+      let expanded = false;
+
+      btn.addEventListener('click', () => {
+        const hiddenItems = document.querySelectorAll('.hidden-news');
+
+        expanded = !expanded;
+
+        hiddenItems.forEach(item => {
+          item.style.display = expanded ? 'block' : 'none';
+        });
+
+        btn.textContent = expanded ? 'Show Less' : 'Show More';
+      });
+    }
   </script>
   <%- include('partials/footer') %>
 </body>

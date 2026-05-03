@@ -263,3 +263,28 @@
     grid-template-columns: 1fr;
   }
 }
+
+.hidden-news {
+  display: none;
+}
+
+.home-news-more {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+.home-news-more-btn {
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.home-news-more-btn:hover {
+  background: var(--panel-light);
+  transform: translateY(-1px);
+}

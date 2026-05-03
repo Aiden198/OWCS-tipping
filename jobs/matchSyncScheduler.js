@@ -2,6 +2,26 @@ const cron = require('node-cron');
 const syncMatchesJob = require('./syncMatchesJob');
 const resolveAllMatches = require('../services/resolveAllMatches');
 const { updateUpcomingMatchOdds } = require('../services/oddsService');
+const db = require('../db');
+
+async function cleanupOldMatches() {
+  console.log('[Scheduler] Cleaning up old matches...');
+
+  try {
+    const [result] = await db.query(`
+      DELETE FROM matches
+      WHERE match_datetime < DATE_SUB(NOW(), INTERVAL 1 MONTH)
+        AND completed = TRUE
+        AND resolved = TRUE
+    `);
+
+    console.log(`[Scheduler] Cleanup success: deleted ${result.affectedRows} old matches.`);
+    return result;
+  } catch (err) {
+    console.error('[Scheduler] Cleanup failed:', err);
+    throw err;
+  }
+}
 
 async function runFullSyncCycle() {
   console.log('[Scheduler] Running match sync...');
@@ -27,10 +47,16 @@ function startMatchSyncScheduler() {
     await runFullSyncCycle();
   });
 
-  console.log('[Scheduler] Started (every 15 minutes)');
+  cron.schedule('0 3 * * *', async () => {
+    await cleanupOldMatches();
+  });
+
+  console.log('[Scheduler] Started match sync every 15 minutes');
+  console.log('[Scheduler] Started cleanup once per day at 3am');
 }
 
 module.exports = {
   startMatchSyncScheduler,
-  runFullSyncCycle
+  runFullSyncCycle,
+  cleanupOldMatches
 };

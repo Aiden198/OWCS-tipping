@@ -22,7 +22,7 @@ const newsItems = [
   {
     title: 'World Cup Starting Soon',
     category: 'Tournament',
-    date: '2026-05-04',
+    date: '04-05-2026',
     summary: 'The Overwatch World Cup (OWWC) is starting soon, with with the Regional group stage kicking off on the 29th of may. Closer to this date the matches will be available to tip on in the fixtures page.',
     linkText: 'View fixtures',
     linkUrl: '/fixtures'
@@ -30,7 +30,7 @@ const newsItems = [
   {
     title: 'Zeta Division Win Korea',
     category: 'Regional Result',
-    date: '2026-05-03',
+    date: '04-05-2026',
     summary: 'Zeta Division secured the Korea region title after a strong playoff run, winning 4 - 1 against Team Falcons.',
     linkText: 'View results',
     linkUrl: '/results'
@@ -38,7 +38,7 @@ const newsItems = [
     {
     title: 'Asia region begginning group stage',
     category: 'Tournament',
-    date: '2026-05-04',
+    date: '04-05-2026',
     summary: 'The Asia region of the Overwatch World Cup is kicking off, with Japan, Korea and Pacific teams facing off in the group stage on May 5th and 6th. Then the playoffs will be held on May 9th and 10th. Closer to these dates the matches will be available to tip on in the fixtures page.',
     linkText: 'View fixtures',
     linkUrl: '/fixtures'
@@ -46,7 +46,7 @@ const newsItems = [
     {
     title: 'Champions Clash',
     category: 'Tournament',
-    date: '2026-05-04',
+    date: '04-05-2026',
     summary: 'The Champions Clash LAN event in Japan is set to begin on Friday the 22nd of May, with the top teams from around the world competing for the title.',
     linkText: 'View fixtures',
     linkUrl: '/fixtures'

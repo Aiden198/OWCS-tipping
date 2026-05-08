@@ -161,6 +161,14 @@ CREATE TABLE news_items (
   related_match_id INT NULL,
   status ENUM('draft', 'published', 'ignored') DEFAULT 'draft',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  published_at DATETIME NULL
+  published_at DATETIME NULL,
   image_url VARCHAR(500) NULL,
+);
+
+CREATE TABLE IF NOT EXISTS upset_overrides (
+    override_id INT AUTO_INCREMENT PRIMARY KEY,
+    match_id INT NOT NULL,
+    active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE
 );

@@ -19,7 +19,7 @@
     <section class="hero">
       <div class="container hero__grid">
         <div class="hero__text">
-          <h1>Tip OWCS matches.<br>Climb the leaderboard.</h1>
+          <h1>Tip OWCS Matches.<br>Climb the Leaderboard.</h1>
           <p>
             Follow upcoming Overwatch Champions Series matches, submit your predictions,
             and compete against others to see who knows the scene best.
@@ -173,6 +173,58 @@
         <% } %>
       </div>
     </section>
+
+    <% if (biggestUpset) { %>
+    <section class="home-upset-section">
+      <div class="container">
+        <div class="home-section-heading">
+          <h2>Biggest Upset This Month</h2>
+          <p>The largest underdog victory in OWCS over the past month (in the admins humble opinion).</p>
+        </div>
+
+        <article class="biggest-upset-card">
+          <div class="biggest-upset-card__teams">
+            <div class="biggest-upset-team">
+              <img
+                src="<%= biggestUpset.winner_icon %>"
+                alt="<%= biggestUpset.winner_name %>"
+              >
+              <span><%= biggestUpset.winner_name %></span>
+            </div>
+
+            <span class="biggest-upset-vs">
+              <%= biggestUpset.winner_score %> - <%= biggestUpset.loser_score %>
+            </span>
+
+            <div class="biggest-upset-team">
+              <img
+                src="<%= biggestUpset.loser_icon %>"
+                alt="<%= biggestUpset.loser_name %>"
+              >
+              <span><%= biggestUpset.loser_name %></span>
+            </div>
+          </div>
+
+          <div class="biggest-upset-details">
+            <strong>
+              <%= Number(biggestUpset.winner_odds).toFixed(2) %>x underdog victory
+            </strong>
+
+            <% if (biggestUpset.source_url) { %>
+              <a
+                href="<%= biggestUpset.source_url %>"
+                target="_blank"
+                class="home-news-card__link"
+              >
+                View Match Source
+              </a>
+            <% } %>
+          </div>
+        </article>
+      </div>
+    </section>
+    <% } %>
+
   </main>
   <script>
     document.addEventListener('DOMContentLoaded', () => {

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Upsets</title>
+
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/admin.css">
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Admin Upsets</h1>
+        <p>
+          Select a manual override for the “Biggest Upset This Month”
+          homepage feature.
+        </p>
+
+        <div class="admin-dashboard-actions">
+          <a href="/adminNews" class="btn btn-secondary">
+            Manage News
+          </a>
+
+          <form method="POST" action="/adminUpset/clear">
+            <button type="submit" class="btn btn-secondary">
+              Clear Override
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+
+        <% if (!upsets || upsets.length === 0) { %>
+
+          <div class="feature-card">
+            <h3>No Upsets Found</h3>
+            <p>
+              No underdog victories were detected in the last month.
+            </p>
+          </div>
+
+        <% } else { %>
+
+          <div class="admin-upset-grid">
+
+            <% upsets.forEach(match => { %>
+
+              <article class="admin-upset-card">
+
+                <div class="admin-upset-top">
+                  <span>
+                    <%= Number(match.winner_odds).toFixed(2) %>x upset
+                  </span>
+
+                  <span>
+                    <%= new Date(match.match_datetime)
+                      .toLocaleDateString('en-AU') %>
+                  </span>
+                </div>
+
+                <div class="admin-upset-match">
+
+                  <div class="admin-upset-team">
+                    <img
+                      src="<%= match.winner_icon %>"
+                      alt="<%= match.winner_name %>"
+                    >
+
+                    <span><%= match.winner_name %></span>
+                  </div>
+
+                  <span class="admin-upset-score">
+                    <%= match.winner_score %>
+                    -
+                    <%= match.loser_score %>
+                  </span>
+
+                  <div class="admin-upset-team">
+                    <img
+                      src="<%= match.loser_icon %>"
+                      alt="<%= match.loser_name %>"
+                    >
+
+                    <span><%= match.loser_name %></span>
+                  </div>
+
+                </div>
+
+                <div class="admin-upset-actions">
+
+                  <% if (match.is_override) { %>
+
+                    <button
+                      class="btn btn-primary"
+                      disabled
+                    >
+                      Current Override
+                    </button>
+                  <% } else { %>
+
+                    <form
+                      method="POST"
+                      action="/adminUpset/<%= match.match_id %>/override"
+                    >
+                      <button
+                        type="submit"
+                        class="btn btn-primary"
+                      >
+                        Set Override
+                      </button>
+                    </form>
+                  <% } %>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        <% } %>
+
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

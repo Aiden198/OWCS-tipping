@@ -32,6 +32,7 @@ var privacyRouter = require('./routes/privacy');
 var termsRouter = require('./routes/terms');
 var donateRouter = require('./routes/donate');
 var adminNewsRouter = require('./routes/adminNews');
+const adminUpsetRouter = require('./routes/adminUpset');
 
 // api routes
 const adminApiRouter = require('./routes/api/admin');
@@ -118,6 +119,7 @@ app.use('/privacy', privacyRouter);
 app.use('/terms', termsRouter);
 app.use('/donate', donateRouter);
 app.use('/adminNews', adminNewsRouter);
+app.use('/adminUpset', adminUpsetRouter);
 //api mounts
 app.use('/api/admin', adminApiRouter);
 app.use('/api/login', loginApiRouter);

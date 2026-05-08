@@ -18,12 +18,48 @@
 
 <main class="page-content">
     <section class="user-tips-header">
-        <!-- <% if (viewedUser.profile_pic) { %>
-            <img src="<%= viewedUser.profile_pic %>" alt="<%= viewedUser.username %>" class="user-tips-avatar">
-        <% } %> -->
+        <img
+        src="<%= viewedUser.profile_pic ? '/uploads/' + viewedUser.profile_pic : '/uploads/default.png' %>"
+        alt="<%= viewedUser.username %>"
+        class="user-tips-avatar"
+        onerror="this.src='/uploads/default.png'"
+        >
 
         <h1><%= viewedUser.username %></h1>
         <p>Public tipping history</p>
+
+        <section class="account-stats-grid user-tips-stats-grid">
+        <div class="account-stat-card">
+            <span>Lifetime Accuracy</span>
+            <strong><%= viewedUserStats.lifetimeAccuracy %>%</strong>
+            <p>
+            <%= viewedUserStats.tipsWon %> won /
+            <%= viewedUserStats.tipsLost %> lost
+            </p>
+        </div>
+
+        <div class="account-stat-card">
+            <span>Last Month Accuracy</span>
+            <strong><%= viewedUserStats.lastMonthAccuracy %>%</strong>
+            <p>
+            <%= viewedUserStats.lastMonthWins %> won /
+            <%= viewedUserStats.lastMonthLosses %> lost
+            </p>
+        </div>
+
+        <div class="account-stat-card">
+            <span>Current Streak</span>
+            <strong><%= viewedUserStats.currentStreak %></strong>
+            <p>Correct tips in a row</p>
+        </div>
+
+        <div class="account-stat-card">
+            <span>Best Streak</span>
+            <strong><%= viewedUserStats.bestStreak %></strong>
+            <p>Best correct streak</p>
+        </div>
+        </section>
+
         <div class="user-tips-data-credit">
         <a href="https://liquipedia.net/overwatch" target="_blank" rel="noopener noreferrer">
             <img src="/images/liquipedia_icon.png" alt="Liquipedia">

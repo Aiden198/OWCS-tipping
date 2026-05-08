@@ -288,3 +288,30 @@
   background: var(--panel-light);
   transform: translateY(-1px);
 }
+
+.home-news-card__image {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  border-radius: 16px;
+  background: var(--bg-darker);
+  border: 1px solid var(--border);
+  padding: 10px;
+  margin-bottom: 12px;
+}
+
+.home-section-heading--with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+@media (max-width: 700px) {
+  .home-section-heading--with-action {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+

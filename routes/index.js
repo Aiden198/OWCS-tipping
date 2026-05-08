@@ -39,6 +39,14 @@ router.get("/", async function (req, res, next) {
       }
     }));
 
+    const [newsItems] = await db.query(`
+      SELECT *
+      FROM news_items
+      WHERE status = 'published'
+      ORDER BY published_at DESC
+      LIMIT 12
+    `);
+
         res.render("index", {
           featuredMatches, newsItems, user: req.session.user || null
         });

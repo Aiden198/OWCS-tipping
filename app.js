@@ -31,6 +31,7 @@ var disclaimerRouter = require('./routes/disclaimer');
 var privacyRouter = require('./routes/privacy');
 var termsRouter = require('./routes/terms');
 var donateRouter = require('./routes/donate');
+var adminNewsRouter = require('./routes/adminNews');
 
 // api routes
 const adminApiRouter = require('./routes/api/admin');
@@ -116,7 +117,7 @@ app.use('/disclaimer', disclaimerRouter);
 app.use('/privacy', privacyRouter);
 app.use('/terms', termsRouter);
 app.use('/donate', donateRouter);
-
+app.use('/adminNews', adminNewsRouter);
 //api mounts
 app.use('/api/admin', adminApiRouter);
 app.use('/api/login', loginApiRouter);
@@ -125,6 +126,12 @@ app.use('/api/signup', signupApiRouter);
 app.use('/api/account', accountApiRouter);
 app.use('/api/tips', tipsApiRouter);
 app.use('/api/matches', matchesApiRouter);
+
+app.use('/uploads', express.static(
+  process.env.NODE_ENV === 'production'
+    ? '/data/uploads'
+    : path.join(__dirname, 'public/uploads')
+));
 
 app.get('/unblock-liquipedia', async (req, res) => {
   const axios = require('axios');

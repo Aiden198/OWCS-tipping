@@ -86,7 +86,10 @@ async function resolveMatch(matchId) {
         await connection.query(
           `
           UPDATE users
-          SET credits = credits + ?
+          SET credits = credits + ?,
+              tips_won = tips_won + 1,
+              current_tip_streak = current_tip_streak + 1,
+              best_tip_streak = GREATEST(best_tip_streak, current_tip_streak + 1)
           WHERE user_id = ?
           `,
           [payout, tip.user_id]
@@ -101,6 +104,16 @@ async function resolveMatch(matchId) {
           [tip.tip_id]
         );
       } else {
+        await connection.query(
+          `
+          UPDATE users
+          SET tips_lost = tips_lost + 1,
+              current_tip_streak = 0
+          WHERE user_id = ?
+          `,
+          [tip.user_id]
+        );
+
         await connection.query(
           `
           UPDATE tips

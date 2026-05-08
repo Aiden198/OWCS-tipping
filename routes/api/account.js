@@ -52,7 +52,10 @@ router.put('/', isAuthenticated, async (req, res) => {
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '../../public/uploads');
+    const uploadPath = process.env.NODE_ENV === 'production'
+      ? '/data/uploads'
+      : path.join(__dirname, '../../public/uploads');
+
     fs.mkdirSync(uploadPath, { recursive: true });
     cb(null, uploadPath);
   },

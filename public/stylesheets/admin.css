@@ -1,0 +1,99 @@
+.admin-news-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.admin-news-edit-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.admin-news-edit-form input,
+.admin-news-edit-form textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-darker);
+  color: var(--text);
+  padding: 12px 14px;
+  font: inherit;
+  line-height: 1.5;
+  outline: none;
+}
+
+.admin-news-edit-form textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+.admin-news-edit-form input:focus,
+.admin-news-edit-form textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+.admin-news-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.admin-news-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.admin-news-actions form {
+  margin: 0;
+}
+
+.text-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.admin-news-edit-form select {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--bg-darker);
+  color: var(--text);
+  padding: 12px 14px;
+  font: inherit;
+  outline: none;
+}
+
+.admin-news-edit-form select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.18);
+}
+
+.admin-news-image {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  border-radius: 16px;
+  background: var(--bg-darker);
+  border: 1px solid var(--border);
+  padding: 10px;
+  margin: 12px 0;
+}
+
+.account-container{
+    padding-left : 1.5rem;
+    padding-right : 1.5rem;
+}

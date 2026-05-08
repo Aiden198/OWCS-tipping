@@ -22,6 +22,10 @@ CREATE TABLE users (
     PRIMARY KEY (user_id),
     UNIQUE KEY uc_users_email (email),
     UNIQUE KEY uc_users_username (username)
+    tips_won INT DEFAULT 0,
+    tips_lost INT DEFAULT 0,
+    current_tip_streak INT DEFAULT 0,
+    best_tip_streak INT DEFAULT 0,
 );
 
 CREATE TABLE teams (
@@ -147,3 +151,16 @@ INSERT INTO teams (slug, name, abbreviation, region, icon_path, liquipedia_url, 
 INSERT INTO team_aliases (team_id, source, alias_name)
 SELECT team_id, 'liquipedia', name
 FROM teams;
+
+CREATE TABLE news_items (
+  news_id INT AUTO_INCREMENT PRIMARY KEY,
+  type VARCHAR(50) NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  body TEXT,
+  source_url VARCHAR(500),
+  related_match_id INT NULL,
+  status ENUM('draft', 'published', 'ignored') DEFAULT 'draft',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  published_at DATETIME NULL
+  image_url VARCHAR(500) NULL,
+);

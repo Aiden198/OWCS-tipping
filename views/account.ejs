@@ -71,6 +71,38 @@
               <a href="/tips" class="btn btn-secondary">View My Tips</a>
               <a href="/leaderboard" class="btn btn-secondary">Leaderboard</a>
             </div>
+
+            <div class="account-stats-grid">
+              <div class="account-stat-card">
+                <span>Lifetime Accuracy</span>
+                <strong><%= profileStats.lifetimeAccuracy %>%</strong>
+                <p>
+                  <%= profileStats.tipsWon %> won /
+                  <%= profileStats.tipsLost %> lost
+                </p>
+              </div>
+
+              <div class="account-stat-card">
+                <span>Last Month Accuracy</span>
+                <strong><%= profileStats.lastMonthAccuracy %>%</strong>
+                <p>
+                  <%= profileStats.lastMonthWins %> won /
+                  <%= profileStats.lastMonthLosses %> lost
+                </p>
+              </div>
+
+              <div class="account-stat-card">
+                <span>Current Streak</span>
+                <strong><%= profileStats.currentStreak %></strong>
+                <p>Correct tips in a row</p>
+              </div>
+
+              <div class="account-stat-card">
+                <span>Best Streak</span>
+                <strong><%= profileStats.bestStreak %></strong>
+                <p>Best correct streak</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

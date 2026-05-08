@@ -127,6 +127,10 @@
           <p>Updates about tournaments, regional results, and OWCS Tipping changes.</p>
         </div>
 
+          <% if (user && user.is_admin) { %>
+            <a href="/adminNews" class="btn btn-secondary" style="margin-bottom: 1rem;">Edit News</a>
+          <% } %>
+
         <% if (!newsItems || newsItems.length === 0) { %>
           <div class="feature-card">
             <h3>No News Yet</h3>
@@ -137,16 +141,22 @@
             <% newsItems.forEach((item, index) => { %>
               <article class="home-news-card <%= index >= 3 ? 'hidden-news' : '' %>">
                 <div class="home-news-card__top">
-                  <span class="home-news-card__category"><%= item.category %></span>
-                  <span class="home-news-card__date"><%= item.date %></span>
+                  <span class="home-news-card__category"><%= item.type.replace('_', ' ') %></span>
+                  <span class="home-news-card__date">
+                    <%= item.published_at ? new Date(item.published_at).toLocaleDateString('en-AU') : '' %>
+                  </span>
                 </div>
 
-                <h3><%= item.title %></h3>
-                <p><%= item.summary %></p>
+                <% if (item.image_url) { %>
+                  <img src="<%= item.image_url %>" alt="" class="home-news-card__image">
+                <% } %>
 
-                <% if (item.linkUrl && item.linkText) { %>
-                  <a href="<%= item.linkUrl %>" class="home-news-card__link">
-                    <%= item.linkText %>
+                <h3><%= item.title %></h3>
+                <p><%= item.body %></p>
+
+                <% if (item.source_url) { %>
+                  <a href="<%= item.source_url %>" class="home-news-card__link" target="_blank">
+                    View Source
                   </a>
                 <% } %>
               </article>

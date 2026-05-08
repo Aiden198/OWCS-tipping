@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin News</title>
+
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/admin.css">
+</head>
+
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Admin News</h1>
+        <p>Review generated news drafts, publish useful updates, or ignore unwanted items.</p>
+      </div>
+    </section>
+
+    <section class="section">
+    <div class="container">
+        <h2>Create News Item</h2>
+
+        <div class="feature-card">
+        <form method="POST" action="/adminNews/create" class="admin-news-edit-form">
+            <label>
+            Type
+            <input
+                type="text"
+                name="type"
+                value="manual"
+                required
+            >
+            </label>
+
+            <label>
+            Title
+            <input
+                type="text"
+                name="title"
+                placeholder="Enter news title"
+                required
+            >
+            </label>
+
+            <label>
+            Body
+            <textarea
+                name="body"
+                rows="5"
+                placeholder="Write the news update..."
+                required
+            ></textarea>
+            </label>
+
+            <label>
+            Source URL
+            <input
+                type="url"
+                name="source_url"
+                placeholder="Optional source link"
+            >
+            </label>
+
+            <label>
+            Image URL
+            <input
+                type="text"
+                name="image_url"
+                placeholder="/images/OW_icon.png"
+            >
+            </label>
+
+            <label>
+            Status
+            <select name="status">
+                <option value="draft">Save as Draft</option>
+                <option value="published">Publish Immediately</option>
+            </select>
+            </label>
+
+            <button type="submit" class="btn btn-primary">
+            Create News Item
+            </button>
+        </form>
+        </div>
+    </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>News Drafts</h2>
+
+        <% if (!drafts || drafts.length === 0) { %>
+          <div class="feature-card">
+            <h3>No Drafts</h3>
+            <p>Generated news drafts will appear here when available.</p>
+          </div>
+        <% } else { %>
+          <div class="admin-news-list">
+            <% drafts.forEach(item => { %>
+              <article class="feature-card admin-news-card">
+                <div class="admin-news-card__top">
+                  <span><%= item.type ? item.type.replace('_', ' ') : 'news' %></span>
+
+                  <% if (item.created_at) { %>
+                    <span>
+                      <%= new Date(item.created_at).toLocaleDateString('en-AU') %>
+                    </span>
+                  <% } %>
+                </div>
+
+                <% if (item.image_url) { %>
+                <img src="<%= item.image_url %>" alt="" class="admin-news-image">
+                <% } %>
+
+
+                <form method="POST" action="/adminNews/<%= item.news_id %>/update" class="admin-news-edit-form">
+                <label>
+                    Title
+                    <input
+                    type="text"
+                    name="title"
+                    value="<%= item.title %>"
+                    required
+                    >
+                </label>
+
+                <label>
+                    Body
+                    <textarea
+                    name="body"
+                    rows="4"
+                    required
+                    ><%= item.body %></textarea>
+                </label>
+
+                <label>
+                Image URL
+                <input
+                    type="text"
+                    name="image_url"
+                    value="<%= item.image_url || '' %>"
+                    placeholder="/images/OW_icon.png"
+                >
+                </label>
+
+                <button type="submit" class="btn btn-secondary">
+                    Save Changes
+                </button>
+                </form>
+
+                <% if (item.source_url) { %>
+                  <a href="<%= item.source_url %>" target="_blank" class="text-link">
+                    View Source
+                  </a>
+                <% } %>
+
+                <div class="admin-news-actions">
+                  <form method="POST" action="/adminNews/<%= item.news_id %>/publish">
+                    <button type="submit" class="btn btn-primary">Publish</button>
+                  </form>
+
+                  <form method="POST" action="/adminNews/<%= item.news_id %>/ignore">
+                    <button type="submit" class="btn btn-secondary">Ignore</button>
+                  </form>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <h2>Recently Published</h2>
+
+        <% if (!published || published.length === 0) { %>
+          <div class="feature-card">
+            <h3>No Published News</h3>
+            <p>Published news items will appear here.</p>
+          </div>
+        <% } else { %>
+          <div class="admin-news-list">
+            <% published.forEach(item => { %>
+              <article class="feature-card admin-news-card">
+                <div class="admin-news-card__top">
+                  <span><%= item.type ? item.type.replace('_', ' ') : 'news' %></span>
+
+                  <% if (item.published_at) { %>
+                    <span>
+                      <%= new Date(item.published_at).toLocaleDateString('en-AU') %>
+                    </span>
+                  <% } %>
+                </div>
+
+                <h3><%= item.title %></h3>
+                <p><%= item.body %></p>
+
+                <% if (item.source_url) { %>
+                  <a href="<%= item.source_url %>" target="_blank" class="text-link">
+                    View Source
+                  </a>
+                <% } %>
+                <div class="admin-news-actions">
+                <form method="POST" action="/adminNews/<%= item.news_id %>/delete">
+                    <button type="submit" class="btn btn-secondary">
+                    Delete
+                    </button>
+                </form>
+                </div>
+              </article>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

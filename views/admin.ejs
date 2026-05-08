@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/stylesheets/components.css">
   <link rel="stylesheet" href="/stylesheets/interactive.css">
   <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/admin.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
 
   <script>
@@ -20,7 +21,11 @@
 <body>
   <%- include('partials/header') %>
 
-  <div class="account-container">
+  <div class="account-container" style ="padding: 2rem;">
+    <h1>Admin Dashboard</h1>
+
+    <a href="/adminNews" class="btn btn-primary">Manage News</a>
+
     <h2>Admin: Manage Users</h2>
 
     <table id="users-table" border="1" style="width: 100%;">

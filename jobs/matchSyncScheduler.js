@@ -2,6 +2,8 @@ const cron = require('node-cron');
 const syncMatchesJob = require('./syncMatchesJob');
 const resolveAllMatches = require('../services/resolveAllMatches');
 const { updateUpcomingMatchOdds } = require('../services/oddsService');
+const generateMatchResultNews = require('../services/news/generateMatchResultNews');
+const generateUpsetNews = require('../services/news/generateUpsetNews');
 const db = require('../db');
 
 async function cleanupOldMatches() {
@@ -28,7 +30,7 @@ async function runFullSyncCycle() {
 
   try {
     const syncResult = await syncMatchesJob.runScheduleSync();
-    console.log('[Scheduler] Match sync success:', syncResult);
+    console.log('[Scheduler] Match sync success:'/*, syncResult */);
 
     console.log('[Scheduler] Updating odds...');
     const oddsResult = await updateUpcomingMatchOdds();
@@ -37,6 +39,12 @@ async function runFullSyncCycle() {
     console.log('[Scheduler] Resolving completed matches...');
     const resolveResult = await resolveAllMatches();
     console.log('[Scheduler] Resolve success:', resolveResult);
+
+    console.log('[Scheduler] Generating match result news...');
+    const newsResult = await generateMatchResultNews();
+    const newsUpsetResult = await generateUpsetNews();
+    //console.log('[Scheduler] News generation success:', newsResult);
+    console.log('[Scheduler] Upset news generation success:', newsUpsetResult);
   } catch (err) {
     console.error('[Scheduler] Cycle failed:', err);
   }

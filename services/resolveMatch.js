@@ -98,7 +98,9 @@ async function resolveMatch(matchId) {
         await connection.query(
           `
           UPDATE tips
-          SET status = 'won'
+          SET
+            status = 'won',
+            resolved_at = NOW()
           WHERE tip_id = ?
           `,
           [tip.tip_id]
@@ -117,7 +119,9 @@ async function resolveMatch(matchId) {
         await connection.query(
           `
           UPDATE tips
-          SET status = 'lost'
+          SET
+            status = 'lost',
+            resolved_at = NOW()
           WHERE tip_id = ?
           `,
           [tip.tip_id]

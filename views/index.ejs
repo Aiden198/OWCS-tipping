@@ -72,6 +72,58 @@
         </div>
       </div>
     </section>
+
+    <% if (recentResolvedTips && recentResolvedTips.length > 0) { %>
+    <section class="recent-results-section">
+      <div class="container">
+        <div class="home-section-heading">
+          <h2>Your Recent Results</h2>
+          <p>Your latest resolved OWCS tips.</p>
+        </div>
+
+        <div class="recent-results-grid">
+          <% recentResolvedTips.forEach((tip) => { %>
+            <div class="recent-tip-card <%= tip.status === 'won' ? 'recent-tip-card--won' : 'recent-tip-card--lost' %>">
+
+              <div class="recent-tip-card__top">
+                <div>
+                  <span class="recent-tip-card__status">
+                    <%= tip.status === 'won' ? 'Won Tip' : 'Lost Tip' %>
+                  </span>
+
+                  <p class="recent-tip-card__picked">
+                    Picked <strong><%= tip.selected_team_abbreviation %></strong>
+                  </p>
+                </div>
+
+                <span class="recent-tip-card__amount">
+                  <%= tip.profit >= 0 ? '+' : '-' %><%= Math.abs(tip.profit).toFixed(2) %>
+                </span>
+              </div>
+
+              <div class="recent-tip-card__match">
+                <div class="match-team">
+                  <img src="<%= tip.team1_icon %>" alt="<%= tip.team1_name %>" class="match-team__logo">
+                  <span class="match-team__abbr"><%= tip.team1_abbreviation %></span>
+                </div>
+
+                <span class="recent-tip-card__score">
+                  <%= tip.team_1_score %> - <%= tip.team_2_score %>
+                </span>
+
+                <div class="match-team">
+                  <img src="<%= tip.team2_icon %>" alt="<%= tip.team2_name %>" class="match-team__logo">
+                  <span class="match-team__abbr"><%= tip.team2_abbreviation %></span>
+                </div>
+              </div>
+
+            </div>
+          <% }) %>
+        </div>
+      </div>
+    </section>
+    <% } %>
+
     <section class="how-it-works">
       <div class="container">
         <div class="how-it-works__content">

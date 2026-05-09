@@ -132,7 +132,8 @@ CREATE TABLE tips (
     UNIQUE KEY uc_user_match_tip (user_id, match_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (match_id) REFERENCES matches(match_id) ON DELETE CASCADE,
-    FOREIGN KEY (selected_team_id) REFERENCES teams(team_id)
+    FOREIGN KEY (selected_team_id) REFERENCES teams(team_id),
+    resolved_at DATETIME NULL
 );
 
 INSERT INTO teams (slug, name, abbreviation, region, icon_path, liquipedia_url, liquipedia_slug, active) VALUES

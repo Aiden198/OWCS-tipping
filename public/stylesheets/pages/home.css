@@ -457,3 +457,180 @@
   padding-top: 0rem;
 }
 */
+.recent-results-card {
+  margin-top: 1rem;
+}
+
+.recent-tip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.recent-tip-card {
+  padding: 0.9rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border);
+}
+
+.recent-tip-card--won {
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.recent-tip-card--lost {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.recent-tip-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.7rem;
+}
+
+.recent-tip-card__status {
+  font-weight: 700;
+}
+
+.recent-tip-card__amount {
+  font-weight: 800;
+  font-size: 1.05rem;
+}
+
+.recent-tip-card--won .recent-tip-card__amount {
+  color: #22c55e;
+}
+
+.recent-tip-card--lost .recent-tip-card__amount {
+  color: #ef4444;
+}
+
+.recent-tip-card__match {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.recent-tip-card__score {
+  font-weight: 800;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.recent-tip-card__picked {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.recent-results-section {
+  padding: 4rem 0;
+}
+
+.recent-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.recent-tip-card {
+  background: linear-gradient(
+    180deg,
+    rgba(18, 26, 47, 0.95),
+    rgba(10, 15, 30, 0.95)
+  );
+
+  border: 1px solid var(--border);
+  border-radius: 22px;
+
+  padding: 1.5rem;
+
+  box-shadow: var(--shadow);
+
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.recent-tip-card:hover {
+  transform: translateY(-4px);
+}
+
+.recent-tip-card--won {
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.recent-tip-card--lost {
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.recent-tip-card__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  margin-bottom: 1.5rem;
+}
+
+.recent-tip-card__status {
+  display: inline-block;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+
+  color: var(--muted);
+
+  margin-bottom: 0.4rem;
+}
+
+.recent-tip-card__picked {
+  margin: 0;
+  color: var(--text);
+  font-size: 1rem;
+}
+
+.recent-tip-card__amount {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.recent-tip-card--won .recent-tip-card__amount {
+  color: #22c55e;
+}
+
+.recent-tip-card--lost .recent-tip-card__amount {
+  color: #ef4444;
+}
+
+.recent-tip-card__match {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.recent-tip-card__score {
+  font-size: 1.4rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.recent-tip-card .match-team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.recent-tip-card .match-team__logo {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+}
+
+.recent-tip-card .match-team__abbr {
+  font-weight: 700;
+}

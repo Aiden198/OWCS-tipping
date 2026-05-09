@@ -144,6 +144,55 @@ router.get("/", async function (req, res, next) {
       LIMIT 1
     `);
 
+    let recentResolvedTips = [];
+
+    if (req.session.user) {
+      const [tipRows] = await db.query(`
+        SELECT
+          tips.tip_id,
+          tips.status,
+          tips.amount_tipped,
+          tips.odds,
+          tips.resolved_at,
+
+          m.match_id,
+          m.team_1_score,
+          m.team_2_score,
+
+          selected.name AS selected_team_name,
+          selected.abbreviation AS selected_team_abbreviation,
+          selected.icon_path AS selected_team_icon,
+
+          t1.name AS team1_name,
+          t1.abbreviation AS team1_abbreviation,
+          t1.icon_path AS team1_icon,
+
+          t2.name AS team2_name,
+          t2.abbreviation AS team2_abbreviation,
+          t2.icon_path AS team2_icon
+        FROM tips
+        JOIN matches m ON tips.match_id = m.match_id
+        JOIN teams selected ON tips.selected_team_id = selected.team_id
+        JOIN teams t1 ON m.team_1_id = t1.team_id
+        JOIN teams t2 ON m.team_2_id = t2.team_id
+        WHERE tips.user_id = ?
+          AND tips.status IN ('won', 'lost')
+          /* AND tips.resolved_at >= DATE_SUB(NOW(), INTERVAL 7 DAY) */
+        ORDER BY tips.resolved_at DESC
+        LIMIT 3
+      `, [req.session.user.userID]);
+
+      recentResolvedTips = tipRows.map(tip => ({
+        ...tip,
+        payout: tip.status === 'won'
+          ? Number(tip.amount_tipped) * Number(tip.odds)
+          : 0,
+        profit: tip.status === 'won'
+          ? Number(tip.amount_tipped) * Number(tip.odds) - Number(tip.amount_tipped)
+          : -Number(tip.amount_tipped)
+      }));
+    }
+
     const [newsItems] = await db.query(`
       SELECT *
       FROM news_items
@@ -153,7 +202,7 @@ router.get("/", async function (req, res, next) {
     `);
 
         res.render("index", {
-          featuredMatches, newsItems, biggestUpset, user: req.session.user || null
+          featuredMatches, newsItems, biggestUpset, recentResolvedTips, user: req.session.user || null
         });
       } catch (err) {
         next(err);

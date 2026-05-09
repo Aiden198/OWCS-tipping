@@ -38,6 +38,7 @@ router.get('/live', async (req, res) => {
     const params = new URLSearchParams();
     params.append('user_login', 'ow_esports');
     params.append('user_login', 'ow_esports_jp');
+    params.append('user_login', 'unter');
 
     const twitchRes = await fetch(`https://api.twitch.tv/helix/streams?${params}`, {
       headers: {

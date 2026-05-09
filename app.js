@@ -42,6 +42,7 @@ const signupApiRouter = require('./routes/api/signup');
 const accountApiRouter = require('./routes/api/account');
 const tipsApiRouter = require('./routes/api/tips');
 var matchesApiRouter = require('./routes/api/matches');
+const twitchApiRouter = require('./routes/api/twitch');
 
 var app = express();
 
@@ -128,6 +129,7 @@ app.use('/api/signup', signupApiRouter);
 app.use('/api/account', accountApiRouter);
 app.use('/api/tips', tipsApiRouter);
 app.use('/api/matches', matchesApiRouter);
+app.use('/api/twitch', twitchApiRouter);
 
 app.use('/uploads', express.static(
   process.env.NODE_ENV === 'production'

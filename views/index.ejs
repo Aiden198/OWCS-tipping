@@ -51,7 +51,7 @@
           <div class="match-list">
             <% featuredMatches.forEach((match) => { %>
               <div class="match-item">
-                <span class="result-card__time local-time" data-time="<%= match.match_datetime %>"></span>
+                <span class="result-card__time match-countdown" data-time="<%= match.match_datetime %>" style="padding: 10rem;"></span>
                 <div class="match-item__teams">
                   <div class="match-team">
                     <img src="<%= match.team1.icon %>" alt="<%= match.team1.name %> logo" class="match-team__logo">
@@ -120,6 +120,18 @@
         </div>
       </div>
     </section>
+
+    <section class="live-now-section" id="live-now-section" hidden>
+      <div class="container">
+        <div class="live-now-header">
+          <h2>OWCS is Live</h2>
+          <p>Watch the official OWCS broadcast now.</p>
+        </div>
+
+        <div class="live-now-list" id="live-now-list"></div>
+      </div>
+    </section>
+
     <section class="home-news-section">
       <div class="container">
         <div class="home-section-heading">
@@ -270,6 +282,86 @@
         btn.textContent = expanded ? 'Show Less' : 'Show More';
       });
     }
+  </script>
+
+  <script>
+    async function loadLiveStreams() {
+      try {
+        const res = await fetch('/api/twitch/live');
+        const streams = await res.json();
+
+        if (!streams || streams.length === 0) return;
+
+        const section = document.getElementById('live-now-section');
+        const list = document.getElementById('live-now-list');
+
+        list.innerHTML = streams.map(stream => `
+          <div class="live-now-card live-now-card--embed">
+            <div class="live-now-player">
+              <iframe
+                src="https://player.twitch.tv/?channel=${stream.channel}&parent=${window.location.hostname}&muted=true"
+                allowfullscreen>
+              </iframe>
+            </div>
+
+            <div class="live-now-info">
+              <div class="live-now-title-row">
+                <span class="live-pill">LIVE</span>
+                <h3>${stream.channelName}</h3>
+              </div>
+
+              <p>${stream.title}</p>
+              <small>${stream.viewerCount.toLocaleString()} viewers</small>
+
+              <a href="${stream.url}" target="_blank" rel="noopener" class="btn btn-secondary">
+                Open on Twitch
+              </a>
+            </div>
+          </div>
+        `).join('');
+
+        section.hidden = false;
+      } catch (err) {
+        console.error('Failed to load Twitch live streams:', err);
+      }
+    }
+
+    loadLiveStreams();
+  </script>
+
+  <script>
+    function updateCountdowns() {
+      const elements = document.querySelectorAll('.match-countdown');
+
+      elements.forEach(el => {
+        const target = new Date(el.dataset.time);
+        const now = new Date();
+
+        const diff = target - now;
+
+        if (diff <= 0) {
+          el.textContent = 'LIVE';
+          return;
+        }
+
+        const totalSeconds = Math.floor(diff / 1000);
+
+        const days = Math.floor(totalSeconds / (60 * 60 * 24));
+        const hours = Math.floor((totalSeconds % (60 * 60 * 24)) / (60 * 60));
+        const minutes = Math.floor((totalSeconds % (60 * 60)) / 60);
+
+        if (days > 0) {
+          el.textContent = `${days}d ${hours}h`;
+        } else if (hours > 0) {
+          el.textContent = `${hours}h ${minutes}m`;
+        } else {
+          el.textContent = `${minutes}m`;
+        }
+      });
+    }
+
+    updateCountdowns();
+    setInterval(updateCountdowns, 60000);
   </script>
   <%- include('partials/footer') %>
 </body>

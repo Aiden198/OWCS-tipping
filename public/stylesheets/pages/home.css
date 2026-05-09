@@ -370,3 +370,90 @@
   font-size: 1.4rem;
   margin-bottom: 1rem;
 }
+
+.live-now-section {
+  margin-top: 3rem;
+  padding: 2rem 0;
+}
+
+.live-now-header {
+  margin-bottom: 1rem;
+}
+
+.live-now-header h2 {
+  margin: 0;
+}
+
+.live-now-header p {
+  color: var(--muted);
+}
+
+.live-now-list {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.live-now-card {
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+.live-now-player {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 0.9rem;
+  overflow: hidden;
+  background: #000;
+  margin-bottom: 1rem;
+}
+
+.live-now-player iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.live-now-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.live-now-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.live-now-title-row h3 {
+  margin: 0;
+}
+
+.live-now-info p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.live-now-info small {
+  color: var(--muted);
+}
+
+.live-pill {
+  display: inline-flex;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #ef4444;
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+/*
+.match-countdown{
+  padding-bottom: 1rem;
+  padding-top: 0rem;
+}
+*/

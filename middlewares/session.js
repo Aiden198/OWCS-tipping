@@ -9,7 +9,7 @@ const sessionMiddleware = session({
     rolling: true, // Refresh expiry on each request
     cookie: {
         httpOnly: true, // Prevent javascript access to cookie
-        maxAge: 3600000, // 1 hour expiration
+        maxAge: 1000 * 60 * 60 * 24 * 30 * 6, // 6 months expiration
         sameSite: 'Strict', // Prevent CSRF attacks
         secure: false
     }

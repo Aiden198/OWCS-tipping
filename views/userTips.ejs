@@ -25,7 +25,10 @@
         onerror="this.src='/uploads/default.png'"
         >
 
-        <h1><%= viewedUser.username %></h1>
+        <h1 class="profile-username">
+        <%= viewedUser.username %>
+        <%- include('partials/userBadge', { user: viewedUser }) %>
+        </h1>
         <p>Public tipping history</p>
 
         <section class="account-stats-grid user-tips-stats-grid">

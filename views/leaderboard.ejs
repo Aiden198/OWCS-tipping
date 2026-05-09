@@ -46,9 +46,10 @@
               <% topUsers.forEach((user, index) => { %>
                 <div class="leaderboard-row <%= index < 3 ? 'leaderboard-row--top' : '' %>">
                   <span class="leaderboard-rank">#<%= index + 1 %></span>
-                  <span class="leaderboard-name">
-                    <a href="/users/<%= user.user_id %>"><%= user.username %></a>
-                  </span>
+                    <span class="leaderboard-name">
+                      <a href="/users/<%= user.user_id %>"><%= user.username %></a>
+                      <%- include('partials/userBadge', { user }) %>
+                    </span>
                   <span class="leaderboard-credits"><%= Number(user.total_credits).toFixed(2) %></span>
                 </div>
               <% }) %>
@@ -65,7 +66,10 @@
 
             <div class="leaderboard-row leaderboard-row--me">
               <span class="leaderboard-rank">#<%= currentUserRank.rank %></span>
-              <span class="leaderboard-name"><%= currentUserRank.username %></span>
+              <span class="leaderboard-name">
+                <%= currentUserRank.username %>
+                <%- include('partials/userBadge', { user: currentUserRank }) %>
+              </span>
               <span class="leaderboard-credits"><%= Number(currentUserRank.total_credits).toFixed(2) %></span>
             </div>
           </div>

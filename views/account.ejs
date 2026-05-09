@@ -45,7 +45,11 @@
             <div class="account-info-grid">
               <div class="account-info-item">
                 <span class="account-info-item__label">Username</span>
-                <span class="account-info-item__value" id="username">Loading...</span>
+
+                <span class="account-info-item__value username-with-badge" id="username">
+                  <span id="username-text"><%= user.username %></span>
+                  <%- include('partials/userBadge', { user }) %>
+                </span>
               </div>
 
               <div class="account-info-item">
@@ -119,7 +123,7 @@
 
         const user = await res.json();
 
-        document.getElementById('username').textContent = user.username;
+        document.getElementById('username-text').textContent = user.username;
         document.getElementById('email').textContent = user.email;
         document.getElementById('credits').textContent = Number(user.credits).toFixed(2);
         document.getElementById('account-type').textContent = Number(user.is_admin) === 1 ? 'Admin' : 'User';

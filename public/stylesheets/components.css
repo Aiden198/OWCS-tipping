@@ -136,3 +136,58 @@
   font-size: 0.95rem;
   line-height: 1;
 }
+
+
+.user-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.4rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+.badge-owner {
+  color: #fff7ed;
+  background: linear-gradient(135deg, #f97316, #facc15);
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.45);
+}
+
+.badge-vip {
+  color: #eff6ff;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.45);
+}
+
+.username-with-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.user-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.badge-owner {
+  color: #fff7ed;
+  background: linear-gradient(135deg, #f97316, #facc15);
+  box-shadow: 0 0 12px rgba(249, 115, 22, 0.45);
+}
+
+.badge-vip {
+  color: #eff6ff;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.45);
+}

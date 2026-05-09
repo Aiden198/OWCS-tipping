@@ -26,6 +26,7 @@ CREATE TABLE users (
     tips_lost INT DEFAULT 0,
     current_tip_streak INT DEFAULT 0,
     best_tip_streak INT DEFAULT 0,
+    badge_type VARCHAR(30) DEFAULT NULL
 );
 
 CREATE TABLE teams (

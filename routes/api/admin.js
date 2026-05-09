@@ -6,7 +6,7 @@ const isAdmin = require('../../middlewares/isAdmin');
 
 router.get('/users', isAuthenticated, isAdmin, async (req, res) => {
     try {
-        const [rows] = await db.query("SELECT user_id, username, email, is_admin FROM users");
+        const [rows] = await db.query("SELECT user_id, username, email, is_admin, badge_type FROM users");
         res.json(rows);
     } catch (err) {
         console.error("Error fetching users:", err);
@@ -26,6 +26,7 @@ router.get('/recent-tips', isAuthenticated, isAdmin, async (req, res) => {
 
         users.username,
         users.email,
+        users.badge_type,
 
         matches.match_datetime,
 

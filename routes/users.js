@@ -10,6 +10,7 @@ router.get('/:userId', async function(req, res, next) {
       `SELECT
           user_id,
           username,
+          badge_type,
           profile_pic,
           tips_won,
           tips_lost,

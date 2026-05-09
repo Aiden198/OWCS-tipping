@@ -38,3 +38,10 @@ a {
   width: min(1600px, 96%);
   margin: 0 auto;
 }
+
+.profile-username {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}

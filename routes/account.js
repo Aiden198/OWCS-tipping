@@ -7,8 +7,15 @@ router.get('/', isAuthenticated, async (req, res, next) => {
   try {
     const userId = req.session.user.userID;
 
-    const [[userStats]] = await db.query(`
+    const [[user]] = await db.query(`
       SELECT
+        user_id,
+        username,
+        email,
+        credits,
+        profile_pic,
+        is_admin,
+        badge_type,
         tips_won,
         tips_lost,
         current_tip_streak,
@@ -27,8 +34,8 @@ router.get('/', isAuthenticated, async (req, res, next) => {
         AND tip_time >= DATE_SUB(NOW(), INTERVAL 1 MONTH)
     `, [userId]);
 
-    const lifetimeWins = Number(userStats.tips_won || 0);
-    const lifetimeLosses = Number(userStats.tips_lost || 0);
+    const lifetimeWins = Number(user.tips_won || 0);
+    const lifetimeLosses = Number(user.tips_lost || 0);
     const lifetimeTotal = lifetimeWins + lifetimeLosses;
 
     const lastMonthWins = Number(lastMonthStats.last_month_wins || 0);
@@ -46,12 +53,12 @@ router.get('/', isAuthenticated, async (req, res, next) => {
         : 0,
       lastMonthWins,
       lastMonthLosses,
-      currentStreak: Number(userStats.current_tip_streak || 0),
-      bestStreak: Number(userStats.best_tip_streak || 0)
+      currentStreak: Number(user.current_tip_streak || 0),
+      bestStreak: Number(user.best_tip_streak || 0)
     };
 
     res.render('account', {
-      user: req.session.user,
+      user,
       profileStats
     });
   } catch (err) {

@@ -76,6 +76,19 @@
         .replaceAll('"', '&quot;')
         .replaceAll("'", '&#039;');
     }
+    function getBadgeHTML(badgeType) {
+      if (!badgeType) return '';
+
+      if (badgeType === 'owner') {
+        return `<span class="user-badge badge-owner">OWNER</span>`;
+      }
+
+      if (badgeType === 'vip') {
+        return `<span class="user-badge badge-vip">VIP</span>`;
+      }
+
+      return '';
+    }
 
     function formatMoney(value) {
       const numberValue = Number(value);
@@ -133,7 +146,12 @@
           const row = document.createElement('tr');
 
           row.innerHTML = `
-            <td>${escapeHTML(user.username)}</td>
+            <td>
+              <div class="username-with-badge">
+                ${escapeHTML(user.username)}
+                ${getBadgeHTML(user.badge_type)}
+              </div>
+            </td>
             <td>${escapeHTML(user.email)}</td>
             <td>${Number(user.is_admin) === 1 ? '✅' : '❌'}</td>
           `;
@@ -168,7 +186,12 @@
           const payout = amount * odds;
 
           row.innerHTML = `
-            <td>${escapeHTML(tip.username)}</td>
+            <td>
+              <div class="username-with-badge">
+                ${escapeHTML(tip.username)}
+                ${getBadgeHTML(tip.badge_type)}
+              </div>
+            </td>
             <td>${escapeHTML(tip.email)}</td>
             <td>${escapeHTML(tip.team_1_name)} vs ${escapeHTML(tip.team_2_name)}</td>
             <td>${escapeHTML(tip.selected_team_name)}</td>

@@ -6,6 +6,7 @@ const leaderboardSelect = `
   SELECT
     u.user_id,
     u.username,
+    u.badge_type,
     u.credits,
     COALESCE(SUM(
       CASE
@@ -23,7 +24,7 @@ const leaderboardSelect = `
     ) AS total_credits
   FROM users u
   LEFT JOIN tips t ON u.user_id = t.user_id
-  GROUP BY u.user_id, u.username, u.credits
+  GROUP BY u.user_id, u.username, u.badge_type, u.credits
 `;
 
 router.get('/', async function(req, res) {
@@ -52,6 +53,7 @@ router.get('/', async function(req, res) {
         currentUserRank = {
           rank: foundIndex + 1,
           username: allUsersOrdered[foundIndex].username,
+          badge_type: allUsersOrdered[foundIndex].badge_type,
           credits: allUsersOrdered[foundIndex].credits,
           outstanding_credits: allUsersOrdered[foundIndex].outstanding_credits,
           total_credits: allUsersOrdered[foundIndex].total_credits

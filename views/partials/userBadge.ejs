@@ -1,0 +1,7 @@
+<% if (user && user.badge_type) { %>
+  <% if (user.badge_type === 'owner') { %>
+    <span class="user-badge badge-owner">OWNER</span>
+  <% } else if (user.badge_type === 'vip') { %>
+    <span class="user-badge badge-vip">VIP</span>
+  <% } %>
+<% } %>

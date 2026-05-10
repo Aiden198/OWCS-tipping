@@ -33,6 +33,7 @@ var termsRouter = require('./routes/terms');
 var donateRouter = require('./routes/donate');
 var adminNewsRouter = require('./routes/adminNews');
 const adminUpsetRouter = require('./routes/adminUpset');
+const fullSyncRouter = require('./routes/api/fullSync');
 
 // api routes
 const adminApiRouter = require('./routes/api/admin');
@@ -130,6 +131,7 @@ app.use('/api/account', accountApiRouter);
 app.use('/api/tips', tipsApiRouter);
 app.use('/api/matches', matchesApiRouter);
 app.use('/api/twitch', twitchApiRouter);
+app.use('/api/full-sync', fullSyncRouter);
 
 app.use('/uploads', express.static(
   process.env.NODE_ENV === 'production'

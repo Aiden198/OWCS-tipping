@@ -27,7 +27,12 @@
     <div class="admin-dashboard-actions">
       <a href="/adminNews" class="btn btn-primary">Manage News</a>
       <a href="/adminUpset" class="btn btn-secondary">Manage Upsets</a>
+      <button id="runFullSyncBtn" class="btn btn-primary" type="button">
+        Run Full Sync
+      </button>
     </div>
+
+    <pre id="syncOutput" style="white-space: pre-wrap; margin-top: 1rem;"></pre>
 
     <h2>Admin: Manage Users</h2>
 
@@ -164,6 +169,38 @@
         window.location.href = '/';
       }
     }
+
+    const runFullSyncBtn = document.getElementById('runFullSyncBtn');
+    const syncOutput = document.getElementById('syncOutput');
+
+    runFullSyncBtn.addEventListener('click', async () => {
+      runFullSyncBtn.disabled = true;
+      runFullSyncBtn.textContent = 'Running Sync...';
+
+      syncOutput.textContent = 'Running full sync. Please do not refresh this page.';
+
+      try {
+        const res = await fetch('/api/full-sync', {
+          method: 'POST',
+          credentials: 'include'
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || data.message || 'Full sync failed.');
+        }
+
+        syncOutput.textContent = 'Full sync completed successfully.';
+      } catch (err) {
+        console.error(err);
+
+        syncOutput.textContent = `Full sync failed.\n\n${err.message}`;
+      } finally {
+        runFullSyncBtn.disabled = false;
+        runFullSyncBtn.textContent = 'Run Full Sync';
+      }
+    });
 
     async function loadRecentTips() {
       try {

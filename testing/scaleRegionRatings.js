@@ -4,14 +4,29 @@ const db = require('../db');
 
 async function main() {
   try {
-    console.log('[Scaling Ratings] Starting...\n');
+    console.log('[Undo Regional Scaling + Selective 7% Adjustment] Starting...\n');
 
-    // Define your scaling factors
-    const regionScales = {
-      China: 0.9,
+    // Undo the previous regional scaling
+    const regionUndoScales = {
+      Korea: 1 / 1.1,
+      Japan: 1 / 1.1,
+      China: 1 / 1.1,
+
+      EMEA: 1 / 0.9,
+      NA: 1 / 0.9,
+      Pacific: 1 / 0.9,
     };
 
-    // Show current ratings (before)
+    // Then apply specific 7% team adjustments
+    const teamAdjustments = {
+      'Twisted Minds': 0.93,
+      'Virtus.pro': 0.93,
+
+      'Crazy Raccoon': 1.07,
+      'ZETA DIVISION': 1.07,
+      'Weibo Gaming': 1.07,
+    };
+
     const [before] = await db.query(`
       SELECT team_id, name, region, rating
       FROM teams
@@ -21,9 +36,8 @@ async function main() {
     console.log('=== BEFORE ===');
     console.table(before);
 
-    // Apply scaling
-    for (const [region, scale] of Object.entries(regionScales)) {
-      console.log(`\n[Scaling] Region: ${region}, Multiplier: ${scale}`);
+    for (const [region, multiplier] of Object.entries(regionUndoScales)) {
+      console.log(`\n[Undoing region scale] ${region} × ${multiplier}`);
 
       const [result] = await db.query(
         `
@@ -31,13 +45,27 @@ async function main() {
         SET rating = ROUND(rating * ?, 0)
         WHERE region = ?
         `,
-        [scale, region]
+        [multiplier, region]
       );
 
-      console.log(`[Scaling] Updated rows: ${result.affectedRows}`);
+      console.log(`[Undoing region scale] Updated rows: ${result.affectedRows}`);
     }
 
-    // Show updated ratings (after)
+    for (const [teamName, multiplier] of Object.entries(teamAdjustments)) {
+      console.log(`\n[Applying team adjustment] ${teamName} × ${multiplier}`);
+
+      const [result] = await db.query(
+        `
+        UPDATE teams
+        SET rating = ROUND(rating * ?, 0)
+        WHERE name = ?
+        `,
+        [multiplier, teamName]
+      );
+
+      console.log(`[Applying team adjustment] Updated rows: ${result.affectedRows}`);
+    }
+
     const [after] = await db.query(`
       SELECT team_id, name, region, rating
       FROM teams
@@ -47,11 +75,11 @@ async function main() {
     console.log('\n=== AFTER ===');
     console.table(after);
 
-    console.log('\n[Scaling Ratings] Complete ✅');
+    console.log('\n[Undo Regional Scaling + Selective 7% Adjustment] Complete ✅');
     process.exit(0);
 
   } catch (err) {
-    console.error('[Scaling Ratings] ERROR:', err);
+    console.error('[Undo Regional Scaling + Selective 7% Adjustment] ERROR:', err);
     process.exit(1);
   }
 }

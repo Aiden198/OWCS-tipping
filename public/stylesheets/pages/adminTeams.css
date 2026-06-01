@@ -1,0 +1,117 @@
+.admin-teams-page {
+  padding: 2rem;
+}
+
+.team-admin-table-wrapper {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+}
+
+.team-admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.team-admin-table th,
+.team-admin-table td {
+  padding: 0.6rem;
+  border-bottom: 1px solid var(--border, #333);
+  vertical-align: middle;
+}
+
+.team-input {
+  width: 100%;
+  min-width: 120px;
+  padding: 0.45rem 0.6rem;
+
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 6px;
+
+  color: white;
+}
+
+.team-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: rgba(255,255,255,0.12);
+}
+
+.team-input.small {
+  min-width: 70px;
+}
+
+.team-icon-preview {
+  display: block;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  margin-top: 0.4rem;
+}
+
+.save-team-btn {
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.save-team-btn:hover {
+  background: #2563eb;
+}
+
+.region-separator-row td {
+  padding: 1rem 0.75rem;
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  border-top: 2px solid rgba(59, 130, 246, 0.35);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.35);
+}
+
+.success-message {
+  margin-top: 1rem;
+  color: #3ddc84;
+}
+
+.error-message {
+  margin-top: 1rem;
+  color: #ff6b6b;
+}
+
+.team-search-wrapper {
+  margin: 1.5rem 0;
+}
+
+.team-search-input {
+  width: 100%;
+  max-width: 520px;
+  padding: 0.75rem 1rem;
+
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+
+  color: white;
+  font-size: 1rem;
+}
+
+.team-search-input::placeholder {
+  color: rgba(255,255,255,0.55);
+}
+
+.team-search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: rgba(255,255,255,0.12);
+}
+
+.team-count {
+  margin: 0.5rem 0 1rem;
+  color: rgba(255,255,255,0.75);
+  font-size: 0.95rem;
+}

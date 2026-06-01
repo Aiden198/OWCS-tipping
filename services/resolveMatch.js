@@ -89,7 +89,7 @@ async function resolveMatch(matchId) {
           SET credits = credits + ?,
               tips_won = tips_won + 1,
               current_tip_streak = current_tip_streak + 1,
-              best_tip_streak = GREATEST(best_tip_streak, current_tip_streak + 1)
+              best_tip_streak = GREATEST(best_tip_streak, current_tip_streak)
           WHERE user_id = ?
           `,
           [payout, tip.user_id]

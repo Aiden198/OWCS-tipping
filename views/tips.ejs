@@ -10,10 +10,13 @@
   <link rel="stylesheet" href="/stylesheets/interactive.css">
   <link rel="stylesheet" href="/stylesheets/match-cards.css">
   <link rel="stylesheet" href="/stylesheets/pages/tips.css">
+  <link rel="stylesheet" href="/stylesheets/pages/fixtures.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 <body>
   <%- include('partials/header') %>
+
+  <div id="toast-message" class="toast-message"></div>
 
   <main class="page-shell">
     <section class="page-hero">
@@ -49,9 +52,17 @@
               <p>You have not placed any tips on upcoming matches yet.</p>
             </div>
           <% } else { %>
-            <div class="my-tips-list">
-              <% activeTips.forEach((tip) => { %>
-                <%- include('partials/tipCard', { tip: tip, isPast: false }) %>
+            <div class="fixtures-list">
+              <% activeTips.forEach((match) => {
+                  const existingTip = existingTips[match.match_id];
+                  const hasOdds = match.team_1_odds !== null && match.team_2_odds !== null;
+              %>
+                <%- include('partials/fixtureCard', {
+                  match,
+                  existingTip,
+                  hasOdds,
+                  user
+                }) %>
               <% }) %>
             </div>
           <% } %>
@@ -117,6 +128,110 @@
           pastSection.style.display = 'block';
         }
       });
+    });
+  });
+</script>
+
+<script>
+
+  function showToast(message, type = 'error') {
+    const toast = document.getElementById('toast-message');
+    if (!toast) return;
+
+    toast.textContent = message;
+    toast.className = `toast-message show ${type}`;
+
+    setTimeout(() => {
+      toast.className = 'toast-message';
+    }, 3000);
+  }
+
+  document.querySelectorAll('.tip-team-btn').forEach((button) => {
+    button.addEventListener('click', async () => {
+      const matchId = button.dataset.matchId;
+      const teamId = button.dataset.teamId;
+      const odds = button.dataset.odds;
+      const amountInput = document.getElementById(`tip-amount-${matchId}`);
+      const amount = amountInput.value;
+
+      if (!amount || Number(amount) <= 0) {
+        showToast('Please enter a valid tip amount.');
+        return;
+      }
+
+      if (!odds || odds === 'null') {
+        showToast('Odds are not available for this match yet.');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/tips', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            match_id: matchId,
+            selected_team_id: teamId,
+            odds: odds,
+            amount_tipped: amount
+          })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showToast(data.message || 'Error placing tip');
+          return;
+        }
+
+        showToast(data.message || 'Tip saved successfully.', 'success');
+
+        document
+          .querySelectorAll(`.tip-team-btn[data-match-id="${matchId}"]`)
+          .forEach(btn => btn.classList.remove('tip-team-btn--selected'));
+
+        button.classList.add('tip-team-btn--selected');
+
+        // update header text (Current tip)
+        const header = button.closest('.fixture-tip-box')
+          .querySelector('.fixture-tip-box__status');
+
+        if (header) {
+          header.textContent = `Current tip: ${Number(amount).toFixed(2)} at ${Number(odds).toFixed(2)} odds`;
+        }
+
+        console.log('data:', data);
+        console.log('balance element:', document.getElementById('user-balance'));
+        // update balance
+        const balanceEl = document.querySelector('#user-balance, .nav-credits__amount');
+        const newBalance = data.newBalance ?? data.credits;
+
+        if (balanceEl && newBalance !== undefined) {
+          balanceEl.textContent = Number(newBalance).toFixed(2);
+        }
+
+      } catch (err) {
+        console.error(err);
+        showToast('Error saving tip.');
+      }
+    });
+  });
+
+  document.querySelectorAll('.quick-bet-btn').forEach((button) => {
+    button.addEventListener('click', () => {
+      const matchId = button.dataset.matchId;
+      const amount = button.dataset.amount;
+      const amountInput = document.getElementById(`tip-amount-${matchId}`);
+
+      if (!amountInput) return;
+
+      amountInput.value = amount;
+
+      document
+        .querySelectorAll(`.quick-bet-btn[data-match-id="${matchId}"]`)
+        .forEach((btn) => btn.classList.remove('quick-bet-btn--selected'));
+
+      button.classList.add('quick-bet-btn--selected');
     });
   });
 </script>

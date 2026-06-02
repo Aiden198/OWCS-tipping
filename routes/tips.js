@@ -57,6 +57,8 @@ router.get('/', async function(req, res) {
         m.match_format,
         m.round_label,
         m.winning_team_id,
+        m.team_1_odds,
+        m.team_2_odds,
 
         c.competition_id,
         c.title AS competition_title,
@@ -65,11 +67,13 @@ router.get('/', async function(req, res) {
         c.stage_type,
 
         team1.team_id AS team_1_id,
+        team1.team_id AS team_1_db_id,
         team1.name AS team_1_name,
         team1.abbreviation AS team_1_abbreviation,
         team1.icon_path AS team_1_icon,
 
         team2.team_id AS team_2_id,
+        team2.team_id AS team_2_db_id,
         team2.name AS team_2_name,
         team2.abbreviation AS team_2_abbreviation,
         team2.icon_path AS team_2_icon
@@ -97,9 +101,19 @@ router.get('/', async function(req, res) {
       LIMIT 20
     `, [req.session.user.userID]);
 
+    const formattedActiveTips = formatTips(activeTips);
+    const formattedPastTips = formatTips(pastTips);
+
+    const existingTips = {};
+
+    formattedActiveTips.forEach((tip) => {
+      existingTips[tip.match_id] = tip;
+    });
+
     res.render('tips', {
-      activeTips: formatTips(activeTips),
-      pastTips: formatTips(pastTips),
+      activeTips: formattedActiveTips,
+      pastTips: formattedPastTips,
+      existingTips,
       user: req.session.user || null
     });
   } catch (err) {

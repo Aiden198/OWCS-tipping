@@ -1,5 +1,9 @@
 const db = require('../../db');
 
+// Minimum spacing between Liquipedia API requests to stay under the rate limit.
+const REQUEST_SPACING_MS = 2000;
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const sourcePages = require('./sourcePages');
 const parseCompetitionMetadata = require('./parseCompetitionMetadata');
 const fetchLiquipediaMatches = require('./fetchLiquipediaMatches');
@@ -109,7 +113,11 @@ async function upsertLiquipediaMatches() {
       }
 
       offset += limit;
+      await sleep(REQUEST_SPACING_MS);
     }
+
+    // Space out requests between source pages to respect the API rate limit.
+    await sleep(REQUEST_SPACING_MS);
 
     summary.matchesFound += apiMatches.length;
 

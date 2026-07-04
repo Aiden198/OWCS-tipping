@@ -1,0 +1,214 @@
+/* ===== Team Ratings (Elo) page ===== */
+
+.ratings-back-btn {
+  display: inline-block;
+  margin-top: 1rem;
+}
+
+/* Region filter */
+.ratings-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.ratings-filter-btn {
+  padding: 0.55rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.ratings-filter-btn:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+.ratings-filter-btn--active {
+  background: linear-gradient(135deg, var(--orange, #f97316), var(--blue, #3b82f6));
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Card */
+.ratings-card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.025));
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.ratings-card__header {
+  padding: 1.4rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.ratings-card__header h2 {
+  margin: 0 0 0.25rem;
+}
+
+.ratings-card__header p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* Table */
+.ratings-table {
+  display: flex;
+  flex-direction: column;
+}
+
+.ratings-row {
+  display: grid;
+  grid-template-columns: 56px 2.4fr 1fr 2fr;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ratings-row:last-child {
+  border-bottom: none;
+}
+
+.ratings-row--head {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ratings-row--top {
+  background: rgba(249, 115, 22, 0.06);
+}
+
+/* Rank */
+.ratings-rank-col {
+  font-weight: 800;
+  font-size: 1rem;
+  text-align: center;
+  color: var(--muted);
+}
+
+.ratings-rank--1 { color: #fbbf24; }
+.ratings-rank--2 { color: #d1d5db; }
+.ratings-rank--3 { color: #d97706; }
+
+/* Team */
+.ratings-team-col {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.ratings-team__logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.04);
+  flex-shrink: 0;
+}
+
+.ratings-team__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.ratings-team__name {
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ratings-team__abbr {
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+/* Region pill */
+.ratings-region-pill {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(96, 165, 250, 0.15);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  color: #bfdbfe;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Rating value + bar */
+.ratings-value-col {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.ratings-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  min-width: 40px;
+}
+
+.ratings-bar__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3b82f6, #f97316);
+}
+
+.ratings-number {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+  text-align: right;
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .ratings-row {
+    grid-template-columns: 34px 1.8fr 1.4fr;
+    gap: 0.6rem;
+    padding: 0.8rem 1rem;
+  }
+
+  /* Hide the separate region column; fold the bar away, keep the number */
+  .ratings-region-col {
+    display: none;
+  }
+
+  .ratings-row--head .ratings-region-col {
+    display: none;
+  }
+
+  .ratings-bar {
+    display: none;
+  }
+
+  .ratings-value-col {
+    justify-content: flex-end;
+  }
+
+  .ratings-team__logo {
+    width: 30px;
+    height: 30px;
+  }
+}

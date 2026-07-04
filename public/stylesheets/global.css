@@ -45,3 +45,18 @@ a {
   justify-content: center;
   gap: 0.5rem;
 }
+
+/* ===== Global mobile safeguards ===== */
+@media (max-width: 600px) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+
+  /* Keep form fields from overflowing narrow screens */
+  input,
+  select,
+  textarea {
+    max-width: 100%;
+  }
+}

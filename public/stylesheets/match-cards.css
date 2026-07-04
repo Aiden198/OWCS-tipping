@@ -202,3 +202,75 @@
     margin: 0.25rem 0;
   }
 }
+
+/* ===== Recent form pips (last 5 W/L) ===== */
+.team-form {
+  display: inline-flex;
+  gap: 3px;
+  margin-top: 5px;
+}
+
+.team-form--right {
+  justify-content: flex-end;
+}
+
+.team-form__pip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  font-size: 0.62rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #fff;
+}
+
+.team-form__pip--win {
+  background: #22c55e;
+}
+
+.team-form__pip--loss {
+  background: #ef4444;
+}
+
+/* ===== Community picks bar ===== */
+.community-picks {
+  margin: 0.85rem 0 0.25rem;
+}
+
+.community-picks__labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+
+.community-picks__labels strong {
+  color: #fff;
+}
+
+.community-picks__count {
+  font-size: 0.68rem;
+  opacity: 0.8;
+}
+
+.community-picks__bar {
+  display: flex;
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.community-picks__fill--home {
+  background: linear-gradient(90deg, #f97316, #fb923c);
+}
+
+.community-picks__fill--away {
+  background: linear-gradient(90deg, #60a5fa, #3b82f6);
+}

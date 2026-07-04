@@ -99,6 +99,9 @@
             <% matches.forEach((match) => {
                 const existingTip = existingTips[match.match_id];
                 const hasOdds = match.team_1_odds !== null && match.team_2_odds !== null;
+                const form1 = (typeof teamForm !== 'undefined' && teamForm[match.team_1_db_id]) ? teamForm[match.team_1_db_id] : [];
+                const form2 = (typeof teamForm !== 'undefined' && teamForm[match.team_2_db_id]) ? teamForm[match.team_2_db_id] : [];
+                const picks = (typeof communityPicks !== 'undefined' && communityPicks[match.match_id]) ? communityPicks[match.match_id] : null;
             %>
               <div class="fixture-card">
                 <div class="fixture-card__top">
@@ -137,6 +140,13 @@
                       <div class="fixture-team__text">
                         <span class="fixture-team__abbr"><%= match.team_1_abbreviation %></span>
                         <span class="fixture-team__name"><%= match.team_1_name %></span>
+                        <% if (form1.length) { %>
+                          <span class="team-form" title="Recent results (oldest to newest)">
+                            <% form1.forEach((r) => { %>
+                              <span class="team-form__pip team-form__pip--<%= r === 'W' ? 'win' : 'loss' %>"><%= r %></span>
+                            <% }) %>
+                          </span>
+                        <% } %>
                       </div>
                     </div>
 
@@ -146,6 +156,13 @@
                       <div class="fixture-team__text fixture-team__text--right">
                         <span class="fixture-team__abbr"><%= match.team_2_abbreviation %></span>
                         <span class="fixture-team__name"><%= match.team_2_name %></span>
+                        <% if (form2.length) { %>
+                          <span class="team-form team-form--right" title="Recent results (oldest to newest)">
+                            <% form2.forEach((r) => { %>
+                              <span class="team-form__pip team-form__pip--<%= r === 'W' ? 'win' : 'loss' %>"><%= r %></span>
+                            <% }) %>
+                          </span>
+                        <% } %>
                       </div>
                       <img
                         src="<%= match.team_2_icon %>"
@@ -154,6 +171,20 @@
                       >
                     </div>
                   </div>
+
+                  <% if (picks && picks.total > 0) { %>
+                    <div class="community-picks" title="How other users have tipped this match">
+                      <div class="community-picks__labels">
+                        <span class="community-picks__side"><%= match.team_1_abbreviation %> <strong><%= picks.team1Pct %>%</strong></span>
+                        <span class="community-picks__count"><%= picks.total %> <%= picks.total === 1 ? 'tip' : 'tips' %></span>
+                        <span class="community-picks__side"><strong><%= picks.team2Pct %>%</strong> <%= match.team_2_abbreviation %></span>
+                      </div>
+                      <div class="community-picks__bar">
+                        <div class="community-picks__fill community-picks__fill--home" style="width: <%= picks.team1Pct %>%"></div>
+                        <div class="community-picks__fill community-picks__fill--away" style="width: <%= picks.team2Pct %>%"></div>
+                      </div>
+                    </div>
+                  <% } %>
                 </div>
 
                 <div class="fixture-card__bottom">

@@ -16,7 +16,13 @@
         </div>
       </a>
 
-      <ul class="nav-links">
+      <button type="button" class="nav-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="primary-nav">
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+        <span class="nav-toggle__bar"></span>
+      </button>
+
+      <ul class="nav-links" id="primary-nav">
         <li><a href="/">Home</a></li>
         <li><a href="/fixtures">Fixtures</a></li>
         <li><a href="/tips">My Tips</a></li>
@@ -49,3 +55,16 @@
     </div>
   </nav>
 </header>
+
+<script>
+  (function () {
+    var toggle = document.querySelector('.nav-toggle');
+    var content = document.querySelector('.navbar__content');
+    if (!toggle || !content) return;
+
+    toggle.addEventListener('click', function () {
+      var isOpen = content.classList.toggle('nav-open');
+      toggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  })();
+</script>

@@ -131,3 +131,8 @@
     height: 20px;
   }
 }
+/* Link to the Team Ratings (Elo) page */
+.teams-ratings-link {
+  display: inline-block;
+  margin-top: 1rem;
+}

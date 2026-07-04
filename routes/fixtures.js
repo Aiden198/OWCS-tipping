@@ -86,6 +86,75 @@ router.get('/', async function(req, res) {
 
     const [matches] = await db.query(matchQuery, matchParams);
 
+    const matchIds = matches.map((m) => m.match_id);
+
+    // ----- Community picks: how the userbase has tipped each match -----
+    const communityPicks = {};
+    matches.forEach((m) => {
+      communityPicks[m.match_id] = { team1: 0, team2: 0, total: 0, team1Pct: 0, team2Pct: 0 };
+    });
+
+    if (matchIds.length) {
+      const [pickRows] = await db.query(`
+        SELECT match_id, selected_team_id, COUNT(*) AS cnt
+        FROM tips
+        WHERE match_id IN (?)
+        GROUP BY match_id, selected_team_id
+      `, [matchIds]);
+
+      pickRows.forEach((row) => {
+        const m = matches.find((mm) => Number(mm.match_id) === Number(row.match_id));
+        if (!m) return;
+        const entry = communityPicks[row.match_id];
+        if (Number(row.selected_team_id) === Number(m.team_1_db_id)) {
+          entry.team1 += Number(row.cnt);
+        } else if (Number(row.selected_team_id) === Number(m.team_2_db_id)) {
+          entry.team2 += Number(row.cnt);
+        }
+      });
+
+      Object.values(communityPicks).forEach((e) => {
+        e.total = e.team1 + e.team2;
+        if (e.total > 0) {
+          e.team1Pct = Math.round((e.team1 / e.total) * 100);
+          e.team2Pct = 100 - e.team1Pct;
+        }
+      });
+    }
+
+    // ----- Recent form: last 5 completed results per team (W/L) -----
+    const teamForm = {};
+    const teamIds = [
+      ...new Set(
+        matches.flatMap((m) => [m.team_1_db_id, m.team_2_db_id]).filter(Boolean)
+      )
+    ];
+
+    if (teamIds.length) {
+      teamIds.forEach((id) => { teamForm[id] = []; });
+
+      const [formRows] = await db.query(`
+        SELECT match_id, match_datetime, team_1_id, team_2_id, winning_team_id
+        FROM matches
+        WHERE completed = 1
+          AND winning_team_id IS NOT NULL
+          AND (team_1_id IN (?) OR team_2_id IN (?))
+        ORDER BY match_datetime DESC
+      `, [teamIds, teamIds]);
+
+      // formRows are newest-first; collect up to 5 per tracked team
+      formRows.forEach((row) => {
+        [row.team_1_id, row.team_2_id].forEach((tid) => {
+          if (teamForm[tid] && teamForm[tid].length < 5) {
+            teamForm[tid].push(Number(row.winning_team_id) === Number(tid) ? 'W' : 'L');
+          }
+        });
+      });
+
+      // reverse to chronological order (oldest -> newest, newest on the right)
+      Object.keys(teamForm).forEach((id) => { teamForm[id].reverse(); });
+    }
+
     let existingTips = {};
 
     if (req.session.user) {
@@ -104,6 +173,8 @@ router.get('/', async function(req, res) {
     res.render('fixtures', {
       matches,
       existingTips,
+      communityPicks,
+      teamForm,
       user: req.session.user || null,
       regions,
       selectedRegion

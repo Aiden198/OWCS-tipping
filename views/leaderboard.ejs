@@ -15,42 +15,115 @@
 <body>
   <%- include('partials/header') %>
 
+  <%
+    // Per-board display metadata
+    const boardMeta = {
+      alltime:  { label: 'All-Time',  column: 'Total Credits', blurb: 'Ranked by total credits (wallet plus outstanding stakes).' },
+      weekly:   { label: 'This Week', column: 'Net (7 days)',  blurb: 'Net credits won from tips settled in the last 7 days.' },
+      stage:    { label: 'By Stage',  column: 'Net Credits',   blurb: 'Net credits won from tips on the selected competition.' },
+      accuracy: { label: 'Accuracy',  column: 'Accuracy',      blurb: 'Correct-tip percentage (minimum ' + accuracyMinTips + ' settled tips).' }
+    };
+    const meta = boardMeta[board] || boardMeta.alltime;
+
+    function fmtPrimary(entry) {
+      if (board === 'accuracy') {
+        return Number(entry.primary).toFixed(1) + '%';
+      }
+      if (board === 'alltime') {
+        return Number(entry.primary).toFixed(2);
+      }
+      // weekly / stage: signed net profit
+      const v = Number(entry.primary);
+      const sign = v > 0 ? '+' : '';
+      return sign + v.toFixed(2);
+    }
+
+    function primaryClass(entry) {
+      if (board === 'alltime' || board === 'accuracy') return '';
+      const v = Number(entry.primary);
+      if (v > 0) return 'leaderboard-value--pos';
+      if (v < 0) return 'leaderboard-value--neg';
+      return '';
+    }
+
+    function fmtSecondary(entry) {
+      if (board === 'accuracy') return entry.wins + '/' + entry.settled + ' won';
+      if (board === 'weekly' || board === 'stage') return entry.settled + (entry.settled === 1 ? ' tip' : ' tips');
+      return '';
+    }
+  %>
+
   <main class="page-shell">
     <section class="page-hero">
       <div class="container">
         <h1>Leaderboard</h1>
-        <p>See the top users ranked by credits, and where you currently place overall.</p>
+        <p>See where you place across different ways of ranking tippers.</p>
       </div>
     </section>
 
     <section class="page-content">
       <div class="container">
+
+        <!-- Board tabs -->
+        <div class="leaderboard-tabs" role="tablist">
+          <a href="/leaderboard?board=alltime"  class="leaderboard-tab <%= board === 'alltime' ? 'leaderboard-tab--active' : '' %>">All-Time</a>
+          <a href="/leaderboard?board=weekly"   class="leaderboard-tab <%= board === 'weekly' ? 'leaderboard-tab--active' : '' %>">This Week</a>
+          <a href="/leaderboard?board=stage"    class="leaderboard-tab <%= board === 'stage' ? 'leaderboard-tab--active' : '' %>">By Stage</a>
+          <a href="/leaderboard?board=accuracy" class="leaderboard-tab <%= board === 'accuracy' ? 'leaderboard-tab--active' : '' %>">Accuracy</a>
+        </div>
+
+        <!-- Stage selector (only on stage board) -->
+        <% if (board === 'stage' && stages && stages.length > 0) { %>
+          <form method="get" action="/leaderboard" class="leaderboard-stage-picker">
+            <input type="hidden" name="board" value="stage">
+            <label for="stage-select">Competition</label>
+            <select id="stage-select" name="stage" onchange="this.form.submit()">
+              <% stages.forEach((s) => { %>
+                <option value="<%= s.key %>" <%= String(selectedStage) === String(s.key) ? 'selected' : '' %>>
+                  <%= s.label %>
+                </option>
+              <% }) %>
+            </select>
+          </form>
+        <% } %>
+
         <div class="leaderboard-card">
           <div class="leaderboard-card__header">
-            <h2>Top Players</h2>
-            <p>Showing up to the top 50 users by credits.</p>
+            <h2><%= meta.label %></h2>
+            <p><%= meta.blurb %></p>
           </div>
 
           <% if (!topUsers || topUsers.length === 0) { %>
             <div class="leaderboard-empty">
-              <p>No users found yet.</p>
+              <% if (board === 'stage' && (!stages || stages.length === 0)) { %>
+                <p>No competitions are available yet.</p>
+              <% } else if (board === 'accuracy') { %>
+                <p>No players have reached <%= accuracyMinTips %> settled tips yet.</p>
+              <% } else { %>
+                <p>No ranked tips in this period yet.</p>
+              <% } %>
             </div>
           <% } else { %>
             <div class="leaderboard-table">
               <div class="leaderboard-row leaderboard-row--head">
                 <span>Rank</span>
                 <span>Player</span>
-                <span>Total Credits</span>
+                <span><%= meta.column %></span>
               </div>
 
-              <% topUsers.forEach((user, index) => { %>
-                <div class="leaderboard-row <%= index < 3 ? 'leaderboard-row--top' : '' %>">
-                  <span class="leaderboard-rank">#<%= index + 1 %></span>
-                    <span class="leaderboard-name">
-                      <a href="/users/<%= user.user_id %>"><%= user.username %></a>
-                      <%- include('partials/userBadge', { user }) %>
-                    </span>
-                  <span class="leaderboard-credits"><%= Number(user.total_credits).toFixed(2) %></span>
+              <% topUsers.forEach((entry) => { %>
+                <div class="leaderboard-row <%= entry.rank <= 3 ? 'leaderboard-row--top' : '' %>">
+                  <span class="leaderboard-rank">#<%= entry.rank %></span>
+                  <span class="leaderboard-name">
+                    <a href="/users/<%= entry.user_id %>"><%= entry.username %></a>
+                    <%- include('partials/userBadge', { user: entry }) %>
+                  </span>
+                  <span class="leaderboard-credits">
+                    <span class="leaderboard-value <%= primaryClass(entry) %>"><%= fmtPrimary(entry) %></span>
+                    <% if (fmtSecondary(entry)) { %>
+                      <span class="leaderboard-subvalue"><%= fmtSecondary(entry) %></span>
+                    <% } %>
+                  </span>
                 </div>
               <% }) %>
             </div>
@@ -61,7 +134,7 @@
           <div class="leaderboard-card leaderboard-card--me">
             <div class="leaderboard-card__header">
               <h2>Your Position</h2>
-              <p>Your current placement compared to all users.</p>
+              <p>Your placement on the <%= meta.label %> board.</p>
             </div>
 
             <div class="leaderboard-row leaderboard-row--me">
@@ -70,10 +143,24 @@
                 <%= currentUserRank.username %>
                 <%- include('partials/userBadge', { user: currentUserRank }) %>
               </span>
-              <span class="leaderboard-credits"><%= Number(currentUserRank.total_credits).toFixed(2) %></span>
+              <span class="leaderboard-credits">
+                <span class="leaderboard-value <%= primaryClass(currentUserRank) %>"><%= fmtPrimary(currentUserRank) %></span>
+                <% if (fmtSecondary(currentUserRank)) { %>
+                  <span class="leaderboard-subvalue"><%= fmtSecondary(currentUserRank) %></span>
+                <% } %>
+              </span>
+            </div>
+          </div>
+        <% } else if (locals.user) { %>
+          <div class="leaderboard-card leaderboard-card--me">
+            <div class="leaderboard-row leaderboard-row--me">
+              <span class="leaderboard-name">
+                You don't have a ranked position on this board yet<% if (board === 'accuracy') { %> — settle at least <%= accuracyMinTips %> tips to appear.<% } else if (board === 'weekly') { %> — place a tip that settles this week to appear.<% } else { %>.<% } %>
+              </span>
             </div>
           </div>
         <% } %>
+
       </div>
     </section>
   </main>

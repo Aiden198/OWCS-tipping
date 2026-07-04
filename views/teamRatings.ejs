@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Ratings - OWCS Tipping</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/teamRatings.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <%
+    function barWidth(rating) {
+      const r = Number(rating);
+      if (!maxRating || maxRating === minRating) return 100;
+      // Scale the visible bar between 22% and 100% so lowest team still shows a sliver.
+      const pct = (r - minRating) / (maxRating - minRating);
+      return Math.round(22 + pct * 78);
+    }
+  %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Team Ratings</h1>
+        <p>
+          Live Elo ratings for OWCS teams, updated automatically as matches resolve.
+          Higher ratings mean stronger recent results.
+        </p>
+        <a href="/teams" class="btn btn-secondary ratings-back-btn">&larr; Back to Teams</a>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <div class="container">
+
+        <!-- Region filter -->
+        <div class="ratings-filter-bar">
+          <a href="/teams/ratings"
+             class="ratings-filter-btn <%= !selectedRegion ? 'ratings-filter-btn--active' : '' %>">
+            All Teams
+          </a>
+          <% regions.forEach((region) => { %>
+            <a href="/teams/ratings?region=<%= encodeURIComponent(region) %>"
+               class="ratings-filter-btn <%= selectedRegion === region ? 'ratings-filter-btn--active' : '' %>">
+              <%= region %>
+            </a>
+          <% }) %>
+        </div>
+
+        <% if (!teams || teams.length === 0) { %>
+          <div class="feature-card">
+            <h3>No Teams Found</h3>
+            <p>There are no rated teams to display<% if (selectedRegion) { %> for <strong><%= selectedRegion %></strong><% } %>.</p>
+          </div>
+        <% } else { %>
+          <div class="ratings-card">
+            <div class="ratings-card__header">
+              <h2><%= selectedRegion ? selectedRegion + ' Teams' : 'All Teams' %></h2>
+              <p><%= teams.length %> team<%= teams.length === 1 ? '' : 's' %>, ranked by Elo rating.</p>
+            </div>
+
+            <div class="ratings-table">
+              <div class="ratings-row ratings-row--head">
+                <span class="ratings-rank-col">#</span>
+                <span class="ratings-team-col">Team</span>
+                <span class="ratings-region-col">Region</span>
+                <span class="ratings-value-col">Rating</span>
+              </div>
+
+              <% teams.forEach((team, index) => { %>
+                <div class="ratings-row <%= index < 3 ? 'ratings-row--top' : '' %>">
+                  <span class="ratings-rank-col ratings-rank--<%= index + 1 %>">
+                    <%= index + 1 %>
+                  </span>
+
+                  <span class="ratings-team-col">
+                    <img
+                      src="<%= team.icon_path %>"
+                      alt="<%= team.name %> logo"
+                      class="ratings-team__logo"
+                      onerror="this.src='/images/team_icons/default_team_icon.png'"
+                    >
+                    <span class="ratings-team__text">
+                      <span class="ratings-team__name"><%= team.name %></span>
+                      <% if (team.abbreviation) { %>
+                        <span class="ratings-team__abbr"><%= team.abbreviation %></span>
+                      <% } %>
+                    </span>
+                  </span>
+
+                  <span class="ratings-region-col">
+                    <span class="ratings-region-pill"><%= team.region %></span>
+                  </span>
+
+                  <span class="ratings-value-col">
+                    <span class="ratings-bar">
+                      <span class="ratings-bar__fill" style="width: <%= barWidth(team.rating) %>%"></span>
+                    </span>
+                    <span class="ratings-number"><%= Number(team.rating) %></span>
+                  </span>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        <% } %>
+
+      </div>
+    </section>
+  </main>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

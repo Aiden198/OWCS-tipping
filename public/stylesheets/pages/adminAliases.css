@@ -1,0 +1,171 @@
+/* ===== Team Alias Manager (admin) ===== */
+
+.al-panel {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.al-panel h3 { margin: 0 0 0.25rem; }
+.al-help { margin: 0 0 0.9rem; color: var(--muted); font-size: 0.85rem; }
+
+.al-add-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.al-add-row input,
+.al-add-row select,
+.al-inline-add input,
+.al-merge select {
+  padding: 0.55rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(10, 14, 24, 0.9);
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.al-add-row input { flex: 2; min-width: 200px; }
+.al-add-row select { flex: 1; min-width: 160px; }
+
+.al-msg, .al-card__msg { font-size: 0.82rem; color: #93c5fd; margin-top: 0.5rem; min-height: 1em; }
+
+.al-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.al-search input {
+  padding: 0.55rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(10, 14, 24, 0.9);
+  color: #fff;
+  min-width: 240px;
+}
+
+.al-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.al-status { color: var(--muted); font-size: 0.85rem; margin-left: auto; }
+
+.al-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1rem;
+}
+
+.al-empty { color: var(--muted); padding: 1.5rem; }
+
+.al-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.al-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.al-team-name { font-weight: 700; font-size: 1.02rem; }
+.al-muted { color: var(--muted); font-size: 0.8rem; }
+
+.al-pill {
+  display: inline-block;
+  padding: 0.12rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  background: rgba(96, 165, 250, 0.16);
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  color: #bfdbfe;
+  vertical-align: middle;
+}
+
+.al-pill--warn {
+  background: rgba(249, 115, 22, 0.16);
+  border-color: rgba(249, 115, 22, 0.35);
+  color: #fdba74;
+}
+
+.al-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.al-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.35rem 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+}
+
+.al-chip__x {
+  border: none;
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  line-height: 1;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+.al-chip__x:hover { background: rgba(239, 68, 68, 0.3); color: #fff; }
+
+.al-card__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.7rem;
+}
+
+.al-inline-add {
+  display: flex;
+  gap: 0.4rem;
+}
+.al-inline-add input { flex: 1; min-width: 0; }
+
+.al-merge {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+.al-merge select { flex: 1; min-width: 120px; }
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.18);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+.btn-danger:hover { background: rgba(239, 68, 68, 0.32); color: #fff; }
+
+@media (max-width: 560px) {
+  .al-list { grid-template-columns: 1fr; }
+  .al-status { margin-left: 0; }
+}

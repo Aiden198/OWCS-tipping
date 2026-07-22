@@ -8,16 +8,24 @@ function parseCompetitionMetadata(pageUrl) {
   // Overwatch_Champions_Series/2026/EMEA/Stage_1/Relegation
   // Overwatch_Champions_Series/2026/Asia/Stage_1/Japan/Regular_Season
   // Overwatch_World_Cup/2026
+  // FACEIT_League/Season_9/OCE/Master
 
   const series = parts[0] || null;
-  const seasonYear = parts[1] ? Number(parts[1]) : null;
+  const isFaceit = series === 'FACEIT_League';
+  const seasonYear = !isFaceit && parts[1] ? Number(parts[1]) : null;
 
   let umbrellaRegion = null;
   let competitionRegion = null;
   let stagePart = null;
   let phasePart = null;
+  let seasonNumber = null;
 
-  if (series === 'Overwatch_World_Cup') {
+  if (isFaceit) {
+    const seasonMatch = parts[1] ? parts[1].match(/^Season_(\d+)$/i) : null;
+    seasonNumber = seasonMatch ? Number(seasonMatch[1]) : null;
+    competitionRegion = parts[2] || null; // OCE
+    stagePart = parts[3] || null;         // Master / Open
+  } else if (series === 'Overwatch_World_Cup') {
     umbrellaRegion = 'World Cup';
     competitionRegion = 'World Cup';
     stagePart = parts[2] || null;
@@ -50,12 +58,20 @@ function parseCompetitionMetadata(pageUrl) {
   }
 
   let stageType = 'main';
-  if (phasePart) {
+  if (isFaceit && stagePart) {
+    stageType = stagePart.toLowerCase();
+  } else if (phasePart) {
     stageType = phasePart.toLowerCase();
   }
 
-  const titleParts =
-    series === 'Overwatch_World_Cup'
+  const titleParts = isFaceit
+    ? [
+        'FACEIT League',
+        seasonNumber ? `Season ${seasonNumber}` : null,
+        competitionRegion,
+        stagePart
+      ].filter(Boolean)
+    : series === 'Overwatch_World_Cup'
       ? [
           'Overwatch World Cup',
           seasonYear,
@@ -73,8 +89,17 @@ function parseCompetitionMetadata(pageUrl) {
 
   const title = titleParts.join(' ');
 
-  const sourceKey =
-    series === 'Overwatch_World_Cup'
+  const sourceKey = isFaceit
+    ? [
+        'faceit_league',
+        seasonNumber,
+        competitionRegion,
+        stagePart
+      ]
+        .filter(Boolean)
+        .join(':')
+        .toLowerCase()
+    : series === 'Overwatch_World_Cup'
       ? [
           series,
           seasonYear,
@@ -100,7 +125,8 @@ function parseCompetitionMetadata(pageUrl) {
   return {
     title,
     game: 'overwatch',
-    season_year: seasonYear,
+    series: isFaceit ? 'FACEIT' : 'OWCS',
+    season_year: isFaceit ? new Date().getFullYear() : seasonYear,
     umbrella_region: umbrellaRegion,
     competition_region: competitionRegion,
     stage_number: stageNumber,

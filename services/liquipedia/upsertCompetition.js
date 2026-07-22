@@ -18,6 +18,7 @@ async function upsertCompetition(competition) {
       SET
         title = ?,
         game = ?,
+        series = ?,
         season_year = ?,
         umbrella_region = ?,
         competition_region = ?,
@@ -31,6 +32,7 @@ async function upsertCompetition(competition) {
     await db.query(updateSql, [
       competition.title,
       competition.game,
+      competition.series || 'OWCS',
       competition.season_year,
       competition.umbrella_region,
       competition.competition_region,
@@ -48,6 +50,7 @@ async function upsertCompetition(competition) {
     INSERT INTO competitions (
       title,
       game,
+      series,
       season_year,
       umbrella_region,
       competition_region,
@@ -56,12 +59,13 @@ async function upsertCompetition(competition) {
       source_page,
       source_key,
       active
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   const [insertResult] = await db.query(insertSql, [
     competition.title,
     competition.game,
+    competition.series || 'OWCS',
     competition.season_year,
     competition.umbrella_region,
     competition.competition_region,

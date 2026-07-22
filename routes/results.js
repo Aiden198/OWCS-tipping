@@ -6,6 +6,7 @@ router.get('/', async function(req, res) {
   try {
     const currentUserId = req.session.user ? req.session.user.userID : null;
     const selectedRegion = req.query.region ? req.query.region.trim() : '';
+    const selectedSeries = req.query.series === 'faceit' ? 'faceit' : '';
 
     const allRegions = ['EMEA', 'NA', 'China', 'Japan', 'Korea', 'Pacific'];
 
@@ -16,6 +17,7 @@ router.get('/', async function(req, res) {
       FROM matches m
       JOIN competitions c ON m.competition_id = c.competition_id
       WHERE m.completed = TRUE
+        AND c.series != 'FACEIT'
         AND c.competition_region IS NOT NULL
         AND c.competition_region <> ''
       GROUP BY c.competition_region
@@ -30,6 +32,16 @@ router.get('/', async function(req, res) {
       name: region,
       count: regionCountMap[region] || 0
     }));
+
+    const [[faceitCountRow]] = await db.query(`
+      SELECT COUNT(*) AS match_count
+      FROM matches m
+      JOIN competitions c ON m.competition_id = c.competition_id
+      WHERE m.completed = TRUE
+        AND c.series = 'FACEIT'
+    `);
+
+    const faceitCount = faceitCountRow ? faceitCountRow.match_count : 0;
 
     let query = `
       SELECT
@@ -97,9 +109,15 @@ router.get('/', async function(req, res) {
       queryParams.push(currentUserId);
     }
 
-    if (selectedRegion) {
-      query += ` AND c.competition_region = ?`;
-      queryParams.push(selectedRegion);
+    if (selectedSeries === 'faceit') {
+      query += ` AND c.series = 'FACEIT'`;
+    } else {
+      query += ` AND c.series != 'FACEIT'`;
+
+      if (selectedRegion) {
+        query += ` AND c.competition_region = ?`;
+        queryParams.push(selectedRegion);
+      }
     }
 
     query += `
@@ -153,7 +171,9 @@ router.get('/', async function(req, res) {
       results,
       user: req.session.user || null,
       regions,
-      selectedRegion
+      selectedRegion,
+      selectedSeries,
+      faceitCount
     });
   } catch (err) {
     console.error('Results page error:', err);

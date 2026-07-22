@@ -1,0 +1,128 @@
+/* ===== Admin dashboard ===== */
+
+/* Navigation card grid */
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.admin-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.15s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.admin-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--orange, #f97316);
+  background: rgba(249, 115, 22, 0.06);
+}
+
+.admin-card--accent {
+  border-color: rgba(249, 115, 22, 0.4);
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.14), rgba(59, 130, 246, 0.12));
+}
+
+.admin-card__icon { font-size: 1.7rem; line-height: 1; }
+.admin-card__title { font-weight: 800; font-size: 1.05rem; }
+.admin-card__desc { color: var(--muted); font-size: 0.82rem; }
+
+/* Panels */
+.admin-panel {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02));
+  padding: 1.25rem 1.4rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-panel__head h2 { margin: 0; font-size: 1.25rem; }
+.admin-panel__note { color: var(--muted); font-size: 0.85rem; margin: 0.4rem 0 0.8rem; }
+
+.admin-sync-output {
+  white-space: pre-wrap;
+  margin: 0.8rem 0 0;
+  padding: 0.9rem 1rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  min-height: 1.2em;
+}
+
+/* Tables */
+.admin-table-wrap {
+  overflow-x: auto;
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 0.7rem 0.9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.admin-table th {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.admin-table tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+.admin-table tbody tr:last-child td { border-bottom: none; }
+
+.username-with-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Status pills */
+.admin-status {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.admin-status--won { background: rgba(52, 211, 153, 0.18); color: #6ee7b7; }
+.admin-status--lost { background: rgba(239, 68, 68, 0.18); color: #fca5a5; }
+.admin-status--pending { background: rgba(250, 204, 21, 0.16); color: #fde68a; }
+
+@media (max-width: 560px) {
+  .admin-grid { grid-template-columns: 1fr 1fr; }
+  .admin-card__desc { display: none; }
+}

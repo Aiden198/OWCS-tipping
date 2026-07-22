@@ -41,7 +41,7 @@
           <div class="fixtures-filter-buttons">
             <a
               href="/fixtures"
-              class="fixtures-filter-btn <%= !selectedRegion ? 'fixtures-filter-btn--active' : '' %>"
+              class="fixtures-filter-btn <%= (!selectedRegion && !selectedSeries) ? 'fixtures-filter-btn--active' : '' %>"
             >
               All
             </a>
@@ -50,7 +50,7 @@
               <% if (region.count > 0) { %>
                 <a
                   href="/fixtures?region=<%= encodeURIComponent(region.name) %>"
-                  class="fixtures-filter-btn <%= selectedRegion === region.name ? 'fixtures-filter-btn--active' : '' %>"
+                  class="fixtures-filter-btn <%= (selectedRegion === region.name && !selectedSeries) ? 'fixtures-filter-btn--active' : '' %>"
                 >
                   <%= region.name %> (<%= region.count %>)
                 </a>
@@ -60,6 +60,19 @@
                 </span>
               <% } %>
             <% }) %>
+
+            <% if (faceitCount > 0) { %>
+              <a
+                href="/fixtures?series=faceit"
+                class="fixtures-filter-btn <%= selectedSeries === 'faceit' ? 'fixtures-filter-btn--active' : '' %>"
+              >
+                FACEIT (<%= faceitCount %>)
+              </a>
+            <% } else { %>
+              <span class="fixtures-filter-btn fixtures-filter-btn--disabled">
+                FACEIT (0)
+              </span>
+            <% } %>
           </div>
         </div>
 
@@ -88,7 +101,9 @@
         <% if (matches.length === 0) { %>
           <div class="feature-card">
             <h3>No Upcoming Matches</h3>
-            <% if (selectedRegion) { %>
+            <% if (selectedSeries === 'faceit') { %>
+              <p>There are currently no scheduled FACEIT League fixtures.</p>
+            <% } else if (selectedRegion) { %>
               <p>There are currently no scheduled fixtures for <strong><%= selectedRegion %></strong>.</p>
             <% } else { %>
               <p>There are currently no scheduled fixtures to tip on.</p>

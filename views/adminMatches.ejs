@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Match Manager - Admin</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/adminMatches.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Match Manager</h1>
+        <p>Fix results, odds and timings, and resolve payouts directly. <a href="/admin">&larr; Back to Admin</a></p>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <div class="container">
+
+        <div class="am-toolbar">
+          <div class="am-filters" id="am-filters">
+            <button class="am-filter am-filter--active" data-filter="unresolved">Needs Resolving</button>
+            <button class="am-filter" data-filter="upcoming">Upcoming</button>
+            <button class="am-filter" data-filter="resolved">Resolved</button>
+            <button class="am-filter" data-filter="all">All</button>
+          </div>
+          <div class="am-search">
+            <input type="text" id="am-search-input" placeholder="Search by team name...">
+            <button id="am-search-btn" class="btn btn-secondary">Search</button>
+          </div>
+        </div>
+
+        <div id="am-status" class="am-status"></div>
+
+        <div class="am-table-wrap">
+          <table class="am-table">
+            <thead>
+              <tr>
+                <th>Match</th>
+                <th>When</th>
+                <th>State</th>
+                <th>Score</th>
+                <th>Odds</th>
+                <th>Tips</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="am-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit modal -->
+  <div id="am-modal" class="am-modal" hidden>
+    <div class="am-modal__backdrop" data-close></div>
+    <div class="am-modal__panel" role="dialog" aria-modal="true">
+      <h2 id="am-modal-title">Edit Match</h2>
+      <div id="am-modal-meta" class="am-modal__meta"></div>
+      <div id="am-resolved-warning" class="am-warning" hidden>
+        This match is already resolved. Result fields are locked to protect payouts and ratings; you can still adjust odds, time and format.
+      </div>
+
+      <div class="am-form-grid">
+        <label>Match time (UTC)
+          <input type="datetime-local" id="am-datetime">
+        </label>
+        <label>Format
+          <input type="text" id="am-format" placeholder="Bo3 / Bo5 / Bo7">
+        </label>
+
+        <label>Status
+          <select id="am-status-select">
+            <option value="upcoming">upcoming</option>
+            <option value="live">live</option>
+            <option value="completed">completed</option>
+          </select>
+        </label>
+        <div></div>
+
+        <label><span id="am-team1-label">Team 1</span> odds
+          <input type="number" step="0.01" min="1" id="am-odds1">
+        </label>
+        <label><span id="am-team2-label">Team 2</span> odds
+          <input type="number" step="0.01" min="1" id="am-odds2">
+        </label>
+
+        <label><span id="am-team1-label2">Team 1</span> score
+          <input type="number" step="1" min="0" id="am-score1">
+        </label>
+        <label><span id="am-team2-label2">Team 2</span> score
+          <input type="number" step="1" min="0" id="am-score2">
+        </label>
+
+        <label class="am-form-grid__full">Winner
+          <select id="am-winner">
+            <option value="">— none —</option>
+            <option value="t1" id="am-winner-t1">Team 1</option>
+            <option value="t2" id="am-winner-t2">Team 2</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="am-modal__actions">
+        <button class="btn btn-secondary" data-close>Cancel</button>
+        <button class="btn btn-secondary" id="am-resolve-btn">Resolve now</button>
+        <button class="btn btn-primary" id="am-save-btn">Save</button>
+        <button class="btn btn-primary" id="am-save-resolve-btn">Save &amp; Resolve</button>
+      </div>
+      <div id="am-modal-msg" class="am-modal__msg"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const tbody = document.getElementById('am-tbody');
+      const statusEl = document.getElementById('am-status');
+      const modal = document.getElementById('am-modal');
+      const msgEl = document.getElementById('am-modal-msg');
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const validFilters = ['unresolved', 'upcoming', 'resolved', 'all'];
+      let currentFilter = validFilters.includes(urlParams.get('filter')) ? urlParams.get('filter') : 'unresolved';
+      let currentSearch = urlParams.get('search') ? String(urlParams.get('search')).trim() : '';
+      let matchesById = {};
+      let editingId = null;
+
+      function esc(v) {
+        if (v === null || v === undefined) return '';
+        return String(v)
+          .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+      }
+
+      function fmtWhen(v) {
+        if (!v) return '<span class="am-tag am-tag--warn">NO DATE</span>';
+        try { return esc(new Date(v).toLocaleString()); } catch (e) { return esc(v); }
+      }
+
+      // Convert stored datetime to a datetime-local value (kept in UTC wall-clock for clean round-trips).
+      function toInputValue(v) {
+        if (!v) return '';
+        try { return new Date(v).toISOString().slice(0, 16); } catch (e) { return ''; }
+      }
+
+      function num(v) { return (v === null || v === undefined || v === '') ? null : Number(v); }
+
+      function stateBadges(m) {
+        const out = [];
+        if (Number(m.resolved) === 1) out.push('<span class="am-tag am-tag--ok">RESOLVED</span>');
+        else if (Number(m.completed) === 1) out.push('<span class="am-tag am-tag--warn">NEEDS RESOLVING</span>');
+        else out.push('<span class="am-tag">' + esc(m.status) + '</span>');
+
+        if (m.status === 'upcoming' && (m.team_1_odds === null || m.team_2_odds === null)) {
+          out.push('<span class="am-tag am-tag--warn">NO ODDS</span>');
+        }
+        if (!m.team_1_id || !m.team_2_id) out.push('<span class="am-tag am-tag--warn">UNMAPPED TEAM</span>');
+        return out.join(' ');
+      }
+
+      function scoreCell(m) {
+        if (m.team_1_score === null || m.team_2_score === null) return '<span class="am-muted">—</span>';
+        const w1 = Number(m.winning_team_id) === Number(m.team_1_id);
+        const w2 = Number(m.winning_team_id) === Number(m.team_2_id);
+        return '<strong class="' + (w1 ? 'am-win' : '') + '">' + esc(m.team_1_score) + '</strong>'
+             + ' : '
+             + '<strong class="' + (w2 ? 'am-win' : '') + '">' + esc(m.team_2_score) + '</strong>';
+      }
+
+      function oddsCell(m) {
+        const o1 = m.team_1_odds === null ? '—' : Number(m.team_1_odds).toFixed(2);
+        const o2 = m.team_2_odds === null ? '—' : Number(m.team_2_odds).toFixed(2);
+        return esc(o1) + ' / ' + esc(o2);
+      }
+
+      async function load() {
+        statusEl.textContent = 'Loading...';
+        tbody.innerHTML = '';
+        try {
+          const url = '/api/admin/matches?filter=' + encodeURIComponent(currentFilter)
+            + '&search=' + encodeURIComponent(currentSearch);
+          const res = await fetch(url, { credentials: 'include' });
+          if (!res.ok) throw new Error('Request failed');
+          const data = await res.json();
+          const matches = data.matches || [];
+          matchesById = {};
+          matches.forEach(m => { matchesById[m.match_id] = m; });
+
+          statusEl.textContent = matches.length + ' match' + (matches.length === 1 ? '' : 'es');
+
+          if (matches.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="am-empty">No matches for this view.</td></tr>';
+            return;
+          }
+
+          matches.forEach(m => {
+            const tr = document.createElement('tr');
+            const t1 = m.team_1_abbr || m.team_1_name || '?';
+            const t2 = m.team_2_abbr || m.team_2_name || '?';
+            tr.innerHTML =
+              '<td><div class="am-match-teams">' + esc(t1) + ' <span class="am-vs">vs</span> ' + esc(t2) + '</div>'
+                + '<div class="am-match-sub">' + esc(m.competition_region || '') + (m.round_label ? ' • ' + esc(m.round_label) : '') + '</div></td>'
+              + '<td>' + fmtWhen(m.match_datetime) + '</td>'
+              + '<td>' + stateBadges(m) + '</td>'
+              + '<td>' + scoreCell(m) + '</td>'
+              + '<td>' + oddsCell(m) + '</td>'
+              + '<td>' + esc(m.tip_count) + (Number(m.pending_tip_count) > 0 ? ' <span class="am-muted">(' + esc(m.pending_tip_count) + ' pending)</span>' : '') + '</td>'
+              + '<td><button class="btn btn-secondary am-edit-btn" data-id="' + esc(m.match_id) + '">Edit</button></td>';
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = 'Failed to load matches.';
+        }
+      }
+
+      function openModal(id) {
+        const m = matchesById[id];
+        if (!m) return;
+        editingId = id;
+        msgEl.textContent = '';
+
+        const t1 = m.team_1_name || m.team_1_abbr || 'Team 1';
+        const t2 = m.team_2_name || m.team_2_abbr || 'Team 2';
+
+        document.getElementById('am-modal-title').textContent = t1 + ' vs ' + t2;
+        document.getElementById('am-modal-meta').textContent =
+          (m.competition_title || '') + '  •  ' + m.tip_count + ' tips (' + m.pending_tip_count + ' pending)';
+
+        document.getElementById('am-team1-label').textContent = t1;
+        document.getElementById('am-team2-label').textContent = t2;
+        document.getElementById('am-team1-label2').textContent = t1;
+        document.getElementById('am-team2-label2').textContent = t2;
+        document.getElementById('am-winner-t1').textContent = t1;
+        document.getElementById('am-winner-t2').textContent = t2;
+
+        document.getElementById('am-datetime').value = toInputValue(m.match_datetime);
+        document.getElementById('am-format').value = m.match_format || '';
+        document.getElementById('am-status-select').value = m.status || 'upcoming';
+        document.getElementById('am-odds1').value = m.team_1_odds === null ? '' : Number(m.team_1_odds);
+        document.getElementById('am-odds2').value = m.team_2_odds === null ? '' : Number(m.team_2_odds);
+        document.getElementById('am-score1').value = m.team_1_score === null ? '' : m.team_1_score;
+        document.getElementById('am-score2').value = m.team_2_score === null ? '' : m.team_2_score;
+
+        let winnerVal = '';
+        if (Number(m.winning_team_id) === Number(m.team_1_id)) winnerVal = 't1';
+        else if (Number(m.winning_team_id) === Number(m.team_2_id)) winnerVal = 't2';
+        document.getElementById('am-winner').value = winnerVal;
+
+        const resolved = Number(m.resolved) === 1;
+        document.getElementById('am-resolved-warning').hidden = !resolved;
+        // Lock result fields when resolved
+        ['am-status-select', 'am-score1', 'am-score2', 'am-winner'].forEach(fid => {
+          document.getElementById(fid).disabled = resolved;
+        });
+        document.getElementById('am-save-resolve-btn').hidden = resolved;
+        document.getElementById('am-resolve-btn').hidden = !(Number(m.completed) === 1 && !resolved);
+
+        modal.hidden = false;
+      }
+
+      function closeModal() { modal.hidden = true; editingId = null; }
+
+      function collectPayload() {
+        const winnerSel = document.getElementById('am-winner').value;
+        const m = matchesById[editingId];
+        let winning_team_id = '';
+        if (winnerSel === 't1') winning_team_id = m.team_1_id;
+        else if (winnerSel === 't2') winning_team_id = m.team_2_id;
+
+        return {
+          match_datetime: document.getElementById('am-datetime').value || '',
+          match_format: document.getElementById('am-format').value || '',
+          status: document.getElementById('am-status-select').value,
+          team_1_odds: document.getElementById('am-odds1').value,
+          team_2_odds: document.getElementById('am-odds2').value,
+          team_1_score: document.getElementById('am-score1').value,
+          team_2_score: document.getElementById('am-score2').value,
+          winning_team_id: winning_team_id
+        };
+      }
+
+      async function save(resolveNow) {
+        if (editingId === null) return;
+        const payload = collectPayload();
+        payload.resolveNow = !!resolveNow;
+        msgEl.textContent = 'Saving...';
+        try {
+          const res = await fetch('/api/admin/matches/' + editingId, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.error || 'Save failed');
+
+          if (resolveNow && data.resolveError) {
+            msgEl.textContent = 'Saved, but resolve failed: ' + data.resolveError;
+          } else if (data.resolved) {
+            msgEl.textContent = 'Saved and resolved. ' + (data.resolveResult ? data.resolveResult.resolvedTips + ' tips paid out.' : '');
+            setTimeout(() => { closeModal(); load(); }, 900);
+            return;
+          } else {
+            msgEl.textContent = 'Saved.';
+          }
+          setTimeout(() => { closeModal(); load(); }, 700);
+        } catch (err) {
+          msgEl.textContent = err.message;
+        }
+      }
+
+      async function resolveOnly() {
+        if (editingId === null) return;
+        msgEl.textContent = 'Resolving...';
+        try {
+          const res = await fetch('/api/admin/matches/' + editingId + '/resolve', {
+            method: 'POST', credentials: 'include'
+          });
+          const data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.error || 'Resolve failed');
+          msgEl.textContent = 'Resolved. ' + (data.result ? data.result.resolvedTips + ' tips paid out.' : '');
+          setTimeout(() => { closeModal(); load(); }, 900);
+        } catch (err) {
+          msgEl.textContent = err.message;
+        }
+      }
+
+      // Events
+      document.getElementById('am-filters').addEventListener('click', (e) => {
+        const btn = e.target.closest('.am-filter');
+        if (!btn) return;
+        document.querySelectorAll('.am-filter').forEach(b => b.classList.remove('am-filter--active'));
+        btn.classList.add('am-filter--active');
+        currentFilter = btn.dataset.filter;
+        load();
+      });
+      document.getElementById('am-search-btn').addEventListener('click', () => {
+        currentSearch = document.getElementById('am-search-input').value.trim();
+        load();
+      });
+      document.getElementById('am-search-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { currentSearch = e.target.value.trim(); load(); }
+      });
+      tbody.addEventListener('click', (e) => {
+        const btn = e.target.closest('.am-edit-btn');
+        if (btn) openModal(Number(btn.dataset.id));
+      });
+      modal.addEventListener('click', (e) => { if (e.target.hasAttribute('data-close')) closeModal(); });
+      document.getElementById('am-save-btn').addEventListener('click', () => save(false));
+      document.getElementById('am-save-resolve-btn').addEventListener('click', () => save(true));
+      document.getElementById('am-resolve-btn').addEventListener('click', resolveOnly);
+
+      // Reflect any URL-driven filter/search in the UI before first load.
+      document.querySelectorAll('.am-filter').forEach(b => {
+        b.classList.toggle('am-filter--active', b.dataset.filter === currentFilter);
+      });
+      if (currentSearch) document.getElementById('am-search-input').value = currentSearch;
+
+      load();
+    })();
+  </script>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

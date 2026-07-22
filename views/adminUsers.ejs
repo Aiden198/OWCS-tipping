@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Management - Admin</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/adminUsers.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>User Management</h1>
+        <p>Adjust credits, roles, badges and passwords. <a href="/admin">&larr; Back to Admin</a></p>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <div class="container">
+
+        <div class="au-toolbar">
+          <div class="au-search">
+            <input type="text" id="au-search-input" placeholder="Search name or email...">
+            <button id="au-search-btn" class="btn btn-secondary">Search</button>
+          </div>
+          <div class="au-topup">
+            <label>Top up balances below
+              <input type="number" id="au-topup-target" value="500" min="1" step="50">
+            </label>
+            <button id="au-topup-btn" class="btn btn-primary">Top Up Low Balances</button>
+          </div>
+        </div>
+
+        <div id="au-status" class="au-status"></div>
+
+        <div class="au-table-wrap">
+          <table class="au-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Email</th>
+                <th>Credits</th>
+                <th>Admin</th>
+                <th>W / L</th>
+                <th>Streak</th>
+                <th>Joined</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="au-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Edit modal -->
+  <div id="au-modal" class="au-modal" hidden>
+    <div class="au-modal__backdrop" data-close></div>
+    <div class="au-modal__panel" role="dialog" aria-modal="true">
+      <h2 id="au-modal-title">Edit User</h2>
+      <div id="au-modal-sub" class="au-modal__sub"></div>
+
+      <div class="au-section">
+        <h3>Credits</h3>
+        <div class="au-row">
+          <select id="au-credit-mode">
+            <option value="set">Set to</option>
+            <option value="adjust">Adjust by (+/-)</option>
+          </select>
+          <input type="number" id="au-credit-amount" step="1" placeholder="Amount">
+          <button class="btn btn-primary" id="au-credit-apply">Apply</button>
+        </div>
+      </div>
+
+      <div class="au-section">
+        <h3>Role</h3>
+        <div class="au-row">
+          <span id="au-admin-state" class="au-muted"></span>
+          <button class="btn btn-secondary" id="au-admin-btn">Toggle Admin</button>
+        </div>
+        <p id="au-admin-note" class="au-note" hidden>You cannot change your own admin access.</p>
+      </div>
+
+      <div class="au-section">
+        <h3>Badge</h3>
+        <div class="au-row">
+          <select id="au-badge-select">
+            <option value="">None</option>
+            <option value="owner">Owner</option>
+            <option value="vip">VIP</option>
+          </select>
+          <button class="btn btn-secondary" id="au-badge-apply">Apply</button>
+        </div>
+      </div>
+
+      <div class="au-section">
+        <h3>Reset Password</h3>
+        <div class="au-row">
+          <input type="text" id="au-password" placeholder="New password (min 8 chars)">
+          <button class="btn btn-secondary" id="au-password-apply">Reset</button>
+        </div>
+      </div>
+
+      <div class="au-modal__actions">
+        <a id="au-history-link" class="btn btn-secondary" href="#" target="_blank" rel="noopener">View Tip History</a>
+        <button class="btn btn-secondary" data-close>Close</button>
+      </div>
+      <div id="au-modal-msg" class="au-modal__msg"></div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const CURRENT_USER_ID = Number(<%= currentUserId %>);
+      const tbody = document.getElementById('au-tbody');
+      const statusEl = document.getElementById('au-status');
+      const modal = document.getElementById('au-modal');
+      const msgEl = document.getElementById('au-modal-msg');
+
+      let usersById = {};
+      let editingId = null;
+      let currentSearch = '';
+
+      function esc(v) {
+        if (v === null || v === undefined) return '';
+        return String(v)
+          .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+      }
+      function money(v) { const n = Number(v); return Number.isFinite(n) ? n.toFixed(2) : '0.00'; }
+      function badgeHTML(b) {
+        if (b === 'owner') return '<span class="user-badge badge-owner">OWNER</span>';
+        if (b === 'vip') return '<span class="user-badge badge-vip">VIP</span>';
+        return '';
+      }
+      function fmtDate(v) { if (!v) return '—'; try { return new Date(v).toLocaleDateString(); } catch (e) { return esc(v); } }
+
+      function rowHTML(u) {
+        return '<td><div class="au-name">' + esc(u.username) + ' ' + badgeHTML(u.badge_type) + '</div></td>'
+          + '<td class="au-muted">' + esc(u.email) + '</td>'
+          + '<td><strong>' + money(u.credits) + '</strong></td>'
+          + '<td>' + (Number(u.is_admin) === 1 ? '✅' : '—') + '</td>'
+          + '<td>' + esc(u.tips_won || 0) + ' / ' + esc(u.tips_lost || 0) + '</td>'
+          + '<td>' + esc(u.current_tip_streak || 0) + ' <span class="au-muted">(best ' + esc(u.best_tip_streak || 0) + ')</span></td>'
+          + '<td class="au-muted">' + fmtDate(u.created_at) + '</td>'
+          + '<td><button class="btn btn-secondary au-edit-btn" data-id="' + esc(u.user_id) + '">Edit</button></td>';
+      }
+
+      function renderRow(u) {
+        const tr = document.querySelector('tr[data-uid="' + u.user_id + '"]');
+        if (tr) tr.innerHTML = rowHTML(u);
+      }
+
+      async function load() {
+        statusEl.textContent = 'Loading...';
+        tbody.innerHTML = '';
+        try {
+          const res = await fetch('/api/admin/users/list?search=' + encodeURIComponent(currentSearch), { credentials: 'include' });
+          if (!res.ok) throw new Error('Request failed');
+          const data = await res.json();
+          const users = data.users || [];
+          usersById = {};
+          users.forEach(u => { usersById[u.user_id] = u; });
+          statusEl.textContent = users.length + ' user' + (users.length === 1 ? '' : 's');
+
+          if (users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" class="au-empty">No users found.</td></tr>';
+            return;
+          }
+          users.forEach(u => {
+            const tr = document.createElement('tr');
+            tr.setAttribute('data-uid', u.user_id);
+            tr.innerHTML = rowHTML(u);
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          console.error(err);
+          statusEl.textContent = 'Failed to load users.';
+        }
+      }
+
+      function openModal(id) {
+        const u = usersById[id];
+        if (!u) return;
+        editingId = id;
+        msgEl.textContent = '';
+
+        document.getElementById('au-modal-title').textContent = u.username;
+        document.getElementById('au-modal-sub').textContent = u.email + '  •  ' + money(u.credits) + ' credits';
+        document.getElementById('au-credit-mode').value = 'set';
+        document.getElementById('au-credit-amount').value = '';
+        document.getElementById('au-badge-select').value = u.badge_type || '';
+        document.getElementById('au-password').value = '';
+        document.getElementById('au-history-link').href = '/users/' + u.user_id;
+
+        updateAdminUI(u);
+        modal.hidden = false;
+      }
+
+      function updateAdminUI(u) {
+        const isAdmin = Number(u.is_admin) === 1;
+        document.getElementById('au-admin-state').textContent = isAdmin ? 'Currently: admin' : 'Currently: standard user';
+        const btn = document.getElementById('au-admin-btn');
+        btn.textContent = isAdmin ? 'Revoke Admin' : 'Grant Admin';
+        const isSelf = Number(u.user_id) === CURRENT_USER_ID;
+        btn.disabled = isSelf;
+        document.getElementById('au-admin-note').hidden = !isSelf;
+      }
+
+      function closeModal() { modal.hidden = true; editingId = null; }
+
+      async function post(url, body) {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(body || {})
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) throw new Error(data.error || 'Request failed');
+        return data;
+      }
+
+      // Credits
+      document.getElementById('au-credit-apply').addEventListener('click', async () => {
+        if (editingId === null) return;
+        const mode = document.getElementById('au-credit-mode').value;
+        const amount = document.getElementById('au-credit-amount').value;
+        msgEl.textContent = 'Updating credits...';
+        try {
+          const data = await post('/api/admin/users/' + editingId + '/credits', { mode, amount });
+          usersById[editingId].credits = data.credits;
+          document.getElementById('au-modal-sub').textContent =
+            usersById[editingId].email + '  •  ' + money(data.credits) + ' credits';
+          renderRow(usersById[editingId]);
+          msgEl.textContent = 'Credits updated to ' + money(data.credits) + '.';
+        } catch (err) { msgEl.textContent = err.message; }
+      });
+
+      // Admin toggle
+      document.getElementById('au-admin-btn').addEventListener('click', async () => {
+        if (editingId === null) return;
+        const u = usersById[editingId];
+        const next = Number(u.is_admin) === 1 ? 0 : 1;
+        msgEl.textContent = 'Updating role...';
+        try {
+          const data = await post('/api/admin/users/' + editingId + '/admin', { is_admin: next });
+          u.is_admin = data.is_admin;
+          updateAdminUI(u);
+          renderRow(u);
+          msgEl.textContent = 'Role updated.';
+        } catch (err) { msgEl.textContent = err.message; }
+      });
+
+      // Badge
+      document.getElementById('au-badge-apply').addEventListener('click', async () => {
+        if (editingId === null) return;
+        const badge = document.getElementById('au-badge-select').value;
+        msgEl.textContent = 'Updating badge...';
+        try {
+          const data = await post('/api/admin/users/' + editingId + '/badge', { badge_type: badge });
+          usersById[editingId].badge_type = data.badge_type;
+          renderRow(usersById[editingId]);
+          msgEl.textContent = 'Badge updated.';
+        } catch (err) { msgEl.textContent = err.message; }
+      });
+
+      // Password
+      document.getElementById('au-password-apply').addEventListener('click', async () => {
+        if (editingId === null) return;
+        const password = document.getElementById('au-password').value;
+        if (password.length < 8) { msgEl.textContent = 'Password must be at least 8 characters.'; return; }
+        msgEl.textContent = 'Resetting password...';
+        try {
+          await post('/api/admin/users/' + editingId + '/password', { password });
+          document.getElementById('au-password').value = '';
+          msgEl.textContent = 'Password reset.';
+        } catch (err) { msgEl.textContent = err.message; }
+      });
+
+      // Top up
+      document.getElementById('au-topup-btn').addEventListener('click', async () => {
+        const target = Number(document.getElementById('au-topup-target').value) || 500;
+        if (!confirm('Set every user below ' + target + ' credits up to ' + target + '?')) return;
+        statusEl.textContent = 'Topping up...';
+        try {
+          const data = await post('/api/admin/users/topup', { target });
+          statusEl.textContent = data.toppedUp + ' account(s) topped up to ' + data.target + '.';
+          load();
+        } catch (err) { statusEl.textContent = err.message; }
+      });
+
+      // Toolbar / table events
+      document.getElementById('au-search-btn').addEventListener('click', () => {
+        currentSearch = document.getElementById('au-search-input').value.trim();
+        load();
+      });
+      document.getElementById('au-search-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { currentSearch = e.target.value.trim(); load(); }
+      });
+      tbody.addEventListener('click', (e) => {
+        const btn = e.target.closest('.au-edit-btn');
+        if (btn) openModal(Number(btn.dataset.id));
+      });
+      modal.addEventListener('click', (e) => { if (e.target.hasAttribute('data-close')) closeModal(); });
+
+      load();
+    })();
+  </script>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

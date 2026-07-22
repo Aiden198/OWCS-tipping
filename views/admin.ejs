@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - OWCS Tipping</title>
   <link rel="stylesheet" href="/stylesheets/global.css">
   <link rel="stylesheet" href="/stylesheets/layout.css">
   <link rel="stylesheet" href="/stylesheets/components.css">
@@ -21,60 +22,119 @@
 <body>
   <%- include('partials/header') %>
 
-  <div class="account-container" style ="padding: 2rem;">
-    <h1>Admin Dashboard</h1>
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Admin Dashboard</h1>
+        <p>Manage matches, users, teams and content — and keep an eye on anything that needs fixing.</p>
+      </div>
+    </section>
 
-    <div class="admin-dashboard-actions">
-      <a href="/adminNews" class="btn btn-primary">Manage News</a>
-      <a href="/adminTeams" class="btn btn-secondary">Manage Teams</a>
-      <a href="/adminUpset" class="btn btn-secondary">Manage Upsets</a>
-      <button id="runFullSyncBtn" class="btn btn-primary" type="button">
-        Run Full Sync
-      </button>
-    </div>
+    <section class="page-content">
+      <div class="container">
 
-    <pre id="syncOutput" style="white-space: pre-wrap; margin-top: 1rem;"></pre>
+        <!-- Navigation cards -->
+        <div class="admin-grid">
+          <a href="/adminHealth" class="admin-card admin-card--accent">
+            <span class="admin-card__icon">🩺</span>
+            <span class="admin-card__title">Health &amp; Triage</span>
+            <span class="admin-card__desc">Everything that needs attention, in one place.</span>
+          </a>
+          <a href="/adminMatches" class="admin-card">
+            <span class="admin-card__icon">🎮</span>
+            <span class="admin-card__title">Manage Matches</span>
+            <span class="admin-card__desc">Fix results, odds and timings; resolve payouts.</span>
+          </a>
+          <a href="/adminUsers" class="admin-card">
+            <span class="admin-card__icon">👥</span>
+            <span class="admin-card__title">Manage Users</span>
+            <span class="admin-card__desc">Credits, roles, badges and passwords.</span>
+          </a>
+          <a href="/adminAliases" class="admin-card">
+            <span class="admin-card__icon">🔗</span>
+            <span class="admin-card__title">Team Aliases</span>
+            <span class="admin-card__desc">Map synced names and merge duplicates.</span>
+          </a>
+          <a href="/adminNews" class="admin-card">
+            <span class="admin-card__icon">📰</span>
+            <span class="admin-card__title">Manage News</span>
+            <span class="admin-card__desc">Draft, publish and edit news items.</span>
+          </a>
+          <a href="/adminTeams" class="admin-card">
+            <span class="admin-card__icon">🛡️</span>
+            <span class="admin-card__title">Manage Teams</span>
+            <span class="admin-card__desc">Edit team details, regions and ratings.</span>
+          </a>
+          <a href="/adminUpset" class="admin-card">
+            <span class="admin-card__icon">⚡</span>
+            <span class="admin-card__title">Manage Upsets</span>
+            <span class="admin-card__desc">Override or clear flagged upsets.</span>
+          </a>
+        </div>
 
-    <h2>Admin: Manage Users</h2>
+        <!-- Sync tools -->
+        <div class="admin-panel">
+          <div class="admin-panel__head">
+            <h2>Data Sync</h2>
+            <button id="runFullSyncBtn" class="btn btn-primary" type="button">Run Full Sync</button>
+          </div>
+          <p class="admin-panel__note">Pulls matches from Liquipedia, refreshes odds, and resolves finished matches.</p>
+          <pre id="syncOutput" class="admin-sync-output"></pre>
+        </div>
 
-    <table id="users-table" border="1" style="width: 100%;">
-      <thead>
-        <tr>
-          <th>Username</th>
-          <th>Email</th>
-          <th>Admin?</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
+        <!-- Users -->
+        <div class="admin-panel">
+          <div class="admin-panel__head">
+            <h2>Users</h2>
+            <a href="/adminUsers" class="btn btn-secondary">Full User Tools &rarr;</a>
+          </div>
+          <div class="admin-table-wrap">
+            <table id="users-table" class="admin-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Admin?</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
 
-    <hr style="margin: 2rem 0;">
+        <!-- Recent tips -->
+        <div class="admin-panel">
+          <div class="admin-panel__head">
+            <h2>Recent Tips</h2>
+          </div>
+          <div class="admin-table-wrap">
+            <table id="recent-tips-table" class="admin-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Email</th>
+                  <th>Match</th>
+                  <th>Selected</th>
+                  <th>Amount</th>
+                  <th>Odds</th>
+                  <th>Payout</th>
+                  <th>Status</th>
+                  <th>Placed</th>
+                  <th>Ago</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
 
-    <h2>Recent Tips</h2>
-
-    <table id="recent-tips-table" border="1" style="width: 100%;">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Email</th>
-          <th>Match</th>
-          <th>Selected Team</th>
-          <th>Amount</th>
-          <th>Odds</th>
-          <th>Payout</th>
-          <th>Status</th>
-          <th>Placed At</th>
-          <th>How Long Ago</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-    </table>
-  </div>
+      </div>
+    </section>
+  </main>
 
   <script>
     function escapeHTML(value) {
       if (value === null || value === undefined) return '';
-
       return String(value)
         .replaceAll('&', '&amp;')
         .replaceAll('<', '&lt;')
@@ -84,84 +144,50 @@
     }
     function getBadgeHTML(badgeType) {
       if (!badgeType) return '';
-
-      if (badgeType === 'owner') {
-        return `<span class="user-badge badge-owner">OWNER</span>`;
-      }
-
-      if (badgeType === 'vip') {
-        return `<span class="user-badge badge-vip">VIP</span>`;
-      }
-
+      if (badgeType === 'owner') return `<span class="user-badge badge-owner">OWNER</span>`;
+      if (badgeType === 'vip') return `<span class="user-badge badge-vip">VIP</span>`;
       return '';
     }
-
     function formatMoney(value) {
       const numberValue = Number(value);
-
-      if (!Number.isFinite(numberValue)) {
-        return '0.00';
-      }
-
+      if (!Number.isFinite(numberValue)) return '0.00';
       return numberValue.toFixed(2);
     }
-
     function formatDateTime(value) {
       if (!value) return 'Unknown';
-
       return new Date(value).toLocaleString();
     }
-
     function timeAgo(date) {
       if (!date) return 'Unknown';
-
       const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-
       if (seconds < 60) return `${seconds}s ago`;
-
       const minutes = Math.floor(seconds / 60);
       if (minutes < 60) return `${minutes}m ago`;
-
       const hours = Math.floor(minutes / 60);
       if (hours < 24) return `${hours}h ago`;
-
       const days = Math.floor(hours / 24);
       return `${days}d ago`;
     }
-
-    function getStatusColour(status) {
-      if (status === 'won') return '#4ade80';
-      if (status === 'lost') return '#f87171';
-      return '#facc15';
+    function getStatusClass(status) {
+      if (status === 'won') return 'admin-status--won';
+      if (status === 'lost') return 'admin-status--lost';
+      return 'admin-status--pending';
     }
 
     async function loadAllUsers() {
       try {
         const res = await fetch('/api/admin/users', { credentials: 'include' });
-
-        if (!res.ok) {
-          throw new Error('Access denied or server error');
-        }
-
+        if (!res.ok) throw new Error('Access denied or server error');
         const users = await res.json();
-
         const tbody = document.querySelector('#users-table tbody');
         tbody.innerHTML = '';
-
         users.forEach(user => {
           const row = document.createElement('tr');
-
           row.innerHTML = `
-            <td>
-              <div class="username-with-badge">
-                ${escapeHTML(user.username)}
-                ${getBadgeHTML(user.badge_type)}
-              </div>
-            </td>
+            <td><div class="username-with-badge">${escapeHTML(user.username)} ${getBadgeHTML(user.badge_type)}</div></td>
             <td>${escapeHTML(user.email)}</td>
-            <td>${Number(user.is_admin) === 1 ? '✅' : '❌'}</td>
+            <td>${Number(user.is_admin) === 1 ? '✅' : '—'}</td>
           `;
-
           tbody.appendChild(row);
         });
       } catch (err) {
@@ -177,25 +203,14 @@
     runFullSyncBtn.addEventListener('click', async () => {
       runFullSyncBtn.disabled = true;
       runFullSyncBtn.textContent = 'Running Sync...';
-
       syncOutput.textContent = 'Running full sync. Please do not refresh this page.';
-
       try {
-        const res = await fetch('/api/full-sync', {
-          method: 'POST',
-          credentials: 'include'
-        });
-
+        const res = await fetch('/api/full-sync', { method: 'POST', credentials: 'include' });
         const data = await res.json();
-
-        if (!res.ok || !data.success) {
-          throw new Error(data.error || data.message || 'Full sync failed.');
-        }
-
+        if (!res.ok || !data.success) throw new Error(data.error || data.message || 'Full sync failed.');
         syncOutput.textContent = 'Full sync completed successfully.';
       } catch (err) {
         console.error(err);
-
         syncOutput.textContent = `Full sync failed.\n\n${err.message}`;
       } finally {
         runFullSyncBtn.disabled = false;
@@ -206,43 +221,27 @@
     async function loadRecentTips() {
       try {
         const res = await fetch('/api/admin/recent-tips', { credentials: 'include' });
-
-        if (!res.ok) {
-          throw new Error('Access denied or server error');
-        }
-
+        if (!res.ok) throw new Error('Access denied or server error');
         const tips = await res.json();
-
         const tbody = document.querySelector('#recent-tips-table tbody');
         tbody.innerHTML = '';
-
         tips.forEach(tip => {
           const row = document.createElement('tr');
-
           const amount = Number(tip.amount_tipped);
           const odds = Number(tip.odds);
           const payout = amount * odds;
-
           row.innerHTML = `
-            <td>
-              <div class="username-with-badge">
-                ${escapeHTML(tip.username)}
-                ${getBadgeHTML(tip.badge_type)}
-              </div>
-            </td>
+            <td><div class="username-with-badge">${escapeHTML(tip.username)} ${getBadgeHTML(tip.badge_type)}</div></td>
             <td>${escapeHTML(tip.email)}</td>
             <td>${escapeHTML(tip.team_1_name)} vs ${escapeHTML(tip.team_2_name)}</td>
             <td>${escapeHTML(tip.selected_team_name)}</td>
             <td>${formatMoney(amount)}</td>
             <td>${formatMoney(odds)}</td>
             <td>${formatMoney(payout)}</td>
-            <td style="color: ${getStatusColour(tip.status)}; font-weight: bold;">
-              ${escapeHTML(tip.status)}
-            </td>
+            <td><span class="admin-status ${getStatusClass(tip.status)}">${escapeHTML(tip.status)}</span></td>
             <td>${formatDateTime(tip.tip_time)}</td>
             <td>${timeAgo(tip.tip_time)}</td>
           `;
-
           tbody.appendChild(row);
         });
       } catch (err) {

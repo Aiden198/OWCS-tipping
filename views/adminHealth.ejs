@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Health & Triage - Admin</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/adminHealth.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+<body>
+  <%- include('partials/header') %>
+
+  <main class="page-shell">
+    <section class="page-hero">
+      <div class="container">
+        <h1>Health &amp; Triage</h1>
+        <p>Everything that needs your attention, in one place. <a href="/admin">&larr; Back to Admin</a></p>
+        <button id="ah-refresh" class="btn btn-secondary">Refresh</button>
+      </div>
+    </section>
+
+    <section class="page-content">
+      <div class="container">
+        <div id="ah-summary" class="ah-summary"></div>
+        <div id="ah-issues" class="ah-issues"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const summaryEl = document.getElementById('ah-summary');
+      const issuesEl = document.getElementById('ah-issues');
+
+      function esc(v) {
+        if (v === null || v === undefined) return '';
+        return String(v)
+          .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
+      }
+      function fmtWhen(v) { if (!v) return ''; try { return new Date(v).toLocaleString(); } catch (e) { return esc(v); } }
+      function money(v) { const n = Number(v); return Number.isFinite(n) ? n.toLocaleString(undefined, { maximumFractionDigits: 0 }) : '0'; }
+
+      function summaryCard(label, value) {
+        return '<div class="ah-card"><span class="ah-card__value">' + value + '</span>'
+          + '<span class="ah-card__label">' + esc(label) + '</span></div>';
+      }
+
+      function renderSummary(s) {
+        summaryEl.innerHTML =
+          summaryCard('Users', money(s.users))
+          + summaryCard('Matches', money(s.matches))
+          + summaryCard('Upcoming', money(s.upcoming))
+          + summaryCard('Live', money(s.live))
+          + summaryCard('Unresolved', money(s.unresolved))
+          + summaryCard('Pending tips', money(s.pending_tips))
+          + summaryCard('Credits in circulation', money(s.credits_in_circulation));
+      }
+
+      function renderIssues(issues) {
+        issuesEl.innerHTML = '';
+        issues.forEach(issue => {
+          const card = document.createElement('div');
+          card.className = 'ah-issue ah-issue--' + esc(issue.severity);
+
+          let itemsHTML = '';
+          if (issue.count === 0) {
+            itemsHTML = '<div class="ah-clear">All clear ✓</div>';
+          } else {
+            itemsHTML = '<ul class="ah-item-list">' + issue.items.map(it => {
+              const when = it.datetime ? '<span class="ah-when">' + fmtWhen(it.datetime) + '</span>' : '';
+              const sub = it.sub ? '<span class="ah-item-sub">' + esc(it.sub) + '</span>' : '';
+              const link = it.href ? '<a class="ah-item-link" href="' + esc(it.href) + '">Fix &rarr;</a>' : '';
+              return '<li><div class="ah-item-main"><span class="ah-item-text">' + esc(it.text) + '</span>'
+                + sub + when + '</div>' + link + '</li>';
+            }).join('') + '</ul>';
+            if (issue.capped) {
+              itemsHTML += '<div class="ah-capped">Showing first 100 — there may be more.</div>';
+            }
+          }
+
+          card.innerHTML =
+            '<div class="ah-issue__head">'
+              + '<div><h3>' + esc(issue.label) + '</h3><p class="ah-issue__help">' + esc(issue.help) + '</p></div>'
+              + '<span class="ah-count ' + (issue.count === 0 ? 'ah-count--zero' : '') + '">' + issue.count + '</span>'
+            + '</div>'
+            + (issue.count > 0 && issue.action
+                ? '<a class="btn btn-secondary ah-issue__action" href="' + esc(issue.action.href) + '">' + esc(issue.action.label) + '</a>'
+                : '')
+            + itemsHTML;
+
+          issuesEl.appendChild(card);
+        });
+      }
+
+      async function load() {
+        summaryEl.innerHTML = '<div class="ah-loading">Loading...</div>';
+        issuesEl.innerHTML = '';
+        try {
+          const res = await fetch('/api/admin/health', { credentials: 'include' });
+          if (!res.ok) throw new Error('Request failed');
+          const data = await res.json();
+          renderSummary(data.summary);
+          renderIssues(data.issues);
+        } catch (err) {
+          console.error(err);
+          summaryEl.innerHTML = '<div class="ah-loading">Failed to load health data.</div>';
+        }
+      }
+
+      document.getElementById('ah-refresh').addEventListener('click', load);
+      load();
+    })();
+  </script>
+
+  <%- include('partials/footer') %>
+</body>
+</html>

@@ -52,6 +52,7 @@ CREATE TABLE competitions (
     competition_id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
     game VARCHAR(50) NOT NULL DEFAULT 'overwatch',
+    series VARCHAR(50) NOT NULL DEFAULT 'OWCS',  -- e.g. OWCS, FACEIT
     season_year INT NOT NULL,
     umbrella_region VARCHAR(50) DEFAULT NULL,    -- e.g. Asia
     competition_region VARCHAR(50) NOT NULL,     -- e.g. NA, EMEA, China, Japan, Korea, Pacific, Global

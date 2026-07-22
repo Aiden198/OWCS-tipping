@@ -35,6 +35,10 @@ var adminNewsRouter = require('./routes/adminNews');
 const adminUpsetRouter = require('./routes/adminUpset');
 const fullSyncRouter = require('./routes/api/fullSync');
 const adminTeamsRouter = require('./routes/adminTeams');
+const adminMatchesRouter = require('./routes/adminMatches');
+const adminUsersRouter = require('./routes/adminUsers');
+const adminHealthRouter = require('./routes/adminHealth');
+const adminAliasesRouter = require('./routes/adminAliases');
 
 // api routes
 const adminApiRouter = require('./routes/api/admin');
@@ -124,6 +128,10 @@ app.use('/donate', donateRouter);
 app.use('/adminNews', adminNewsRouter);
 app.use('/adminUpset', adminUpsetRouter);
 app.use('/', adminTeamsRouter);
+app.use('/', adminMatchesRouter);
+app.use('/', adminUsersRouter);
+app.use('/', adminHealthRouter);
+app.use('/', adminAliasesRouter);
 //api mounts
 app.use('/api/admin', adminApiRouter);
 app.use('/api/login', loginApiRouter);

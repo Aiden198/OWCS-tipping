@@ -41,7 +41,7 @@
         <div class="results-filter-buttons">
           <a
             href="/results"
-            class="results-filter-btn <%= !selectedRegion ? 'results-filter-btn--active' : '' %>"
+            class="results-filter-btn <%= (!selectedRegion && !selectedSeries) ? 'results-filter-btn--active' : '' %>"
           >
             All
           </a>
@@ -50,7 +50,7 @@
             <% if (region.count > 0) { %>
               <a
                 href="/results?region=<%= encodeURIComponent(region.name) %>"
-                class="results-filter-btn <%= selectedRegion === region.name ? 'results-filter-btn--active' : '' %>"
+                class="results-filter-btn <%= (selectedRegion === region.name && !selectedSeries) ? 'results-filter-btn--active' : '' %>"
               >
                 <%= region.name %> (<%= region.count %>)
               </a>
@@ -60,12 +60,27 @@
               </span>
             <% } %>
           <% }) %>
+
+          <% if (faceitCount > 0) { %>
+            <a
+              href="/results?series=faceit"
+              class="results-filter-btn <%= selectedSeries === 'faceit' ? 'results-filter-btn--active' : '' %>"
+            >
+              FACEIT (<%= faceitCount %>)
+            </a>
+          <% } else { %>
+            <span class="results-filter-btn results-filter-btn--disabled">
+              FACEIT (0)
+            </span>
+          <% } %>
         </div>
       </div>
       <% if (!results || results.length === 0) { %>
         <div class="feature-card">
           <h3>No Results Yet</h3>
-          <% if (selectedRegion) { %>
+          <% if (selectedSeries === 'faceit') { %>
+            <p>No completed FACEIT League matches are available at the moment.</p>
+          <% } else if (selectedRegion) { %>
             <p>No completed matches are available at the moment for <strong><%= selectedRegion %></strong>.</p>
           <% } else { %>
             <p>No completed matches are available at the moment.</p>

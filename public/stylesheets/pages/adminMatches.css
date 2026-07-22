@@ -1,0 +1,203 @@
+/* ===== Match Manager (admin) ===== */
+
+.am-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.am-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.am-filter {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.am-filter--active {
+  background: linear-gradient(135deg, var(--orange, #f97316), var(--blue, #3b82f6));
+  color: #fff;
+  border-color: transparent;
+}
+
+.am-search {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.am-search input {
+  padding: 0.5rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(10, 14, 24, 0.9);
+  color: #fff;
+  min-width: 200px;
+}
+
+.am-status {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-bottom: 0.6rem;
+}
+
+.am-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+}
+
+.am-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 720px;
+}
+
+.am-table th,
+.am-table td {
+  text-align: left;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: middle;
+}
+
+.am-table th {
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.am-match-teams { font-weight: 700; }
+.am-vs { color: var(--muted); font-weight: 500; font-size: 0.85rem; }
+.am-match-sub { color: var(--muted); font-size: 0.75rem; margin-top: 2px; }
+.am-muted { color: var(--muted); font-size: 0.8rem; }
+.am-win { color: #34d399; }
+.am-empty { text-align: center; color: var(--muted); padding: 1.5rem; }
+
+.am-tag {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e5e7eb;
+  white-space: nowrap;
+}
+
+.am-tag--ok { background: rgba(52, 211, 153, 0.18); color: #6ee7b7; }
+.am-tag--warn { background: rgba(249, 115, 22, 0.18); color: #fdba74; }
+
+/* Modal */
+.am-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.am-modal[hidden] { display: none; }
+
+.am-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.am-modal__panel {
+  position: relative;
+  z-index: 1;
+  width: min(560px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #0d1220;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+}
+
+.am-modal__panel h2 { margin: 0 0 0.25rem; }
+.am-modal__meta { color: var(--muted); font-size: 0.82rem; margin-bottom: 1rem; }
+
+.am-warning {
+  background: rgba(249, 115, 22, 0.12);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  color: #fdba74;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.am-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.am-form-grid__full { grid-column: 1 / -1; }
+
+.am-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.am-form-grid input,
+.am-form-grid select {
+  padding: 0.5rem 0.65rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(10, 14, 24, 0.9);
+  color: #fff;
+  font-size: 0.9rem;
+}
+
+.am-form-grid input:disabled,
+.am-form-grid select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.am-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+.am-modal__msg {
+  margin-top: 0.8rem;
+  font-size: 0.85rem;
+  color: #93c5fd;
+  min-height: 1.1em;
+  text-align: right;
+}
+
+@media (max-width: 560px) {
+  .am-form-grid { grid-template-columns: 1fr; }
+  .am-modal__actions { justify-content: stretch; }
+  .am-modal__actions .btn { flex: 1; }
+}

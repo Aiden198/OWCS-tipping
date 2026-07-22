@@ -53,6 +53,35 @@ function buildAbbreviation(name) {
     .toUpperCase();
 }
 
+async function resolveUniqueAbbreviation(baseAbbreviation) {
+  const base = baseAbbreviation.slice(0, 10);
+
+  const [existingRows] = await db.query(
+    `SELECT 1 FROM teams WHERE abbreviation = ? LIMIT 1`,
+    [base]
+  );
+
+  if (existingRows.length === 0) {
+    return base;
+  }
+
+  for (let suffix = 2; suffix <= 99; suffix += 1) {
+    const suffixStr = String(suffix);
+    const candidate = `${base.slice(0, 10 - suffixStr.length)}${suffixStr}`;
+
+    const [rows] = await db.query(
+      `SELECT 1 FROM teams WHERE abbreviation = ? LIMIT 1`,
+      [candidate]
+    );
+
+    if (rows.length === 0) {
+      return candidate;
+    }
+  }
+
+  throw new Error(`Unable to generate a unique abbreviation for base "${baseAbbreviation}"`);
+}
+
 async function resolveTeamAlias(sourceName) {
   if (!sourceName) {
     return null;
@@ -137,7 +166,7 @@ async function resolveTeamAlias(sourceName) {
   console.log('[Team] Creating new team:', trimmedName);
 
   const slug = buildSlug(trimmedName);
-  const abbreviation = buildAbbreviation(trimmedName);
+  const abbreviation = await resolveUniqueAbbreviation(buildAbbreviation(trimmedName));
 
   const [insertResult] = await db.query(
     `

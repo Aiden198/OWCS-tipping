@@ -9,6 +9,7 @@ function parseCompetitionMetadata(pageUrl) {
   // Overwatch_Champions_Series/2026/Asia/Stage_1/Japan/Regular_Season
   // Overwatch_World_Cup/2026
   // FACEIT_League/Season_9/OCE/Master
+  // FACEIT_League/Season_9/OCE/Master/Regular_Season
 
   const series = parts[0] || null;
   const isFaceit = series === 'FACEIT_League';
@@ -25,6 +26,7 @@ function parseCompetitionMetadata(pageUrl) {
     seasonNumber = seasonMatch ? Number(seasonMatch[1]) : null;
     competitionRegion = parts[2] || null; // OCE
     stagePart = parts[3] || null;         // Master / Open
+    phasePart = parts[4] || null;         // Regular_Season (subpage) or null (top-level = Playoffs bracket)
   } else if (series === 'Overwatch_World_Cup') {
     umbrellaRegion = 'World Cup';
     competitionRegion = 'World Cup';
@@ -58,8 +60,8 @@ function parseCompetitionMetadata(pageUrl) {
   }
 
   let stageType = 'main';
-  if (isFaceit && stagePart) {
-    stageType = stagePart.toLowerCase();
+  if (isFaceit) {
+    stageType = phasePart ? phasePart.toLowerCase() : 'playoffs';
   } else if (phasePart) {
     stageType = phasePart.toLowerCase();
   }
@@ -69,7 +71,8 @@ function parseCompetitionMetadata(pageUrl) {
         'FACEIT League',
         seasonNumber ? `Season ${seasonNumber}` : null,
         competitionRegion,
-        stagePart
+        stagePart,
+        phasePart ? phasePart.replace(/_/g, ' ') : 'Playoffs'
       ].filter(Boolean)
     : series === 'Overwatch_World_Cup'
       ? [
@@ -94,7 +97,8 @@ function parseCompetitionMetadata(pageUrl) {
         'faceit_league',
         seasonNumber,
         competitionRegion,
-        stagePart
+        stagePart,
+        phasePart
       ]
         .filter(Boolean)
         .join(':')

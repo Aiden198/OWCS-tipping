@@ -4,6 +4,7 @@ module.exports = [
 
   // OWCS stage 2
   'https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Midseason_Championship',
+  'https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/Midseason_Championship/Group_Stage',
 
   // stage 2 relegation
   'https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/NA/Stage_2/Relegation',

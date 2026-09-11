@@ -11,9 +11,9 @@ module.exports = [
   'https://liquipedia.net/overwatch/Overwatch_Champions_Series/2026/EMEA/Stage_2/Relegation',
 
   //faceit oce
-  'https://liquipedia.net/overwatch/FACEIT_League/Season_9/OCE/Master',
-  'https://liquipedia.net/overwatch/FACEIT_League/Season_9/OCE/Master/Regular_Season',
-  'https://liquipedia.net/overwatch/FACEIT_League/Season_9/OCE/Open',
-  'https://liquipedia.net/overwatch/FACEIT_League/Season_9/OCE/Open/Regular_Season'
+  'https://liquipedia.net/overwatch/FACEIT_League/Season_10/OCE/Master',
+  'https://liquipedia.net/overwatch/FACEIT_League/Season_10/OCE/Master/Regular_Season',
+  'https://liquipedia.net/overwatch/FACEIT_League/Season_10/OCE/Open',
+  'https://liquipedia.net/overwatch/FACEIT_League/Season_10/OCE/Open/Regular_Season'
 
 ];

@@ -4,7 +4,7 @@ const db = require('../../db');
 const REQUEST_SPACING_MS = 2000;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const sourcePages = require('./sourcePages');
+const getSourcePages = require('./sourcePages');
 const parseCompetitionMetadata = require('./parseCompetitionMetadata');
 const fetchLiquipediaMatches = require('./fetchLiquipediaMatches');
 const normalizeLiquipediaApiMatch = require('./normalizeLiquipediaApiMatch');
@@ -87,6 +87,8 @@ async function upsertLiquipediaMatches() {
     skipped: 0,
     unmatchedTeams: []
   };
+
+  const sourcePages = await getSourcePages();
 
   for (const pageUrl of sourcePages) {
     console.log(`[Liquipedia API] Processing page: ${pageUrl}`);

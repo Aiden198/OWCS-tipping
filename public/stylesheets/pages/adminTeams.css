@@ -49,6 +49,30 @@
   margin-top: 0.4rem;
 }
 
+.team-icon-file {
+  display: block;
+  width: 100%;
+  max-width: 160px;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.upload-icon-btn {
+  margin-top: 0.4rem;
+  background: #1e3a8a;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.upload-icon-btn:hover {
+  background: #2563eb;
+}
+
 .save-team-btn {
   background: #1e3a8a;
   color: white;

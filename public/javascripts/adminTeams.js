@@ -55,6 +55,8 @@ function renderTeams(teams) {
       <td>
         <input class="team-input" data-field="icon_path" value="${team.icon_path || ''}">
         <img class="team-icon-preview" src="${team.icon_path || ''}" alt="${team.name || ''}">
+        <input type="file" class="team-icon-file" accept="image/png,image/jpeg,image/webp,image/gif">
+        <button type="button" class="upload-icon-btn">Upload</button>
       </td>
 
       <td>
@@ -94,8 +96,52 @@ function renderTeams(teams) {
       saveTeam(team.team_id, row);
     });
 
+    row.querySelector('.upload-icon-btn').addEventListener('click', () => {
+      uploadTeamIcon(team.team_id, row);
+    });
+
     teamsTableBody.appendChild(row);
   });
+}
+
+async function uploadTeamIcon(teamId, row) {
+  const fileInput = row.querySelector('.team-icon-file');
+  const file = fileInput.files[0];
+
+  if (!file) {
+    showMessage('Choose an image file first.', true);
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append('icon', file);
+
+  try {
+    const res = await fetch(`/api/admin/teams/${teamId}/icon`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (!data.success) {
+      showMessage(data.error || 'Failed to upload icon.', true);
+      return;
+    }
+
+    showMessage('Icon uploaded successfully.');
+
+    row.querySelector('[data-field="icon_path"]').value = data.icon_path;
+    row.querySelector('.team-icon-preview').src = data.icon_path;
+    fileInput.value = '';
+
+    const cachedTeam = allTeams.find((t) => t.team_id === teamId);
+    if (cachedTeam) cachedTeam.icon_path = data.icon_path;
+  } catch (err) {
+    console.error(err);
+    showMessage('Failed to upload icon.', true);
+  }
 }
 
 function filterTeams() {

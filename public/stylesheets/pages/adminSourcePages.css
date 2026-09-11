@@ -1,0 +1,39 @@
+.sp-add-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+}
+
+.sp-add-row input {
+  flex: 1 1 260px;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  color: white;
+}
+
+.sp-add-row input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.sp-msg {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  min-height: 1.2em;
+}
+
+.sp-msg--success { color: #3ddc84; }
+.sp-msg--error { color: #ff6b6b; }
+
+.sp-url-cell a {
+  word-break: break-all;
+}
+
+.sp-muted {
+  color: var(--muted);
+}

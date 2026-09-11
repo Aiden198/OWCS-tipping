@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Source Pages - Admin</title>
+  <link rel="stylesheet" href="/stylesheets/global.css">
+  <link rel="stylesheet" href="/stylesheets/layout.css">
+  <link rel="stylesheet" href="/stylesheets/components.css">
+  <link rel="stylesheet" href="/stylesheets/interactive.css">
+  <link rel="stylesheet" href="/stylesheets/pages/admin.css">
+  <link rel="stylesheet" href="/stylesheets/pages/adminSourcePages.css">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+<%- include('partials/header') %>
+
+<main class="page-shell">
+  <section class="page-hero">
+    <div class="container">
+      <h1>Source Pages</h1>
+      <p>The Liquipedia pages the match sync pulls from. Add or remove pages here instead of editing code. <a href="/admin">&larr; Back to Admin</a></p>
+    </div>
+  </section>
+
+  <section class="page-content">
+    <div class="container">
+
+      <div class="admin-panel">
+        <h2>Add a source page</h2>
+        <div class="sp-add-row">
+          <input type="text" id="sp-add-url" placeholder="https://liquipedia.net/overwatch/...">
+          <input type="text" id="sp-add-label" placeholder="Label (optional, e.g. &quot;FACEIT OCE Master&quot;)">
+          <button class="btn btn-primary" id="sp-add-btn">Add</button>
+        </div>
+        <div id="sp-add-msg" class="sp-msg"></div>
+      </div>
+
+      <div class="admin-panel">
+        <div class="admin-panel__head">
+          <h2>Current source pages</h2>
+          <span id="sp-count" class="admin-panel__note"></span>
+        </div>
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Label</th>
+                <th>URL</th>
+                <th>Added</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="sp-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<script src="/javascripts/adminSourcePages.js"></script>
+
+<%- include('partials/footer') %>
+</body>
+</html>

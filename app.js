@@ -39,6 +39,7 @@ const adminMatchesRouter = require('./routes/adminMatches');
 const adminUsersRouter = require('./routes/adminUsers');
 const adminHealthRouter = require('./routes/adminHealth');
 const adminAliasesRouter = require('./routes/adminAliases');
+const adminSourcePagesRouter = require('./routes/adminSourcePages');
 
 // api routes
 const adminApiRouter = require('./routes/api/admin');
@@ -132,6 +133,7 @@ app.use('/', adminMatchesRouter);
 app.use('/', adminUsersRouter);
 app.use('/', adminHealthRouter);
 app.use('/', adminAliasesRouter);
+app.use('/', adminSourcePagesRouter);
 //api mounts
 app.use('/api/admin', adminApiRouter);
 app.use('/api/login', loginApiRouter);

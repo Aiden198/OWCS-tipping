@@ -1,12 +1,15 @@
 const db = require('../db');
 
+const MAX_ODDS = 999.99;
+
 function winProbability(ratingA, ratingB) {
-  return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 200));
+  return 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
 }
 
 function decimalOdds(probability, margin = 0.0) {
   const fairOdds = 1 / probability;
-  return Number((fairOdds * (1 - margin)).toFixed(2));
+  const odds = fairOdds * (1 - margin);
+  return Number(Math.min(odds, MAX_ODDS).toFixed(2));
 }
 
 function isPlaceholderTeamName(name) {

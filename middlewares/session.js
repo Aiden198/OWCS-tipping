@@ -1,10 +1,14 @@
 const session = require('express-session');
+const db = require('../db');
+const MySQLSessionStore = require('./mysqlSessionStore');
 
-// USING A MEMORY STORE!!! DATA WILL NOT PERSIST ON RESTART!!!
+const sessionStore = new MySQLSessionStore(db);
+sessionStore.on('error', (err) => console.error('Session store error:', err));
 
 const sessionMiddleware = session({
+    store: sessionStore,
     secret: process.env.session_secret || "default",
-    resave: true, // Do not resave session if not modified
+    resave: false, // Store implements touch(), so it can refresh expiry without a full resave
     saveUninitialized: false, // Do not store uninitialised sessions
     rolling: true, // Refresh expiry on each request
     cookie: {

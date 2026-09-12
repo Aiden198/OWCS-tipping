@@ -1,6 +1,5 @@
 .nav-links {
   list-style: none;
-  display: flex;
   gap: 1rem;
   margin: 0;
   padding: 0;
@@ -8,10 +7,18 @@
 }
 
 .nav-actions {
-  display: flex;
   gap: 0.6rem;
   flex-wrap: nowrap;
   align-items: center;
+}
+
+/* Default (desktop) layout — below 900px, layout.css's collapsible-menu
+   rules take over and control display based on the hamburger toggle. */
+@media (min-width: 901px) {
+  .nav-links,
+  .nav-actions {
+    display: flex;
+  }
 }
 
 .nav-actions .btn {

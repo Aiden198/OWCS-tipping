@@ -634,3 +634,77 @@
 .recent-tip-card .match-team__abbr {
   font-weight: 700;
 }
+
+/* Your Season bar */
+
+.season-bar {
+  padding: 1.5rem 0 0;
+}
+
+.season-bar__inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem 2.5rem;
+
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.1rem 1.5rem;
+  box-shadow: var(--shadow);
+}
+
+.season-bar__label {
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.season-bar__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.75rem;
+}
+
+.season-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
+.season-stat__icon {
+  font-size: 1.1rem;
+}
+
+.season-stat__value {
+  font-weight: 800;
+  font-size: 1.15rem;
+}
+
+.season-stat__unit {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+/* Homepage leaderboard preview */
+
+.leaderboard-preview-section {
+  padding: 4rem 0;
+}
+
+.leaderboard-preview-section .leaderboard-card--me {
+  margin-top: 0.75rem;
+}
+
+.home-section-link {
+  display: inline-block;
+  margin-top: 1.25rem;
+  color: var(--orange);
+  font-weight: 700;
+}
+
+.home-section-link:hover {
+  text-decoration: underline;
+}

@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require("../db");
 
 const newsItems = require('../data/newsItems');
+const { getBoardEntries } = require('../services/leaderboardService');
 
 router.get("/", async function (req, res, next) {
   try {
@@ -201,8 +202,44 @@ router.get("/", async function (req, res, next) {
       LIMIT 12
     `);
 
+    const allTimeEntries = await getBoardEntries('alltime');
+
+    const leaderboardTop = allTimeEntries.slice(0, 5).map((entry, index) => ({
+      ...entry,
+      rank: index + 1
+    }));
+
+    let leaderboardUserRank = null;
+    let seasonStats = null;
+
+    if (req.session.user) {
+      const currentUserId = Number(req.session.user.userID);
+      const foundIndex = allTimeEntries.findIndex((e) => Number(e.user_id) === currentUserId);
+      if (foundIndex !== -1) {
+        leaderboardUserRank = { ...allTimeEntries[foundIndex], rank: foundIndex + 1 };
+      }
+
+      const [[statsRow]] = await db.query(`
+        SELECT tips_won, tips_lost, current_tip_streak
+        FROM users
+        WHERE user_id = ?
+      `, [currentUserId]);
+
+      const tipsWon = Number(statsRow.tips_won) || 0;
+      const tipsLost = Number(statsRow.tips_lost) || 0;
+      const settled = tipsWon + tipsLost;
+
+      seasonStats = {
+        credits: Number(req.session.user.credits),
+        settled,
+        accuracy: settled > 0 ? (tipsWon / settled) * 100 : null,
+        currentStreak: Number(statsRow.current_tip_streak) || 0
+      };
+    }
+
         res.render("index", {
-          featuredMatches, newsItems, biggestUpset, recentResolvedTips, user: req.session.user || null
+          featuredMatches, newsItems, biggestUpset, recentResolvedTips, user: req.session.user || null,
+          leaderboardTop, leaderboardUserRank, seasonStats
         });
       } catch (err) {
         next(err);

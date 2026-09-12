@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/stylesheets/components.css">
   <link rel="stylesheet" href="/stylesheets/interactive.css">
   <link rel="stylesheet" href="/stylesheets/match-cards.css">
+  <link rel="stylesheet" href="/stylesheets/pages/leaderboard.css">
   <link rel="stylesheet" href="/stylesheets/pages/home.css">
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
@@ -73,6 +74,46 @@
       </div>
     </section>
 
+    <% if (user && seasonStats) { %>
+    <section class="season-bar">
+      <div class="container season-bar__inner">
+        <span class="season-bar__label">Your Season</span>
+
+        <div class="season-bar__stats">
+          <span class="season-stat">
+            <span class="season-stat__icon">💰</span>
+            <span class="season-stat__value"><%= seasonStats.credits.toFixed(2) %></span>
+            <span class="season-stat__unit">credits</span>
+          </span>
+
+          <% if (leaderboardUserRank) { %>
+          <span class="season-stat">
+            <span class="season-stat__icon">🏆</span>
+            <span class="season-stat__value">#<%= leaderboardUserRank.rank %></span>
+            <span class="season-stat__unit">rank</span>
+          </span>
+          <% } %>
+
+          <% if (seasonStats.accuracy !== null) { %>
+          <span class="season-stat">
+            <span class="season-stat__icon">🎯</span>
+            <span class="season-stat__value"><%= seasonStats.accuracy.toFixed(0) %>%</span>
+            <span class="season-stat__unit">accuracy</span>
+          </span>
+          <% } %>
+
+          <% if (seasonStats.currentStreak > 0) { %>
+          <span class="season-stat">
+            <span class="season-stat__icon">🔥</span>
+            <span class="season-stat__value"><%= seasonStats.currentStreak %></span>
+            <span class="season-stat__unit">streak</span>
+          </span>
+          <% } %>
+        </div>
+      </div>
+    </section>
+    <% } %>
+
     <% if (recentResolvedTips && recentResolvedTips.length > 0) { %>
     <section class="recent-results-section">
       <div class="container">
@@ -123,6 +164,61 @@
       </div>
     </section>
     <% } %>
+
+    <section class="leaderboard-preview-section">
+      <div class="container">
+        <div class="home-section-heading">
+          <h2>Top Tippers</h2>
+          <p>Ranked by total credits, all-time.</p>
+        </div>
+
+        <% if (!leaderboardTop || leaderboardTop.length === 0) { %>
+          <div class="leaderboard-empty">
+            <p>No ranked tippers yet.</p>
+          </div>
+        <% } else { %>
+          <div class="leaderboard-card">
+            <div class="leaderboard-table">
+              <div class="leaderboard-row leaderboard-row--head">
+                <span>Rank</span>
+                <span>Player</span>
+                <span>Credits</span>
+              </div>
+
+              <% leaderboardTop.forEach((entry) => { %>
+                <div class="leaderboard-row <%= entry.rank <= 3 ? 'leaderboard-row--top' : '' %>">
+                  <span class="leaderboard-rank">#<%= entry.rank %></span>
+                  <span class="leaderboard-name">
+                    <a href="/users/<%= entry.user_id %>"><%= entry.username %></a>
+                    <%- include('partials/userBadge', { user: entry }) %>
+                  </span>
+                  <span class="leaderboard-credits">
+                    <span class="leaderboard-value"><%= Number(entry.primary).toFixed(2) %></span>
+                  </span>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+
+          <% if (leaderboardUserRank && leaderboardUserRank.rank > 5) { %>
+            <div class="leaderboard-card leaderboard-card--me">
+              <div class="leaderboard-row leaderboard-row--me">
+                <span class="leaderboard-rank">#<%= leaderboardUserRank.rank %></span>
+                <span class="leaderboard-name">
+                  <%= leaderboardUserRank.username %>
+                  <%- include('partials/userBadge', { user: leaderboardUserRank }) %>
+                </span>
+                <span class="leaderboard-credits">
+                  <span class="leaderboard-value"><%= Number(leaderboardUserRank.primary).toFixed(2) %></span>
+                </span>
+              </div>
+            </div>
+          <% } %>
+        <% } %>
+
+        <a href="/leaderboard" class="home-section-link">View full leaderboard &rarr;</a>
+      </div>
+    </section>
 
     <section class="how-it-works">
       <div class="container">
